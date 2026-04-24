@@ -128,7 +128,7 @@ def generate(title: str, keyword: str, region: str = "", notes: str = "", dry_ru
     return str(output_path)
 
 
-def interactive_mode() -> None:
+def interactive_mode(dry_run: bool = False) -> None:
     print("=== 記事下書き生成（対話モード）===\n")
     title = input("記事タイトル: ").strip()
     if not title:
@@ -137,7 +137,7 @@ def interactive_mode() -> None:
     keyword = input("メインキーワード（スペース区切りで複数可）: ").strip()
     region = input("地域（例: 世田谷区 / 空白でスキップ）: ").strip()
     notes = input("特記事項（空白でスキップ）: ").strip()
-    generate(title, keyword, region, notes)
+    generate(title, keyword, region, notes, dry_run=dry_run)
 
 
 def main() -> None:
@@ -151,7 +151,7 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.interactive:
-        interactive_mode()
+        interactive_mode(dry_run=args.dry_run)
     elif args.title:
         generate(args.title, args.keyword, args.region, args.notes, dry_run=args.dry_run)
     else:

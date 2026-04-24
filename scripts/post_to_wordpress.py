@@ -16,6 +16,7 @@ import re
 import sys
 from datetime import datetime
 from pathlib import Path
+from typing import Optional
 
 import requests
 from dotenv import load_dotenv
@@ -95,7 +96,7 @@ def markdown_to_html(md: str) -> str:
     return "\n".join(html_lines)
 
 
-def post_draft(draft_path: Path, dry_run: bool = False) -> dict | None:
+def post_draft(draft_path: Path, dry_run: bool = False) -> Optional[dict]:
     if not draft_path.exists():
         print(f"[ERROR] ファイルが見つかりません: {draft_path}")
         sys.exit(1)
