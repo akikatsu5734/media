@@ -1,0 +1,63 @@
+{
+  "sources": [
+    {
+      "name": "NHK ニュース - 社会",
+      "url": "https://www.nhk.or.jp/rss/news/cat1.xml",
+      "category": "ニュース",
+      "enabled": true
+    },
+    {
+      "name": "国土交通省 - 新着情報",
+      "url": "https://www.mlit.go.jp/rss/rss_mlit.xml",
+      "category": "行政",
+      "enabled": true
+    },
+    {
+      "name": "Google Alerts - 空き家",
+      "url": "https://www.google.com/alerts/feeds/YOUR_ALERT_ID/空き家",
+      "category": "アラート",
+      "enabled": false,
+      "note": "Google AlertsでRSS URLを生成して設定してください"
+    },
+    {
+      "name": "Google Alerts - 空き家 補助金",
+      "url": "https://www.google.com/alerts/feeds/YOUR_ALERT_ID/空き家+補助金",
+      "category": "アラート",
+      "enabled": false,
+      "note": "Google AlertsでRSS URLを生成して設定してください"
+    },
+    {
+      "name": "世田谷区 - 新着情報",
+      "url": "https://www.city.setagaya.lg.jp/rss/all.rss",
+      "category": "地域",
+      "region": "世田谷区",
+      "enabled": true
+    },
+    {
+      "name": "不動産ジャパン - ニュース",
+      "url": "https://www.fudousanjapan.co.jp/rss",
+      "category": "不動産",
+      "enabled": false,
+      "note": "RSS URLを確認して有効化してください"
+    }
+  ],
+  "keywords": [
+    "空き家",
+    "空き家活用",
+    "空き家対策",
+    "空き家バンク",
+    "不動産",
+    "補助金",
+    "相続",
+    "固定資産税",
+    "住宅",
+    "リノベーション",
+    "移住",
+    "古民家",
+    "賃貸",
+    "売却",
+    "解体",
+    "管理不全",
+    "特定空家"
+  ]
+}
