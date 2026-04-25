@@ -1,0 +1,16 @@
+.env
+
+data/performance_data.json
+data/performance_report.md
+data/improvement_proposals.md
+data/collected_topics.json
+data/theme_proposals.md
+data/posted.json
+data/drafts/
+
+data/csv/sc_pages.csv
+data/csv/ga4_pages.csv
+
+__pycache__/
+*.pyc
+*.pyo
