@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
 """
-WordPress 下書き投稿スクリプト
-data/drafts/ 内の Markdown ファイルを WordPress REST API 経由で下書き保存する。
+WordPress 投稿スクリプト（下書き / 予約投稿 / 確認）
+data/drafts/ 内の Markdown ファイルを WordPress REST API 経由で投稿する。
+
+モード:
+  下書き保存（デフォルト）: --file <path>
+  予約投稿:                 --file <path> --schedule "2026-04-25T10:00:00"
+  確認のみ（投稿しない）:  --file <path> --dry-run
 
 使用例:
   python scripts/post_to_wordpress.py --file data/drafts/20260424_世田谷区.md
+  python scripts/post_to_wordpress.py --file data/drafts/20260424_世田谷区.md --schedule "2026-04-25T10:00:00"
   python scripts/post_to_wordpress.py --file data/drafts/20260424_世田谷区.md --dry-run
 """
 
@@ -95,7 +101,18 @@ def markdown_to_html(md: str) -> str:
     return "\n".join(html_lines)
 
 
-def post_draft(draft_path: Path, dry_run: bool = False) -> dict | None:
+def parse_schedule(schedule_str: str) -> str:
+    """--schedule で渡された日時文字列を検証して返す。WordPressはサイトのローカル時刻を期待する。"""
+    try:
+        dt = datetime.fromisoformat(schedule_str)
+        return dt.strftime("%Y-%m-%dT%H:%M:%S")
+    except ValueError:
+        print(f"[ERROR] --schedule の日時フォーマットが不正です: {schedule_str}")
+        print("       正しい形式: YYYY-MM-DDTHH:MM:SS  例: 2026-04-25T10:00:00")
+        sys.exit(1)
+
+
+def post_draft(draft_path: Path, dry_run: bool = False, schedule: str = "") -> dict | None:
     if not draft_path.exists():
         print(f"[ERROR] ファイルが見つかりません: {draft_path}")
         sys.exit(1)
@@ -105,19 +122,29 @@ def post_draft(draft_path: Path, dry_run: bool = False) -> dict | None:
 
     title = meta.get("title", draft_path.stem)
     excerpt = meta.get("excerpt", "")
-    tags_raw = meta.get("tags", "[]")
     category_id = int(os.environ.get("WP_DEFAULT_CATEGORY_ID", "1"))
 
     html_body = markdown_to_html(body)
 
+    if schedule:
+        mode_label = f"予約投稿（{schedule}）"
+        post_status = "future"
+    else:
+        mode_label = "下書き保存"
+        post_status = "draft"
+
     print(f"📄 ファイル: {draft_path.name}")
     print(f"📝 タイトル: {title}")
+    print(f"🗂  モード: {mode_label}")
     print(f"📋 メタ情報: {json.dumps(meta, ensure_ascii=False)[:120]}")
 
     if dry_run:
         print("\n[DRY-RUN] 以下の内容で WordPress に投稿します（実際には投稿しません）:")
-        print(f"  title: {title}")
-        print(f"  status: draft")
+        print(f"  title:   {title}")
+        print(f"  status:  {post_status}")
+        if schedule:
+            print(f"  date:    {schedule}")
+            print("  ※ WordPress サイトのタイムゾーン設定に合わせた日時を指定してください。")
         print(f"  excerpt: {excerpt[:80]}")
         print(f"  content（先頭200字）: {html_body[:200]}")
         return None
@@ -136,13 +163,15 @@ def post_draft(draft_path: Path, dry_run: bool = False) -> dict | None:
         "Content-Type": "application/json",
     }
 
-    post_data = {
+    post_data: dict = {
         "title": title,
         "content": html_body,
-        "status": "draft",  # 常に下書き。直接 publish は禁止。
+        "status": post_status,
         "excerpt": excerpt,
         "categories": [category_id],
     }
+    if schedule:
+        post_data["date"] = schedule
 
     api_url = f"{wp_url}/wp-json/wp/v2/posts"
     print(f"\n🚀 投稿中: {api_url}")
@@ -153,7 +182,11 @@ def post_draft(draft_path: Path, dry_run: bool = False) -> dict | None:
         result = resp.json()
         post_id = result.get("id")
         post_link = result.get("link", "")
-        print(f"\n✅ 下書き投稿成功！ post_id={post_id}")
+
+        if schedule:
+            print(f"\n✅ 予約投稿成功！ post_id={post_id}  公開予定: {schedule}")
+        else:
+            print(f"\n✅ 下書き投稿成功！ post_id={post_id}")
         print(f"   WordPress 管理画面で確認: {wp_url}/wp-admin/post.php?post={post_id}&action=edit")
 
         log = load_posted_log()
@@ -162,6 +195,8 @@ def post_draft(draft_path: Path, dry_run: bool = False) -> dict | None:
             "title": title,
             "draft_file": str(draft_path),
             "posted_at": datetime.now().isoformat(),
+            "scheduled_at": schedule or None,
+            "status": post_status,
             "link": post_link,
         })
         save_posted_log(log)
@@ -173,16 +208,33 @@ def post_draft(draft_path: Path, dry_run: bool = False) -> dict | None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="WordPress 下書き投稿スクリプト")
+    parser = argparse.ArgumentParser(
+        description="WordPress 投稿スクリプト（下書き / 予約投稿 / 確認）",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+モード:
+  下書き保存（デフォルト）: --file <path>
+  予約投稿:                 --file <path> --schedule "2026-04-25T10:00:00"
+  確認のみ（投稿しない）:  --file <path> --dry-run
+        """,
+    )
     parser.add_argument("--file", required=True, help="投稿する Markdown ファイルのパス")
+    parser.add_argument(
+        "--schedule",
+        default="",
+        metavar="DATETIME",
+        help="予約公開日時（例: 2026-04-25T10:00:00）。WordPressサイトのタイムゾーン基準。",
+    )
     parser.add_argument("--dry-run", action="store_true", help="実際には投稿せず内容を確認のみ")
     args = parser.parse_args()
+
+    schedule = parse_schedule(args.schedule) if args.schedule else ""
 
     draft_path = Path(args.file)
     if not draft_path.is_absolute():
         draft_path = BASE_DIR / draft_path
 
-    post_draft(draft_path, dry_run=args.dry_run)
+    post_draft(draft_path, dry_run=args.dry_run, schedule=schedule)
 
 
 if __name__ == "__main__":

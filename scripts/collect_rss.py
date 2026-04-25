@@ -9,6 +9,7 @@ import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Optional
 
 import feedparser
 import requests
@@ -42,7 +43,7 @@ def matches_keywords(text: str, keywords: list[str]) -> list[str]:
     return [kw for kw in keywords if kw in text_lower]
 
 
-def entry_to_topic(entry: object, source_name: str, keywords: list[str]) -> dict | None:
+def entry_to_topic(entry: object, source_name: str, keywords: list[str]) -> Optional[dict]:
     """feedparser のエントリをトピック辞書に変換する。マッチしない場合は None。"""
     title = getattr(entry, "title", "") or ""
     summary = getattr(entry, "summary", "") or ""
