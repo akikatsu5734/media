@@ -1,12 +1,21 @@
 #!/usr/bin/env python3
 """
 記事下書き生成スクリプト
-タイトルとキーワードを受け取り、Claude API を使って記事下書きを生成する。
+記事タイプとタイトルを受け取り、Claude API を使って記事下書きを生成する。
 出力は data/drafts/YYYYMMDD_<slug>.md に保存される。
 
 使用例:
-  python scripts/generate_draft.py --title "世田谷区の空き家補助金2026年最新版" --keyword "空き家 補助金 世田谷"
-  python scripts/generate_draft.py --interactive  # 対話モード
+  # 記事タイプを指定（推奨）
+  python scripts/generate_draft.py --type general --title "空き家の売却手順完全ガイド" --keyword "空き家 売却"
+  python scripts/generate_draft.py --type case --title "相続した実家の空き家問題を解決した事例"
+  python scripts/generate_draft.py --type tokyo23 --title "世田谷区"
+  python scripts/generate_draft.py --type seasonal_pr --title "夏の台風前に空き家点検を済ませておく理由"
+
+  # 動作確認（API 呼び出しなし）
+  python scripts/generate_draft.py --type general --title "テスト記事" --keyword "テスト" --dry-run
+
+  # 対話モード
+  python scripts/generate_draft.py --interactive
 """
 
 import argparse
@@ -23,7 +32,16 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).parent.parent
 DRAFTS_DIR = BASE_DIR / "data" / "drafts"
-PROMPT_FILE = BASE_DIR / "prompts" / "article_draft.md"
+PROMPTS_DIR = BASE_DIR / "prompts"
+
+ARTICLE_TYPES = {
+    "general":     "article_general.md",
+    "case":        "article_case.md",
+    "tokyo23":     "article_tokyo23.md",
+    "seasonal_pr": "article_seasonal_pr.md",
+}
+
+DEFAULT_CTA_URL = "https://aki-katsu.co.jp/counter/"
 
 
 def slugify(text: str) -> str:
@@ -32,81 +50,75 @@ def slugify(text: str) -> str:
     return text[:40].strip("_").lower()
 
 
-def load_prompt_template() -> str:
-    if PROMPT_FILE.exists():
-        with open(PROMPT_FILE, encoding="utf-8") as f:
+def load_file(path: Path) -> str:
+    if path.exists():
+        with open(path, encoding="utf-8") as f:
             return f.read()
     return ""
 
 
-def build_article_prompt(title: str, keyword: str, region: str = "", notes: str = "") -> str:
-    template = load_prompt_template()
+def build_prompt(
+    article_type: str,
+    title: str,
+    keyword: str = "",
+    region: str = "",
+    notes: str = "",
+    cta_url: str = DEFAULT_CTA_URL,
+) -> str:
+    common = load_file(PROMPTS_DIR / "article_common.md")
+    specific = load_file(PROMPTS_DIR / ARTICLE_TYPES[article_type])
 
-    base_prompt = f"""あなたは空き家・不動産メディア「アキカツ」の専門ライターです。
-以下の条件で記事を執筆してください。
+    combined = (common + "\n\n---\n\n" + specific).strip()
 
-## 記事情報
-- タイトル: {title}
-- メインキーワード: {keyword}
-- 地域: {region if region else "指定なし（全国向け）"}
-- 特記事項: {notes if notes else "なし"}
+    if article_type == "tokyo23":
+        combined = combined.replace("{{対象区名}}", title)
+        combined = combined.replace("{{補足}}", notes)
+    else:
+        combined = combined.replace("{{記事タイトル}}", title)
+        combined = combined.replace("{{キーワード}}", keyword)
+        combined = combined.replace("{{対象地域}}", region)
+        combined = combined.replace("{{補足}}", notes)
 
-## 執筆ルール
-- 読者は空き家を抱える40〜60代の所有者・相続予定者
-- 専門用語は必ず平易な言葉で補足説明する
-- 法律・制度・補助金の数値は「※要確認」と明記し、必ず一次ソースを確認するよう促す
-- 文末は「〜です」「〜ます」調で統一する
-- 記事末尾に必ずCTA（行動喚起）を入れる
-- 見出しはH2・H3の2階層で構成する
-- 文字数目安: 2,000〜3,000字
+    combined = combined.replace("{{WP_CTA_URL}}", cta_url)
 
-## 出力フォーマット（Markdown）
-
-まず以下のフロントマターを出力してください:
-
----
-title: "{title}"
-keyword: "{keyword}"
-region: "{region}"
-excerpt: "（120字以内のメタディスクリプション）"
-tags: ["タグ1", "タグ2", "タグ3"]
-category: "（カテゴリ案）"
-eyecatch_instruction: "（アイキャッチ画像の制作指示文）"
-fact_check_required: true
-status: draft
-created_at: {datetime.now().strftime('%Y-%m-%d')}
----
-
-次に本文を出力してください。
-
-# {title}
-
-（本文）
-
----
-※この記事はAIが生成した下書きです。公開前に事実確認・編集を行ってください。
-"""
-    return template + "\n" + base_prompt if template else base_prompt
+    return combined
 
 
-def generate(title: str, keyword: str, region: str = "", notes: str = "", dry_run: bool = False) -> str:
-    print(f"📝 記事タイトル: {title}")
-    print(f"🔑 キーワード: {keyword}")
-    if region:
-        print(f"📍 地域: {region}")
+def generate(
+    article_type: str,
+    title: str,
+    keyword: str = "",
+    region: str = "",
+    notes: str = "",
+    dry_run: bool = False,
+) -> str:
+    cta_url = os.environ.get("WP_CTA_URL", DEFAULT_CTA_URL)
+
+    print(f"📝 記事タイプ: {article_type}")
+    if article_type == "tokyo23":
+        print(f"📍 対象区名: {title}")
+    else:
+        print(f"📝 記事タイトル: {title}")
+        if keyword:
+            print(f"🔑 キーワード: {keyword}")
+        if region:
+            print(f"📍 地域: {region}")
     print("🤖 Claude API で下書きを生成中...")
 
-    prompt = build_article_prompt(title, keyword, region, notes)
+    prompt = build_prompt(article_type, title, keyword, region, notes, cta_url)
 
     if dry_run:
-        print("\n[DRY-RUN] プロンプトのみ出力（API 呼び出しなし）:")
-        print(prompt[:400] + "...")
+        print("\n[DRY-RUN] 統合プロンプト（先頭600字）:")
+        print("-" * 60)
+        print(prompt[:600])
+        print("-" * 60)
+        print(f"(全体: {len(prompt)} 文字)")
         return prompt
 
     client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
     message = client.messages.create(
         model="claude-sonnet-4-6",
-        max_tokens=6000,
+        max_tokens=8000,
         messages=[{"role": "user", "content": prompt}],
     )
 
@@ -128,21 +140,43 @@ def generate(title: str, keyword: str, region: str = "", notes: str = "", dry_ru
     return str(output_path)
 
 
-def interactive_mode(dry_run: bool = False) -> None:
+def interactive_mode() -> None:
     print("=== 記事下書き生成（対話モード）===\n")
-    title = input("記事タイトル: ").strip()
-    if not title:
-        print("タイトルは必須です。")
+    type_choices = " / ".join(ARTICLE_TYPES.keys())
+    article_type = input(f"記事タイプ ({type_choices}) [省略=general]: ").strip() or "general"
+    if article_type not in ARTICLE_TYPES:
+        print(f"無効なタイプです: {article_type}")
         sys.exit(1)
-    keyword = input("メインキーワード（スペース区切りで複数可）: ").strip()
-    region = input("地域（例: 世田谷区 / 空白でスキップ）: ").strip()
-    notes = input("特記事項（空白でスキップ）: ").strip()
-    generate(title, keyword, region, notes, dry_run=dry_run)
+
+    if article_type == "tokyo23":
+        title = input("対象区名（例: 世田谷区）: ").strip()
+        if not title:
+            print("区名は必須です。")
+            sys.exit(1)
+        notes = input("補足（空白でスキップ）: ").strip()
+        generate(article_type, title, notes=notes)
+    else:
+        title = input("記事タイトル: ").strip()
+        if not title:
+            print("タイトルは必須です。")
+            sys.exit(1)
+        keyword = input("メインキーワード（スペース区切りで複数可）: ").strip()
+        region = input("地域（例: 世田谷区 / 空白でスキップ）: ").strip()
+        notes = input("特記事項（空白でスキップ）: ").strip()
+        generate(article_type, title, keyword, region, notes)
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="記事下書き生成スクリプト")
-    parser.add_argument("--title", help="記事タイトル")
+    parser.add_argument(
+        "--type",
+        dest="article_type",
+        choices=list(ARTICLE_TYPES.keys()),
+        default="general",
+        metavar="TYPE",
+        help="記事タイプ: general / case / tokyo23 / seasonal_pr（デフォルト: general）",
+    )
+    parser.add_argument("--title", help="記事タイトル（tokyo23 の場合は対象区名）")
     parser.add_argument("--keyword", help="メインキーワード", default="")
     parser.add_argument("--region", help="地域（例: 世田谷区）", default="")
     parser.add_argument("--notes", help="特記事項", default="")
@@ -151,9 +185,16 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.interactive:
-        interactive_mode(dry_run=args.dry_run)
+        interactive_mode()
     elif args.title:
-        generate(args.title, args.keyword, args.region, args.notes, dry_run=args.dry_run)
+        generate(
+            args.article_type,
+            args.title,
+            args.keyword,
+            args.region,
+            args.notes,
+            dry_run=args.dry_run,
+        )
     else:
         parser.print_help()
         sys.exit(1)
