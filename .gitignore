@@ -14,3 +14,5 @@ data/csv/ga4_pages.csv
 __pycache__/
 *.pyc
 *.pyo
+
+data/images/
