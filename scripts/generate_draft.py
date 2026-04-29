@@ -31,6 +31,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BASE_DIR = Path(__file__).parent.parent
+sys.path.insert(0, str(BASE_DIR))
 DRAFTS_DIR = BASE_DIR / "data" / "drafts"
 PROMPTS_DIR = BASE_DIR / "prompts"
 
@@ -91,8 +92,28 @@ def generate(
     region: str = "",
     notes: str = "",
     dry_run: bool = False,
+    theme_id: str = "",
 ) -> str:
     cta_url = os.environ.get("WP_CTA_URL", DEFAULT_CTA_URL)
+
+    # theme_id が指定されている場合は articles_state.json から補完 & ステータス更新
+    _theme_article = None
+    if theme_id:
+        try:
+            from scripts.state import find_article, update_article as _update_article
+            _theme_article = find_article(theme_id)
+            if _theme_article is None:
+                print(f"[WARN] theme-id={theme_id} の記事が articles_state.json に見つかりません。")
+            else:
+                if not keyword and _theme_article.get("keyword"):
+                    keyword = _theme_article["keyword"]
+                if not region and _theme_article.get("region"):
+                    region = _theme_article["region"]
+                if not dry_run:
+                    _update_article(theme_id, status="drafting")
+        except Exception as e:
+            print(f"[WARN] articles_state.json の読み込みに失敗しました: {e}")
+            _theme_article = None
 
     print(f"📝 記事タイプ: {article_type}")
     if article_type == "tokyo23":
@@ -103,6 +124,8 @@ def generate(
             print(f"🔑 キーワード: {keyword}")
         if region:
             print(f"📍 地域: {region}")
+    if theme_id:
+        print(f"🔗 テーマID: {theme_id}")
     print("🤖 Claude API で下書きを生成中...")
 
     prompt = build_prompt(article_type, title, keyword, region, notes, cta_url)
@@ -136,6 +159,16 @@ def generate(
 
     print(f"\n✅ 下書きを {output_path} に保存しました。")
     print(f"\n--- 先頭300字 ---\n{draft[:300]}\n...")
+
+    # articles_state.json を更新
+    if theme_id and _theme_article:
+        try:
+            from scripts.state import update_article as _update_article
+            draft_rel = str(output_path.relative_to(BASE_DIR))
+            _update_article(theme_id, status="draft_ready", draft_file=draft_rel)
+            print(f"📋 articles_state.json 更新: [{theme_id}] → draft_ready")
+        except Exception as e:
+            print(f"[WARN] articles_state.json の更新に失敗しました: {e}")
 
     return str(output_path)
 
@@ -182,6 +215,12 @@ def main() -> None:
     parser.add_argument("--notes", help="特記事項", default="")
     parser.add_argument("--interactive", action="store_true", help="対話モードで実行")
     parser.add_argument("--dry-run", action="store_true", help="API を呼ばずプロンプトのみ確認")
+    parser.add_argument(
+        "--theme-id",
+        default="",
+        metavar="ID",
+        help="articles_state.json のテーマID（指定するとステータスを自動更新）",
+    )
     args = parser.parse_args()
 
     if args.interactive:
@@ -194,6 +233,7 @@ def main() -> None:
             args.region,
             args.notes,
             dry_run=args.dry_run,
+            theme_id=args.theme_id,
         )
     else:
         parser.print_help()

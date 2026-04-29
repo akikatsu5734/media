@@ -22,6 +22,7 @@ import re
 import sys
 from datetime import datetime
 from pathlib import Path
+from typing import Optional
 
 import requests
 from dotenv import load_dotenv
@@ -29,6 +30,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BASE_DIR = Path(__file__).parent.parent
+sys.path.insert(0, str(BASE_DIR))
 POSTED_LOG = BASE_DIR / "data" / "posted.json"
 
 
@@ -112,7 +114,39 @@ def parse_schedule(schedule_str: str) -> str:
         sys.exit(1)
 
 
-def post_draft(draft_path: Path, dry_run: bool = False, schedule: str = "") -> dict | None:
+def upload_media(image_path: Path, wp_url: str, credentials: str) -> Optional[int]:
+    """
+    WordPress メディアライブラリに画像をアップロードして media_id を返す。
+    失敗した場合は None を返す（投稿はアイキャッチなしで続行される）。
+    """
+    suffix = image_path.suffix.lower()
+    content_type = {"jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png", ".webp": "image/webp"}.get(suffix, "image/jpeg")
+    headers = {
+        "Authorization": f"Basic {credentials}",
+        "Content-Type": content_type,
+        "Content-Disposition": f'attachment; filename="{image_path.name}"',
+    }
+    media_url = f"{wp_url}/wp-json/wp/v2/media"
+    print(f"🖼  画像アップロード中: {image_path.name} → {media_url}")
+    try:
+        with open(image_path, "rb") as f:
+            resp = requests.post(media_url, headers=headers, data=f, timeout=60)
+    except Exception as e:
+        print(f"[ERROR] 画像アップロード中に例外が発生しました: {e}")
+        return None
+
+    if resp.status_code in (200, 201):
+        media_id = resp.json().get("id")
+        print(f"   ✅ アップロード成功: media_id={media_id}")
+        return media_id
+    else:
+        print(f"   [WARN] 画像アップロード失敗: HTTP {resp.status_code}")
+        print(f"   {resp.text[:300]}")
+        print("   アイキャッチなしで投稿を続行します。")
+        return None
+
+
+def post_draft(draft_path: Path, dry_run: bool = False, schedule: str = "", image_path: Optional[Path] = None) -> Optional[dict]:
     if not draft_path.exists():
         print(f"[ERROR] ファイルが見つかりません: {draft_path}")
         sys.exit(1)
@@ -126,6 +160,7 @@ def post_draft(draft_path: Path, dry_run: bool = False, schedule: str = "") -> d
 
     html_body = markdown_to_html(body)
 
+    # 投稿モードの決定
     if schedule:
         mode_label = f"予約投稿（{schedule}）"
         post_status = "future"
@@ -137,6 +172,8 @@ def post_draft(draft_path: Path, dry_run: bool = False, schedule: str = "") -> d
     print(f"📝 タイトル: {title}")
     print(f"🗂  モード: {mode_label}")
     print(f"📋 メタ情報: {json.dumps(meta, ensure_ascii=False)[:120]}")
+    if image_path:
+        print(f"🖼  アイキャッチ: {image_path}")
 
     if dry_run:
         print("\n[DRY-RUN] 以下の内容で WordPress に投稿します（実際には投稿しません）:")
@@ -147,6 +184,8 @@ def post_draft(draft_path: Path, dry_run: bool = False, schedule: str = "") -> d
             print("  ※ WordPress サイトのタイムゾーン設定に合わせた日時を指定してください。")
         print(f"  excerpt: {excerpt[:80]}")
         print(f"  content（先頭200字）: {html_body[:200]}")
+        if image_path:
+            print(f"  featured_media: {image_path} （実行時にアップロードされます）")
         return None
 
     wp_url = os.environ.get("WP_URL", "").rstrip("/")
@@ -163,6 +202,15 @@ def post_draft(draft_path: Path, dry_run: bool = False, schedule: str = "") -> d
         "Content-Type": "application/json",
     }
 
+    media_id: Optional[int] = None
+    if image_path:
+        if not image_path.exists():
+            print(f"[WARN] 画像ファイルが見つかりません: {image_path}")
+            print("   アイキャッチなしで投稿を続行します。")
+            image_path = None
+        else:
+            media_id = upload_media(image_path, wp_url, credentials)
+
     post_data: dict = {
         "title": title,
         "content": html_body,
@@ -171,7 +219,9 @@ def post_draft(draft_path: Path, dry_run: bool = False, schedule: str = "") -> d
         "categories": [category_id],
     }
     if schedule:
-        post_data["date"] = schedule
+        post_data["date"] = schedule  # WordPressサイトのローカル時刻
+    if image_path and media_id:
+        post_data["featured_media"] = media_id
 
     api_url = f"{wp_url}/wp-json/wp/v2/posts"
     print(f"\n🚀 投稿中: {api_url}")
@@ -200,6 +250,24 @@ def post_draft(draft_path: Path, dry_run: bool = False, schedule: str = "") -> d
             "link": post_link,
         })
         save_posted_log(log)
+
+        # articles_state.json を更新
+        new_status = "scheduled" if schedule else "wp_draft"
+        try:
+            from scripts.state import find_by_draft_file, update_article
+            article = find_by_draft_file(str(draft_path))
+            if article:
+                fields: dict = {
+                    "status": new_status,
+                    "wp_post_id": post_id,
+                }
+                if post_link:
+                    fields["public_url"] = post_link
+                update_article(article["id"], **fields)
+                print(f"   📋 articles_state.json 更新: [{article['id']}] → {new_status}")
+        except Exception as e:
+            print(f"   [WARN] articles_state.json の更新に失敗しました（本処理には影響しません）: {e}")
+
         return result
     else:
         print(f"\n[ERROR] 投稿失敗: HTTP {resp.status_code}")
@@ -226,6 +294,12 @@ def main() -> None:
         help="予約公開日時（例: 2026-04-25T10:00:00）。WordPressサイトのタイムゾーン基準。",
     )
     parser.add_argument("--dry-run", action="store_true", help="実際には投稿せず内容を確認のみ")
+    parser.add_argument(
+        "--image",
+        default="",
+        metavar="FILE",
+        help="アイキャッチ画像のパス（省略可）。指定した場合、WordPress メディアにアップロードして featured_media に設定する。",
+    )
     args = parser.parse_args()
 
     schedule = parse_schedule(args.schedule) if args.schedule else ""
@@ -234,7 +308,13 @@ def main() -> None:
     if not draft_path.is_absolute():
         draft_path = BASE_DIR / draft_path
 
-    post_draft(draft_path, dry_run=args.dry_run, schedule=schedule)
+    image_path: Optional[Path] = None
+    if args.image:
+        image_path = Path(args.image)
+        if not image_path.is_absolute():
+            image_path = BASE_DIR / image_path
+
+    post_draft(draft_path, dry_run=args.dry_run, schedule=schedule, image_path=image_path)
 
 
 if __name__ == "__main__":
