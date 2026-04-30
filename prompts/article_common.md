@@ -107,3 +107,135 @@
 - 断定表現を避け、法律・制度は「〜とされています」「〜の場合があります」等の表現を使う
 - 読者を「あなた」と呼ぶのは避け、「空き家の所有者の方」等の表現を使う
 - カタカナ語は最小限にする（「コンサルタント」→「相談員」等）
+
+
+---
+
+## WordPress SWELL ブロック出力ルール（最優先）
+
+以下のルールは、WordPressコードエディター用の本文HTMLを生成する際に必ず優先する。
+
+### 公的情報・参考リンク
+
+- 架空URLは絶対に使用禁止。
+- 実在する公式URL（中央省庁・自治体・国の機関の公式サイト）のみ使用する。
+- 外部リンクには必ず `target="_blank" rel="noopener noreferrer"` を付ける。
+- curlで403が返る場合はbotブロックの可能性があるため、403だけを理由に不正URL扱いしない。
+- 明らかな404や誤ったURLパスは使用しない。
+
+### CTAボタン
+
+**禁止：** `wp-block-loos-button` div や `swell-block-btn` を `<a>` タグの class に使う構造は使わない。
+
+**標準構造：**
+
+```html
+<!-- wp:loos/button {"hrefUrl":"{{WP_CTA_URL}}","color":"green","className":"is-style-btn_normal"} -->
+<div class="swell-block-button green_ is-style-btn_normal">
+  <a href="{{WP_CTA_URL}}" class="swell-block-button__link" target="_blank" rel="noopener noreferrer">
+    <span>ボタンテキスト</span>
+  </a>
+</div>
+<!-- /wp:loos/button -->
+```
+
+- 空き家相談系記事のデフォルトURLは `{{WP_CTA_URL}}` を使う。
+- CTAリンクには必ず `target="_blank" rel="noopener noreferrer"` を付ける。
+
+### CTA見出しの重複禁止
+
+- CTA直前のH2と cap_box_ttl に同じ文言を使う構成は禁止。
+- 例：H2「迷ったら無料相談へ」＋ cap_box_ttl「迷ったら無料相談へ」は使わない。
+- CTAはH2なしでcap-blockを直接出力し、cap_box_ttlでタイトルを表現する。
+- 目次アンカー `id="cta"` が必要な場合は、cap-blockの親要素に付与する。
+
+### ステップブロック
+
+手順系・流れ系セクションでは、通常の番号付きリストではなく、必ずSWELLのstepブロックを使う。
+
+**禁止：**
+- `swell-block-stepItem`
+- `swell-block-stepItem__num`
+- `STEP01` / `STEP02` 形式
+
+**標準構造：**
+
+```html
+<!-- wp:loos/step -->
+<div class="swell-block-step" data-num-style="circle">
+
+  <!-- wp:loos/step-item {"stepLabel":"STEP"} -->
+  <div class="swell-block-step__item">
+    <div class="swell-block-step__number u-bg-main"><span class="__label">STEP</span></div>
+    <div class="swell-block-step__title u-fz-l">ステップタイトル</div>
+    <div class="swell-block-step__body">
+      <!-- wp:paragraph -->
+      <p>本文テキスト</p>
+      <!-- /wp:paragraph -->
+    </div>
+  </div>
+  <!-- /wp:loos/step-item -->
+
+</div>
+<!-- /wp:loos/step -->
+```
+
+### FAQ
+
+- FAQは `<!-- wp:details -->` ブロックで出力する。
+- 質問文は `<summary>` タグに入れる。
+- `<!-- wp:details -->` の開始タグ数と `<!-- /wp:details -->` の終了タグ数を必ず一致させる。
+
+**禁止する回りくどい表現：**
+- 「〜とは限らないのでしょうか？」
+- 「〜ということになるのでしょうか？」
+- 「〜にはなりませんか？」
+
+**推奨する直接的な表現：**
+- 「〜ますか？」
+- 「〜できますか？」
+- 「〜は必要ですか？」
+- 「〜したら、〜になりますか？」
+
+### まとめ3ポイント・複数カラムカード
+
+- 複数カードを横並びにする場合は `columns` / `column` に `"verticalAlignment":"stretch"` を使う。
+- カード間で本文量に差がある場合は `wp:spacer` を必要最小限で使い、目視上の高さを揃える。
+- spacerは過剰に乱用しない。
+
+**まとめ3ポイントの禁止構造：**
+- `<p class="is-style-big_icon_point">Point1</p>` のように、Point表記だけをparagraphで出す形式は禁止。
+
+**まとめ3ポイントの標準構造：**
+
+- 各カードのgroupには `has-border -border02 is-style-big_icon_point` を指定する。
+- 各カード内の順番は、H3（Point 1 / Point 2 / Point 3）→ 太字要点paragraph → 補足本文paragraph とする。
+
+```html
+<!-- wp:columns {"verticalAlignment":"stretch"} -->
+<div class="wp-block-columns are-vertically-aligned-stretch">
+
+  <!-- wp:column {"verticalAlignment":"stretch"} -->
+  <div class="wp-block-column is-vertically-aligned-stretch">
+    <!-- wp:group {"className":"has-border -border02 is-style-big_icon_point"} -->
+    <div class="wp-block-group has-border -border02 is-style-big_icon_point">
+      <!-- wp:heading {"level":3} -->
+      <h3 class="wp-block-heading">Point 1</h3>
+      <!-- /wp:heading -->
+      <!-- wp:paragraph -->
+      <p><strong>太字の要点テキスト</strong></p>
+      <!-- /wp:paragraph -->
+      <!-- wp:paragraph -->
+      <p>補足本文テキスト</p>
+      <!-- /wp:paragraph -->
+    </div>
+    <!-- /wp:group -->
+  </div>
+  <!-- /wp:column -->
+
+  <!-- Point 2、Point 3 も同じ構造で作成する -->
+
+</div>
+<!-- /wp:columns -->
+```
+
