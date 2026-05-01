@@ -33,16 +33,16 @@
 以下の11項目を必ずすべて出力すること。**8〜11は省略禁止**。
 
 1. **導入文** — 読者の課題・疑問に共感し、この記事で解決できることを簡潔に示す
-2. **目次** — `is-style-crease` + `loos/link-list` で実装
+2. **目次** — `is-style-crease` + `loos/link-list` で実装（`swell-block-linkList is-style-default` + `icon-placeholder` 必須）
 3. **まず結論** — 記事の答えを冒頭で提示する
 4. **最初に確認したいこと** — 前提知識・用語・背景の整理
-5. **進め方・手順** — SWELLのstepブロックで実装
+5. **進め方・手順** — SWELLのstepブロックで実装（全体を `has-border -border02` ラッパーで囲む）
 6. **比較表または判断表** — `wp:table` で実装
 7. **注意点・よくある失敗** — 読者がハマりやすいポイント
-8. **公的情報・参考ページ一覧** ← **省略禁止**
+8. **公的情報・参考ページ一覧** — `swell-block-linkList is-style-default` + `icon-placeholder` 必須（架空URL禁止） ← **省略禁止**
 9. **よくある質問**（3〜5問、`wp:details`ブロック） ← **省略禁止**
 10. **この記事のまとめ・押さえておきたい3つのポイント** ← **省略禁止**
-11. **CTA**（`loos/button`、ボタン色: green） ← **省略禁止**
+11. **CTA** — `cap-block` / `cap_box_ttl` / `cap_box_content` + `loos/button`（green） ← **省略禁止**
 
 ### 字数目安
 

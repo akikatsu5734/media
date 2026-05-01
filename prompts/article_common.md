@@ -44,19 +44,43 @@
 
 - 目次は必ず `is-style-crease` の `wp:group` で囲む
 - 内部は `loos/link-list` + `loos/link-list-item` の正規構造を使う
-- 各リンクは `a` タグ1つ + `span.swell-block-linkList__text` の構造にする
 - `id="mokuji"` を h2 に付与して目次のアンカーとして使う
 - 目次リンクには `target="_blank"` を付けない（同一ページ内リンクのため）
 - 各セクションのアンカー ID は `sec1` / `sec2` のような連番は使わない。内容に対応した短いローマ字（例: `akiya-toha` / `tetsuzuki` / `faq`）を使う
 - 目次に列挙した項目は、必ず本文側にも対応する見出しを出力する（目次と本文の対応を一致させる）
 
+**目次リンクの必須HTMLクラス構造：**
+- `ul`: `class="swell-block-linkList is-style-default"`
+- `li`: `class="swell-block-linkList__item"`
+- `a`: `class="swell-block-linkList__link"`（内部リンクのため `target` / `rel` は付けない）
+- `a` タグ内に必ず `<!-- icon-placeholder -->` を入れる
+- `span`: `class="swell-block-linkList__text"`
+
+**禁止：**
+- 通常の `ul` / `li` のみで出力（classなし）
+- `a` タグに class なし・`icon-placeholder` なし
+- div 形式の link-list-item
+
 ---
 
 ## 公的情報・参考ページ一覧の実装ルール
 
-- 公的情報・参考リンクの一覧は `loos/link-list` で実装する
+- 公的情報・参考リンクの一覧は目次と同じ SWELL link-list 構造で実装する
 - `is-style-crease` は使わない（目次と区別するため）
 - 外部リンクには必ず `target="_blank" rel="noopener noreferrer"` を付ける
+- 実在する公式URLのみ使用する（架空URLは絶対禁止）
+
+**参考リンクの必須HTMLクラス構造：**
+- `ul`: `class="swell-block-linkList is-style-default"`
+- `li`: `class="swell-block-linkList__item"`
+- `a`: `class="swell-block-linkList__link"` + 必ず `target="_blank" rel="noopener noreferrer"` を付ける
+- `a` タグ内に必ず `<!-- icon-placeholder -->` を入れる
+- `span`: `class="swell-block-linkList__text"`
+
+**禁止：**
+- 通常のリスト / 通常リンクだけで出力
+- `a` タグに class なし・`icon-placeholder` なし
+- 架空URLの使用
 
 ---
 
@@ -72,6 +96,8 @@
 ## ステップブロックの実装ルール
 
 - 「手続きの流れ」「進め方」「確認の順番」など、順番がある内容は通常の番号付きリストではなく必ず SWELL の step ブロックを使う
+- STEPブロック全体は必ず `has-border -border02` のボーダー付き `wp:group` で囲む
+- 手順系セクションでSTEPを裸のまま（border groupなしで）出力しない
 
 ---
 
@@ -129,6 +155,27 @@
 
 以下のルールは、WordPressコードエディター用の本文HTMLを生成する際に必ず優先する。
 
+### 目次リンクリスト
+
+目次アイテムは以下の HTML 構造を厳守する（classの省略・変更・div化は禁止）。
+
+```html
+<!-- wp:loos/link-list {"className":"is-style-default"} -->
+<ul class="swell-block-linkList is-style-default">
+
+  <!-- wp:loos/link-list-item {"url":"#section-id","label":"セクションタイトル"} -->
+  <li class="swell-block-linkList__item">
+    <a class="swell-block-linkList__link" href="#section-id"><!-- icon-placeholder --><span class="swell-block-linkList__text">セクションタイトル</span></a>
+  </li>
+  <!-- /wp:loos/link-list-item -->
+
+</ul>
+<!-- /wp:loos/link-list -->
+```
+
+- 内部リンクのため `target` / `rel` は付けない。
+- `icon-placeholder` コメントと `swell-block-linkList__text` span は必須。
+
 ### 公的情報・参考リンク
 
 - 架空URLは絶対に使用禁止。
@@ -136,6 +183,23 @@
 - 外部リンクには必ず `target="_blank" rel="noopener noreferrer"` を付ける。
 - curlで403が返る場合はbotブロックの可能性があるため、403だけを理由に不正URL扱いしない。
 - 明らかな404や誤ったURLパスは使用しない。
+- 通常のリスト / 通常リンクだけで出力しない。必ず以下の link-list 構造を使う。
+
+**参考リンク（外部リンク）の標準構造：**
+
+```html
+<!-- wp:loos/link-list {"className":"is-style-default"} -->
+<ul class="swell-block-linkList is-style-default">
+
+  <!-- wp:loos/link-list-item {"url":"https://example.go.jp/page","label":"参考ページ名"} -->
+  <li class="swell-block-linkList__item">
+    <a class="swell-block-linkList__link" href="https://example.go.jp/page" target="_blank" rel="noopener noreferrer"><!-- icon-placeholder --><span class="swell-block-linkList__text">参考ページ名</span></a>
+  </li>
+  <!-- /wp:loos/link-list-item -->
+
+</ul>
+<!-- /wp:loos/link-list -->
+```
 
 ### CTAボタン
 
@@ -155,6 +219,36 @@
 
 - 空き家相談系記事のデフォルトURLは `{{WP_CTA_URL}}` を使う。
 - CTAリンクには必ず `target="_blank" rel="noopener noreferrer"` を付ける。
+
+### CTA全体構造（cap-block必須）
+
+CTA全体は `cap-block` / `cap_box_ttl` / `cap_box_content` 構造で出力する。
+
+**標準構造：**
+
+```html
+<!-- wp:group {"className":"cap-block"} -->
+<div class="wp-block-group cap-block">
+  <!-- wp:heading {"level":3,"className":"cap_box_ttl"} -->
+  <h3 class="wp-block-heading cap_box_ttl">CTAタイトル</h3>
+  <!-- /wp:heading -->
+  <!-- wp:group {"className":"cap_box_content"} -->
+  <div class="wp-block-group cap_box_content">
+    <!-- wp:paragraph -->
+    <p>本文・補足テキスト</p>
+    <!-- /wp:paragraph -->
+    <!-- wp:loos/button {"hrefUrl":"{{WP_CTA_URL}}","color":"green","className":"is-style-btn_normal"} -->
+    <div class="swell-block-button green_ is-style-btn_normal">
+      <a href="{{WP_CTA_URL}}" class="swell-block-button__link" target="_blank" rel="noopener noreferrer">
+        <span>ボタンテキスト</span>
+      </a>
+    </div>
+    <!-- /wp:loos/button -->
+  </div>
+  <!-- /wp:group -->
+</div>
+<!-- /wp:group -->
+```
 
 ### CTA見出しの重複禁止
 
@@ -193,6 +287,24 @@
 </div>
 <!-- /wp:loos/step -->
 ```
+
+**STEPブロック全体のラッパー（ボーダー付きgroup必須）：**
+
+```html
+<!-- wp:group {"className":"has-border -border02"} -->
+<div class="wp-block-group has-border -border02">
+
+  <!-- wp:loos/step -->
+  <div class="swell-block-step" data-num-style="circle">
+    <!-- STEPアイテムをここに入れる -->
+  </div>
+  <!-- /wp:loos/step -->
+
+</div>
+<!-- /wp:group -->
+```
+
+- 手順系セクションでSTEPを裸のまま（border groupなしで）出力しない。
 
 ### FAQ
 
