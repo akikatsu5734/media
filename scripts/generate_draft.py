@@ -44,11 +44,61 @@ ARTICLE_TYPES = {
 
 DEFAULT_CTA_URL = "https://aki-katsu.co.jp/counter/"
 
+_REQUIRED_SECTIONS = [
+    ("公的情報・参考ページ一覧", ["公的情報", "参考ページ", "参考リンク"]),
+    ("よくある質問", ["wp:details", "よくある質問", "FAQ"]),
+    ("まとめ", ["まとめ"]),
+    ("CTA", ["swell-block-button", "aki-katsu.co.jp/counter", "loos/button"]),
+]
+
 
 def slugify(text: str) -> str:
     text = re.sub(r"[^\w\s-]", "", text)
     text = re.sub(r"[\s_-]+", "_", text)
     return text[:40].strip("_").lower()
+
+
+def strip_code_fences(text: str) -> str:
+    text = text.strip()
+    text = re.sub(r"^```(?:html)?\s*\n?", "", text)
+    text = re.sub(r"\n?```\s*$", "", text)
+    return text.strip()
+
+
+def validate_draft(draft: str) -> list:
+    errors = []
+
+    if re.search(r"```", draft):
+        errors.append("コードフェンス ``` が残存しています")
+
+    if not re.search(r"公的情報|参考ページ|参考リンク", draft):
+        errors.append("「公的情報・参考ページ一覧」セクションが見つかりません")
+
+    if not re.search(r"wp:details|よくある質問|FAQ", draft):
+        errors.append("「よくある質問」セクションが見つかりません")
+
+    if not re.search(r"まとめ", draft):
+        errors.append("「まとめ」セクションが見つかりません")
+
+    if not re.search(r"swell-block-button|aki-katsu\.co\.jp/counter|loos/button", draft):
+        errors.append("CTA（loos/button または swell-block-button）が見つかりません")
+
+    details_open = len(re.findall(r"<!-- wp:details", draft))
+    details_close = len(re.findall(r"<!-- /wp:details", draft))
+    if details_open != details_close:
+        errors.append(
+            f"wp:details の開始({details_open})と終了({details_close})の数が一致しません"
+        )
+
+    tail = draft[-300:] if len(draft) > 300 else draft
+    if re.search(r"<li>[^<]*$", tail):
+        errors.append("末尾が <li> の途中で終わっています（出力途中終了の可能性）")
+    if re.search(r"<p>[^<]*$", tail):
+        errors.append("末尾が <p> の途中で終わっています（出力途中終了の可能性）")
+    if re.search(r"[%…]$|\.{3}$", draft.rstrip()):
+        errors.append("末尾が % または ... で終わっています（出力途中終了の可能性）")
+
+    return errors
 
 
 def load_file(path: Path) -> str:
@@ -141,23 +191,35 @@ def generate(
     client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
     message = client.messages.create(
         model="claude-sonnet-4-6",
-        max_tokens=8000,
+        max_tokens=16000,
+        extra_headers={"anthropic-beta": "output-128k-2025-02-19"},
         messages=[{"role": "user", "content": prompt}],
     )
 
-    draft = message.content[0].text
+    draft = strip_code_fences(message.content[0].text)
+    errors = validate_draft(draft)
 
     date_str = datetime.now().strftime("%Y%m%d")
     slug = slugify(title)
-    filename = f"{date_str}_{slug}.md"
 
     DRAFTS_DIR.mkdir(parents=True, exist_ok=True)
-    output_path = DRAFTS_DIR / filename
 
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write(draft)
+    if errors:
+        filename = f"{date_str}_{slug}.incomplete.md"
+        output_path = DRAFTS_DIR / filename
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write(draft)
+        print(f"\n⚠️  バリデーションエラーが検出されました:")
+        for err in errors:
+            print(f"   - {err}")
+        print(f"\n📄 不完全な下書きを {output_path} に保存しました。")
+    else:
+        filename = f"{date_str}_{slug}.md"
+        output_path = DRAFTS_DIR / filename
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write(draft)
+        print(f"\n✅ 下書きを {output_path} に保存しました。")
 
-    print(f"\n✅ 下書きを {output_path} に保存しました。")
     print(f"\n--- 先頭300字 ---\n{draft[:300]}\n...")
 
     # articles_state.json を更新
