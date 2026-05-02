@@ -42,7 +42,7 @@
 8. **公的情報・参考ページ一覧** — `swell-block-linkList is-style-default` + `icon-placeholder` 必須（架空URL禁止） ← **省略禁止**
 9. **よくある質問**（3〜5問、`wp:details`ブロック） ← **省略禁止**
 10. **この記事のまとめ・押さえておきたい3つのポイント** ← **省略禁止**
-11. **CTA** — `cap-block` / `cap_box_ttl` / `cap_box_content` + `loos/button`（green） ← **省略禁止**
+11. **CTA** — `loos/cap-block` + `cap_box_ttl`（div）+ `cap_box_content`（本文・箇条書き・spacer・buttonを内包）+ `loos/button`（green） ← **省略禁止**（`wp:group cap-block` 不可）
 
 ### 字数目安
 
