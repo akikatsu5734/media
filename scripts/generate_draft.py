@@ -51,11 +51,24 @@ _NOTFOUND_URL_PATTERNS = ("/notfound", "notfound", "not-found", "page-not-found"
 _NOTFOUND_BODY_PATTERNS = (
     "ページが見つかりません",
     "ご利用のページが見つかりません",
+    "お探しのページが見つかりません",
+    "お探しのページは見つかりません",
+    "指定されたページは存在しません",
+    "ページが存在しません",
     "Not Found",
     "404 Not Found",
-    "お探しのページは見つかりません",
+    "404 File Not Found",
 )
 _EGOV_HOSTS = ("laws.e-gov.go.jp", "elaws.e-gov.go.jp", "e-gov.go.jp")
+_DOMAIN_RULES = {
+    "国土交通省": ["mlit.go.jp"],
+    "国税庁": ["nta.go.jp"],
+    "法務省": ["moj.go.jp"],
+    "法務局": ["moj.go.jp", "houmukyoku.moj.go.jp"],
+    "裁判所": ["courts.go.jp"],
+    "総務省": ["soumu.go.jp"],
+    "e-Gov": ["laws.e-gov.go.jp", "elaws.e-gov.go.jp"],
+}
 
 _REQUIRED_SECTIONS = [
     ("公的情報・参考ページ一覧", ["公的情報", "参考ページ", "参考リンク"]),
@@ -148,6 +161,26 @@ def _check_url_enhanced(url: str):
     return status, final_url, None
 
 
+def _extract_ref_links(draft: str) -> list:
+    """参考ページ一覧セクションから (href, label) ペアのリストを抽出する"""
+    ref_start = -1
+    for keyword in ("公的情報・参考ページ一覧", "公的情報", "参考ページ一覧"):
+        idx = draft.find(keyword)
+        if idx != -1:
+            ref_start = idx
+            break
+    if ref_start == -1:
+        return []
+    rest = draft[ref_start:]
+    m = re.search(r'<!-- wp:heading \{[^}]*"level"\s*:\s*2\b', rest[100:])
+    ref_section = rest[:m.start() + 100] if m else rest
+    return re.findall(
+        r'href="(https?://[^">\s]+)"[^>]*><!-- icon-placeholder -->'
+        r'<span class="swell-block-linkList__text">([^<]+)</span>',
+        ref_section,
+    )
+
+
 def strip_code_fences(text: str) -> str:
     text = text.strip()
     text = re.sub(r"^```(?:html)?\s*\n?", "", text)
@@ -204,6 +237,37 @@ def validate_draft(draft: str) -> list:
 
         if is_egov and "document?lawid=" in url and not label:
             print(f"   [WARN] ⚠ URL確認警告: e-Govリンクのリンクテキストが不明確です: {url}")
+
+    # 参考リンクセクションの重複URLチェックとラベル・ドメイン整合性チェック
+    ref_links = _extract_ref_links(draft)
+    seen_ref_urls: set = set()
+    for href, label in ref_links:
+        if href in seen_ref_urls:
+            errors.append(f"参考リンクに重複URLがあります: {href}")
+        seen_ref_urls.add(href)
+        for keyword, domains in _DOMAIN_RULES.items():
+            if keyword in label:
+                if not any(d in href for d in domains):
+                    errors.append(
+                        f"参考リンクのラベルとドメインが不一致です: [{label}] → {href}"
+                        f"（想定ドメイン: {', '.join(domains)}）"
+                    )
+                break
+
+    # まとめ3ポイントのminHeight検証
+    point_cards = re.findall(
+        r'<div\b[^>]+class="[^"]*is-style-big_icon_point[^"]*"', draft
+    )
+    if len(point_cards) < 3:
+        errors.append(
+            f"まとめ3ポイントのカード（is-style-big_icon_point）が3つありません（現在: {len(point_cards)}個）"
+        )
+    else:
+        min_height_count = len(re.findall(r'min-height:560px', draft))
+        if min_height_count < 3:
+            errors.append(
+                f"まとめ3ポイントの3カードにmin-height:560pxが指定されていません（{min_height_count}/3）"
+            )
 
     return errors
 
