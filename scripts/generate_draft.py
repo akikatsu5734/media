@@ -21,7 +21,10 @@
 import argparse
 import os
 import re
+import socket
 import sys
+import urllib.error
+import urllib.request
 from datetime import datetime
 from pathlib import Path
 
@@ -56,6 +59,27 @@ def slugify(text: str) -> str:
     text = re.sub(r"[^\w\s-]", "", text)
     text = re.sub(r"[\s_-]+", "_", text)
     return text[:40].strip("_").lower()
+
+
+def _check_url(url: str):
+    for method in ("HEAD", "GET"):
+        try:
+            req = urllib.request.Request(
+                url, method=method, headers={"User-Agent": "Mozilla/5.0"}
+            )
+            with urllib.request.urlopen(req, timeout=5) as resp:
+                return resp.status
+        except urllib.error.HTTPError as e:
+            if method == "HEAD" and e.code in (405, 429):
+                continue
+            return e.code
+        except socket.gaierror:
+            print(f"   [WARN] DNSエラー: {url}")
+            return None
+        except Exception:
+            print(f"   [WARN] URL確認スキップ: {url}")
+            return None
+    return None
 
 
 def strip_code_fences(text: str) -> str:
@@ -97,6 +121,13 @@ def validate_draft(draft: str) -> list:
         errors.append("末尾が <p> の途中で終わっています（出力途中終了の可能性）")
     if re.search(r"[%…]$|\.{3}$", draft.rstrip()):
         errors.append("末尾が % または ... で終わっています（出力途中終了の可能性）")
+
+    for url in set(re.findall(r'href=["\'](https?://[^"\'>\s]+)', draft)):
+        code = _check_url(url)
+        if code in (404, 410):
+            errors.append(f"URL が {code} を返しています: {url}")
+        elif code in (403, 405, 429):
+            print(f"   [WARN] {url} → {code}（botブロック・HEAD拒否の可能性）")
 
     return errors
 
