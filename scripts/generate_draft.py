@@ -47,6 +47,16 @@ ARTICLE_TYPES = {
 
 DEFAULT_CTA_URL = "https://aki-katsu.co.jp/counter/"
 
+_NOTFOUND_URL_PATTERNS = ("/notfound", "notfound", "not-found", "page-not-found", "/404", "404.html")
+_NOTFOUND_BODY_PATTERNS = (
+    "ページが見つかりません",
+    "ご利用のページが見つかりません",
+    "Not Found",
+    "404 Not Found",
+    "お探しのページは見つかりません",
+)
+_EGOV_HOSTS = ("laws.e-gov.go.jp", "elaws.e-gov.go.jp", "e-gov.go.jp")
+
 _REQUIRED_SECTIONS = [
     ("公的情報・参考ページ一覧", ["公的情報", "参考ページ", "参考リンク"]),
     ("よくある質問", ["wp:details", "よくある質問", "FAQ"]),
@@ -80,6 +90,62 @@ def _check_url(url: str):
             print(f"   [WARN] URL確認スキップ: {url}")
             return None
     return None
+
+
+def _extract_link_text_near_href(draft: str, url: str) -> str:
+    idx = draft.find(url)
+    if idx == -1:
+        return ""
+    nearby = draft[max(0, idx - 200):idx + 500]
+    m = re.search(r'<span class="swell-block-linkList__text">([^<]+)</span>', nearby)
+    if m:
+        return m.group(1)
+    m = re.search(r'"label"\s*:\s*"([^"]+)"', nearby)
+    if m:
+        return m.group(1)
+    return ""
+
+
+def _check_url_enhanced(url: str):
+    """Returns (status_code, final_url, error_msg_or_None)."""
+    final_url = url
+    status = None
+
+    for method in ("HEAD", "GET"):
+        try:
+            req = urllib.request.Request(
+                url, method=method, headers={"User-Agent": "Mozilla/5.0"}
+            )
+            with urllib.request.urlopen(req, timeout=5) as resp:
+                status = resp.status
+                final_url = resp.url
+                final_lower = final_url.lower()
+                for pattern in _NOTFOUND_URL_PATTERNS:
+                    if pattern in final_lower:
+                        return status, final_url, f"最終URLにnotfoundパターンが含まれます: {final_url}"
+                if method == "GET":
+                    content_type = resp.headers.get("Content-Type", "")
+                    if "text/html" in content_type:
+                        try:
+                            body = resp.read(20000).decode("utf-8", errors="ignore")
+                            for pattern in _NOTFOUND_BODY_PATTERNS:
+                                if pattern in body:
+                                    return status, final_url, f"HTML本文にnotfound文言が含まれます（「{pattern}」）"
+                        except Exception:
+                            pass
+                return status, final_url, None
+        except urllib.error.HTTPError as e:
+            if method == "HEAD" and e.code in (405, 429):
+                continue
+            return e.code, url, None
+        except socket.gaierror:
+            print(f"   [WARN] DNSエラー: {url}")
+            return None, url, None
+        except Exception:
+            print(f"   [WARN] URL確認スキップ: {url}")
+            return None, url, None
+
+    return status, final_url, None
 
 
 def strip_code_fences(text: str) -> str:
@@ -123,11 +189,21 @@ def validate_draft(draft: str) -> list:
         errors.append("末尾が % または ... で終わっています（出力途中終了の可能性）")
 
     for url in set(re.findall(r'href=["\'](https?://[^"\'>\s]+)', draft)):
-        code = _check_url(url)
-        if code in (404, 410):
-            errors.append(f"URL が {code} を返しています: {url}")
+        label = _extract_link_text_near_href(draft, url)
+        label_info = f" [{label}]" if label else ""
+        is_egov = any(h in url for h in _EGOV_HOSTS)
+
+        code, final_url, notfound_msg = _check_url_enhanced(url)
+
+        if notfound_msg:
+            errors.append(f"URLがnotfoundを返しています{label_info}: {url} → {notfound_msg}")
+        elif code in (404, 410):
+            errors.append(f"URL が {code} を返しています{label_info}: {url}")
         elif code in (403, 405, 429):
-            print(f"   [WARN] {url} → {code}（botブロック・HEAD拒否の可能性）")
+            print(f"   [WARN] {url}{label_info} → {code}（botブロック・HEAD拒否の可能性）")
+
+        if is_egov and "document?lawid=" in url and not label:
+            print(f"   [WARN] ⚠ URL確認警告: e-Govリンクのリンクテキストが不明確です: {url}")
 
     return errors
 
