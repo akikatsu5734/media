@@ -71,6 +71,42 @@ COMPOSITION_DESCRIPTIONS = {
     "diagonal_flow": "対角流れ：左下→右上の視線誘導、開放感・変化のある場面",
 }
 
+LAYOUT_FAMILY_DESCRIPTIONS = {
+    "single_scene":        "1つの場面。主役モチーフ中心、補助要素少なめ、余白少なく仕上げる",
+    "central_storyboard":  "中央主題＋周囲4〜8個の補助要素。ストーリーボード的な高密度構成",
+    "infographic_scene":   "メイン場面＋2〜3個の補助場面。説明力のあるインフォグラフィック構成",
+    "center_with_corners": "中央主題＋四隅・周辺にカテゴリ要素を配置。整然としたカード型",
+    "consultation_card":   "机上・相談シーン。人物・小物・書類・費用整理の要素が整然と並ぶ",
+    "process_collage":     "流れ・比較・注意点向け。複数の小場面がコラージュ的に配置",
+}
+
+DENSITY_DESCRIPTIONS = {
+    "low":         "補助要素1〜2個。シンプルな構成",
+    "medium":      "補助要素3〜4個。補助場面1つ追加可",
+    "medium_high": "補助要素4〜6個。補助場面1〜2つ",
+    "high":        "補助要素5〜8個。補助場面2〜3つ",
+}
+
+PEOPLE_MODE_DESCRIPTIONS = {
+    "none":       "人物なし（無生物モチーフで表現）",
+    "hands_only": "手元のみ可（書類・コイン・鍵などを操作する手を使用可）",
+    "up_to_2":    "最大2名可（相談・確認シーン）",
+    "up_to_4":    "最大4名可（複数名の相談・案内・作業シーン）",
+}
+
+VISUAL_STYLE_DIRECTIVES = {
+    "public_card_v1": (
+        "## ビジュアルスタイル設計（記事一覧カード型サムネイル）\n\n"
+        "この画像を「記事一覧に並ぶ横長カード型サムネイル」として設計すること：\n"
+        "- 中央主題＋周辺補助要素で画面の70〜90%を主題関連要素で埋める\n"
+        "- 余白を広く取りすぎない。右側・上部に大きな白い空白を残さない\n"
+        "- 縮小表示でもカテゴリ差が分かる。情報密度は中〜高\n"
+        "- rounded card feel / visually rich but organized\n"
+        "- 静かな単体挿絵で終わらせない\n"
+        "- 読める文字・数字・ロゴは一切入れない"
+    ),
+}
+
 
 def load_file(path: Path) -> str:
     if path.exists():
@@ -150,31 +186,58 @@ def build_category_brief(title: str, motifs: dict) -> tuple[str, dict]:
     main_motifs = cat_data.get("main_motifs", [])
     supporting = cat_data.get("supporting_motifs", [])
     avoid = cat_data.get("avoid_motifs", [])
-    patterns = cat_data.get("composition_patterns", ["single_scene"])
     fallback = cat_data.get("fallback_center_motif", "やさしい光の中の静かな日本の家")
     reader_concerns = cat_data.get("reader_concerns", [])
+
+    # レイアウト・密度・人物・blank props・ビジュアルスタイル
+    layout_family = cat_data.get("layout_family", "central_storyboard")
+    density = cat_data.get("density", "medium")
+    people_mode = cat_data.get("people_mode", "none")
+    allow_blank_docs = cat_data.get("allow_blank_documents", False)
+    allow_blank_signs = cat_data.get("allow_blank_signs", False)
+    allow_ui_props = cat_data.get("allow_ui_like_props", False)
+    visual_style = cat_data.get("visual_style_profile", "public_card_v1")
 
     center_motif = (
         main_motifs[hash_select(title, len(main_motifs))]
         if main_motifs else fallback
     )
-    composition = select_composition(title, patterns)
-    comp_desc = COMPOSITION_DESCRIPTIONS.get(composition, composition)
     reader_concern = (
         reader_concerns[hash_select(title + "_concern", len(reader_concerns))]
         if reader_concerns else ""
     )
 
+    layout_desc = LAYOUT_FAMILY_DESCRIPTIONS.get(layout_family, layout_family)
+    density_desc = DENSITY_DESCRIPTIONS.get(density, density)
+    people_desc = PEOPLE_MODE_DESCRIPTIONS.get(people_mode, people_mode)
+
     brief_lines = [
         "## カテゴリ別設計指示",
         "",
         f"カテゴリ: {category}",
+        f"レイアウト: {layout_family} — {layout_desc}",
+        f"情報密度: {density} — {density_desc}",
+        f"人物設定: {people_mode} — {people_desc}",
+        "",
         f"読者の懸念: {reader_concern}",
         f"中心モチーフ: {center_motif}",
         f"サポートモチーフ: {', '.join(supporting)}",
-        f"構図パターン: {comp_desc}",
         f"必ず避けるモチーフ: {', '.join(avoid)}",
+        "",
+        "blank プロップ設定:",
     ]
+    if allow_blank_docs:
+        brief_lines.append("- 文字なし書類・クリップボード・フォームの使用可（形のみ、文字なし）")
+    if allow_blank_signs:
+        brief_lines.append("- 文字なし看板の使用可（形のみ、文字なし）")
+    if allow_ui_props:
+        brief_lines.append("- 文字なしスマホ・タブレット画面の使用可（画面表示なし）")
+    if not any([allow_blank_docs, allow_blank_signs, allow_ui_props]):
+        brief_lines.append("- 書類・看板・画面プロップは使用しない")
+
+    if visual_style in VISUAL_STYLE_DIRECTIVES:
+        brief_lines.extend(["", VISUAL_STYLE_DIRECTIVES[visual_style]])
+
     brief = "\n".join(brief_lines)
 
     metadata = {
@@ -185,8 +248,13 @@ def build_category_brief(title: str, motifs: dict) -> tuple[str, dict]:
         "center_motif": center_motif,
         "supporting_motifs": supporting,
         "avoid_motifs": avoid,
-        "composition_pattern": composition,
-        "composition_description": comp_desc,
+        "layout_family": layout_family,
+        "density": density,
+        "people_mode": people_mode,
+        "visual_style_profile": visual_style,
+        "allow_blank_documents": allow_blank_docs,
+        "allow_blank_signs": allow_blank_signs,
+        "allow_ui_like_props": allow_ui_props,
     }
 
     return brief, metadata
@@ -231,21 +299,25 @@ def _print_post_checklist() -> None:
 def _print_dry_run(prompt: str, output_path: Path, metadata: dict) -> None:
     print("\n=== DRY-RUN: 画像生成パラメータ確認 ===\n")
     if metadata:
-        w = 18
+        w = 20
         print(f"  {'記事タイトル':<{w}}: {metadata.get('article_title', '-')}")
         print(f"  {'検出カテゴリ':<{w}}: {metadata.get('detected_category', '-')}")
         kws = metadata.get("matched_keywords", [])
         print(f"  {'マッチキーワード':<{w}}: {', '.join(kws) if kws else '（なし）'}")
         print(f"  {'読者の懸念':<{w}}: {metadata.get('reader_concern', '-')}")
+        print(f"  {'レイアウト':<{w}}: {metadata.get('layout_family', '-')}")
+        print(f"  {'情報密度':<{w}}: {metadata.get('density', '-')}")
+        print(f"  {'人物設定':<{w}}: {metadata.get('people_mode', '-')}")
+        print(f"  {'ビジュアルスタイル':<{w}}: {metadata.get('visual_style_profile', '-')}")
+        print(f"  {'blank書類':<{w}}: {'可' if metadata.get('allow_blank_documents') else '不可'}")
+        print(f"  {'blank看板':<{w}}: {'可' if metadata.get('allow_blank_signs') else '不可'}")
+        print(f"  {'UI系プロップ':<{w}}: {'可' if metadata.get('allow_ui_like_props') else '不可'}")
         print(f"  {'中心モチーフ':<{w}}: {metadata.get('center_motif', '-')}")
         supporting = metadata.get("supporting_motifs", [])
         print(f"  {'サポートモチーフ':<{w}}: {', '.join(supporting) if supporting else '-'}")
         avoid = metadata.get("avoid_motifs", [])
         print(f"  {'回避モチーフ':<{w}}: {', '.join(avoid[:4]) + (' …' if len(avoid) > 4 else '') if avoid else '-'}")
-        comp = metadata.get("composition_pattern", "-")
-        comp_desc = metadata.get("composition_description", "")
-        print(f"  {'構図パターン':<{w}}: {comp} — {comp_desc}")
-    print(f"  {'出力先（予定）':<18}: {output_path}")
+    print(f"  {'出力先（予定）':<20}: {output_path}")
     _print_post_checklist()
     print("\n--- 送信プロンプト全文 ---")
     print(prompt)
