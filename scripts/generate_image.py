@@ -156,6 +156,30 @@ PERSON_GENERATION_MAP = {
     "up_to_4":    "allow_adult",
 }
 
+# API送信プロンプト用: 日本語自然文マッピング（変数名をそのままAPIに出さない）
+LAYOUT_JA = {
+    "single_scene":        "1つの印象的な場面を中心に描く構図。主役モチーフを大きく配置する",
+    "central_storyboard":  "中央に主役モチーフを大きく配置し、周囲に4〜8個の関連要素を自然に配置する",
+    "infographic_scene":   "メインシーンを中心に、2〜3つの補助的な小場面を周辺に組み込む",
+    "center_with_corners": "中央の主役モチーフを軸に、四隅や周辺にカテゴリを象徴する要素を配置する",
+    "consultation_card":   "相談机を囲む俯瞰構図。家の模型や関連小物を机上に整然と配置し、手元や指差しで相談の動きを表現する",
+    "process_collage":     "複数の小場面をコラージュ的に配置し、流れや注意点が一目で分かる構図",
+}
+
+DENSITY_JA = {
+    "low":         "要素は少なめで、主役モチーフが際立つシンプルな構成",
+    "medium":      "要素は3〜4個。中心モチーフを引き立てる補助要素を控えめに配置",
+    "medium_high": "要素はやや多めで4〜6個。画面全体に情報が整理されて配置されている",
+    "high":        "要素は5〜8個と多め。複数の小場面を含む情報量の高い構成",
+}
+
+PEOPLE_JA = {
+    "none":       "人物は登場させない。小物・空間・構成要素だけで状況を表現する",
+    "hands_only": "人物の顔は大きく映さず、手元・指差し・物を持つ動作で相談や整理の動きを表現する",
+    "up_to_2":    "1〜2名の人物を、自然な相談・確認のシーンとして登場させる",
+    "up_to_4":    "2〜4名の人物を、相談・案内・作業の場面として自然に登場させる",
+}
+
 
 def load_file(path: Path) -> str:
     if path.exists():
@@ -340,8 +364,9 @@ def build_image_prompt(image_type: str, title: str) -> tuple[str, dict]:
 
 
 def build_api_prompt(title: str, metadata: dict) -> str:
-    """Imagen API に送る compact な自然文プロンプトを生成する。
-    Markdown 見出し・内部説明・長い禁止事項列挙を含まない。
+    """Imagen API に送る日本語自然文プロンプトを生成する。
+    変数名はAPIプロンプトに出さず、すべて情景描写として埋め込む。
+    成功ChatGPTプロンプトの役割設定・推論構造・感情的ゴールを踏襲する。
     """
     category    = metadata.get("detected_category", "その他")
     center_motif = metadata.get("center_motif", "")
@@ -351,63 +376,77 @@ def build_api_prompt(title: str, metadata: dict) -> str:
     people_mode = metadata.get("people_mode", "none")
     allow_blank = metadata.get("allow_blank_documents", False)
 
-    cat_en      = CATEGORY_EN.get(category, category)
-    layout_en   = LAYOUT_EN.get(layout, layout)
-    density_en  = DENSITY_EN.get(density, density)
-    people_en   = PEOPLE_EN.get(people_mode, people_mode)
-    support_str = ", ".join(supporting[:6]) if supporting else "related props"
-    blank_note  = "blank papers and clipboards allowed (shape only, no text)" if allow_blank else "no documents"
+    layout_desc  = LAYOUT_JA.get(layout, "中央に主役モチーフを配置し、周辺に関連要素を自然に配置した構図")
+    density_desc = DENSITY_JA.get(density, "要素はやや多め、画面全体に情報が整理されて配置されている")
+    people_desc  = PEOPLE_JA.get(people_mode, "人物は必要に応じて登場させる")
+    support_str  = "・".join(supporting[:5]) if supporting else "関連する小物"
 
-    return "\n".join([
-        "Create a 16:9 horizontal watercolor editorial thumbnail for a Japanese vacant-house information media.",
+    lines = [
+        "あなたは、日本の情報メディア向けの最高峰の商用イラストレーターです。",
+        "日本の空き家情報メディア「アキカツ」の記事アイキャッチ画像を1枚生成してください。",
         "",
-        f"Article: {title}",
-        f"Category: {category} ({cat_en})",
+        "【記事タイトル】",
+        title,
         "",
-        f"Composition: {layout_en}",
-        f"Main subject: {center_motif}",
-        f"Supporting elements: {support_str}",
-        f"People: {people_en}",
-        f"Density: {density_en}",
-        f"Blank props: {blank_note}",
+        "【カテゴリと描くシーン】",
+        f"カテゴリ：{category}",
+        f"このイラストの中心：「{center_motif}」",
+        f"周辺に配置する要素：{support_str}",
+        f"構図：{layout_desc}",
+        f"情報密度：{density_desc}",
+        f"人物の扱い：{people_desc}",
+    ]
+
+    if allow_blank:
+        lines.append("小道具：白紙の書類やクリップボードは文字なしの形のみで使用可。")
+
+    lines += [
         "",
-        "Visual style: gentle hand-drawn watercolor, soft colored-pencil lines,"
-        " warm cream-white background with soft watercolor washes in light blue,"
-        " pale yellow, soft green, warm brown. Calm, trustworthy, organized."
-        " Not photorealistic, not 3D rendered.",
+        "【テイスト】",
+        "水彩絵の具で薄く塗ったような少しにじみのある手描きタッチ。鉛筆・色鉛筆・ペンで描いたやわらかい輪郭線。",
+        "写真風・リアル3D・CGにしない。上品で親しみやすい挿絵風。",
+        "背景は白〜薄い生成りベース。淡い水色・淡い黄色・薄い緑・やさしい茶色の水彩にじみをうっすら入れる。",
         "",
-        "Card layout: public card style thumbnail, 70-90% of frame filled,"
-        " central theme with surrounding elements, visually rich but organized.",
+        "【構図・サイズ】",
+        "横長バナー16:9。画面の70〜90%を主題関連要素で使い、余白を広く取りすぎない。",
+        "記事一覧で並んだとき他記事と見分けがつきやすい1枚にする。",
         "",
-        "Text rule: no readable text, no numbers, no letters, no logos anywhere."
-        " Blank paper shapes are fine.",
-    ])
+        "【文字禁止ルール】",
+        "画像内のどこにも文字・数字・記号・ロゴを入れない。",
+        "コインは文字・記号のないシンプルな金属円盤として描く。",
+        "電卓は数字ボタン・画面表示を描かず、形だけで表現する。",
+        "書類・クリップボードは白紙または読めない横線のみ。看板やラベルは形だけ。",
+        "",
+        "【仕上がりの印象】",
+        "不安を煽るより「整理できそう」「読めば前に進めそう」という前向きな印象を与える。",
+        "記事タイトルを知らなくても、記事テーマがイラストで直感的に伝わる仕上がりにする。",
+    ]
+
+    return "\n".join(lines)
 
 
 def build_fallback_prompt(title: str, metadata: dict) -> str:
-    """generated_images が空だった場合の短縮リトライプロンプト。
-    否定表現を最小化し、セーフティフィルターに引っかかりにくくする。
+    """generated_images が空だった場合の短縮リトライプロンプト（日本語自然文）。
+    役割設定・中心シーン・テイスト・文字禁止だけを残した短縮版。
     """
     category    = metadata.get("detected_category", "その他")
     center_motif = metadata.get("center_motif", "")
     people_mode = metadata.get("people_mode", "none")
     allow_blank = metadata.get("allow_blank_documents", False)
 
-    cat_en    = CATEGORY_EN.get(category, category)
-    people_en = PEOPLE_EN.get(people_mode, people_mode)
-    subject   = center_motif[:80] if center_motif else "Japanese house with nature"
-    blank_note = " Blank paper shapes welcome." if allow_blank else ""
+    people_desc = PEOPLE_JA.get(people_mode, "人物は必要に応じて登場させる")
+    subject     = center_motif[:80] if center_motif else "日本の家と関連する小物"
+    blank_note  = "白紙の書類や形だけのクリップボードは使用可。" if allow_blank else ""
 
-    return (
-        f"Watercolor illustration, 16:9, Japanese home media thumbnail. "
-        f"Category: {cat_en}. "
-        f"Scene: {subject}. "
-        f"People: {people_en}. "
-        f"Style: soft hand-drawn watercolor, warm cream background, muted pastel colors, gentle pencil lines."
-        f" Multiple related objects arranged around the central subject."
-        f" Visually rich, organized card layout.{blank_note}"
-        f" No readable text, no numbers, no logos."
-    )
+    return "\n".join([
+        "あなたは日本の情報メディア向けの商用イラストレーターです。",
+        f"「{title}」のアイキャッチ画像を手描き水彩スタイルで生成してください。",
+        f"カテゴリ：{category}。描くシーン：{subject}。",
+        people_desc,
+        f"手描き水彩。薄い生成り背景。淡い水色・黄色・緑のにじみ。関連する小物を周囲に自然に配置。{blank_note}",
+        "画像内に文字・数字・記号・ロゴを入れない。コインは無地の金属円盤のみ。電卓は形のみ。",
+        "「整理できそう」「前に進めそう」という明るい印象にする。",
+    ])
 
 
 def _print_post_checklist() -> None:
