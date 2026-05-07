@@ -107,6 +107,55 @@ VISUAL_STYLE_DIRECTIVES = {
     ),
 }
 
+# Imagen API送信用: 英語マッピング辞書
+CATEGORY_EN = {
+    "解決事例":      "vacant house problem-solving case",
+    "買取":          "vacant house quick buyout",
+    "庭木剪定":      "garden and tree pruning",
+    "片付け":        "vacant house cleanup and removal",
+    "建築リフォーム": "renovation and repair",
+    "保険":          "vacant house insurance",
+    "駐車場":        "parking lot conversion",
+    "相続・生前対策": "inheritance and estate planning",
+    "お金の手配":    "subsidy, grant, and cost arrangement",
+    "民泊":          "vacation rental (minpaku)",
+    "賃貸":          "vacant house rental",
+    "解体":          "demolition and clearance",
+    "管理":          "vacant house management",
+    "売買":          "vacant house sale",
+    "その他":        "vacant house related topic",
+}
+
+LAYOUT_EN = {
+    "single_scene":        "single focused scene, subject centered",
+    "central_storyboard":  "central theme surrounded by 4-8 supporting elements",
+    "infographic_scene":   "main scene with 2-3 supporting mini-scenes",
+    "center_with_corners": "central subject with related elements in corners",
+    "consultation_card":   "organized desktop consultation scene with house model and props",
+    "process_collage":     "process collage with multiple small scenes",
+}
+
+DENSITY_EN = {
+    "low":         "minimal, 1-2 supporting elements",
+    "medium":      "moderate, 3-4 supporting elements",
+    "medium_high": "medium-high, 4-6 supporting elements and 1-2 mini scenes",
+    "high":        "rich, 5-8 supporting elements and 2-3 mini scenes",
+}
+
+PEOPLE_EN = {
+    "none":       "no people",
+    "hands_only": "hands only (showing hands interacting with props)",
+    "up_to_2":    "1-2 people in a consultation or advisory scene",
+    "up_to_4":    "2-4 people in a consultation, work, or advisory scene",
+}
+
+PERSON_GENERATION_MAP = {
+    "none":       "dont_allow",
+    "hands_only": "allow_adult",
+    "up_to_2":    "allow_adult",
+    "up_to_4":    "allow_adult",
+}
+
 
 def load_file(path: Path) -> str:
     if path.exists():
@@ -290,13 +339,90 @@ def build_image_prompt(image_type: str, title: str) -> tuple[str, dict]:
     return combined, metadata
 
 
+def build_api_prompt(title: str, metadata: dict) -> str:
+    """Imagen API に送る compact な自然文プロンプトを生成する。
+    Markdown 見出し・内部説明・長い禁止事項列挙を含まない。
+    """
+    category    = metadata.get("detected_category", "その他")
+    center_motif = metadata.get("center_motif", "")
+    supporting  = metadata.get("supporting_motifs", [])
+    layout      = metadata.get("layout_family", "central_storyboard")
+    density     = metadata.get("density", "medium")
+    people_mode = metadata.get("people_mode", "none")
+    allow_blank = metadata.get("allow_blank_documents", False)
+
+    cat_en      = CATEGORY_EN.get(category, category)
+    layout_en   = LAYOUT_EN.get(layout, layout)
+    density_en  = DENSITY_EN.get(density, density)
+    people_en   = PEOPLE_EN.get(people_mode, people_mode)
+    support_str = ", ".join(supporting[:6]) if supporting else "related props"
+    blank_note  = "blank papers and clipboards allowed (shape only, no text)" if allow_blank else "no documents"
+
+    return "\n".join([
+        "Create a 16:9 horizontal watercolor editorial thumbnail for a Japanese vacant-house information media.",
+        "",
+        f"Article: {title}",
+        f"Category: {category} ({cat_en})",
+        "",
+        f"Composition: {layout_en}",
+        f"Main subject: {center_motif}",
+        f"Supporting elements: {support_str}",
+        f"People: {people_en}",
+        f"Density: {density_en}",
+        f"Blank props: {blank_note}",
+        "",
+        "Visual style: gentle hand-drawn watercolor, soft colored-pencil lines,"
+        " warm cream-white background with soft watercolor washes in light blue,"
+        " pale yellow, soft green, warm brown. Calm, trustworthy, organized."
+        " Not photorealistic, not 3D rendered.",
+        "",
+        "Card layout: public card style thumbnail, 70-90% of frame filled,"
+        " central theme with surrounding elements, visually rich but organized.",
+        "",
+        "Text rule: no readable text, no numbers, no letters, no logos anywhere."
+        " Blank paper shapes are fine.",
+    ])
+
+
+def build_fallback_prompt(title: str, metadata: dict) -> str:
+    """generated_images が空だった場合の短縮リトライプロンプト。
+    否定表現を最小化し、セーフティフィルターに引っかかりにくくする。
+    """
+    category    = metadata.get("detected_category", "その他")
+    center_motif = metadata.get("center_motif", "")
+    people_mode = metadata.get("people_mode", "none")
+    allow_blank = metadata.get("allow_blank_documents", False)
+
+    cat_en    = CATEGORY_EN.get(category, category)
+    people_en = PEOPLE_EN.get(people_mode, people_mode)
+    subject   = center_motif[:80] if center_motif else "Japanese house with nature"
+    blank_note = " Blank paper shapes welcome." if allow_blank else ""
+
+    return (
+        f"Watercolor illustration, 16:9, Japanese home media thumbnail. "
+        f"Category: {cat_en}. "
+        f"Scene: {subject}. "
+        f"People: {people_en}. "
+        f"Style: soft hand-drawn watercolor, warm cream background, muted pastel colors, gentle pencil lines."
+        f" Multiple related objects arranged around the central subject."
+        f" Visually rich, organized card layout.{blank_note}"
+        f" No readable text, no numbers, no logos."
+    )
+
+
 def _print_post_checklist() -> None:
     print("\n--- 生成後チェックリスト ---")
     for item in POST_CHECK_LIST:
         print(f"  □ {item}")
 
 
-def _print_dry_run(prompt: str, output_path: Path, metadata: dict) -> None:
+def _print_dry_run(
+    verbose_prompt: str,
+    api_prompt: str,
+    fallback_prompt: str,
+    output_path: Path,
+    metadata: dict,
+) -> None:
     print("\n=== DRY-RUN: 画像生成パラメータ確認 ===\n")
     if metadata:
         w = 20
@@ -319,20 +445,30 @@ def _print_dry_run(prompt: str, output_path: Path, metadata: dict) -> None:
         print(f"  {'回避モチーフ':<{w}}: {', '.join(avoid[:4]) + (' …' if len(avoid) > 4 else '') if avoid else '-'}")
     print(f"  {'出力先（予定）':<20}: {output_path}")
     _print_post_checklist()
-    print("\n--- 送信プロンプト全文 ---")
-    print(prompt)
+    print("\n--- API送信プロンプト（compact） ---")
+    print(api_prompt)
+    print("---")
+    print("\n--- fallback プロンプト ---")
+    print(fallback_prompt)
+    print("---")
+    print("\n--- 詳細プロンプト（debug） ---")
+    print(verbose_prompt)
     print("---")
 
 
 def generate_image(
-    prompt: str,
+    verbose_prompt: str,
+    api_prompt: str,
+    fallback_prompt: str,
     output_path: Path,
     dry_run: bool = False,
     metadata: Optional[dict] = None,
 ) -> Optional[Path]:
-    """Gemini Imagen で画像を生成して output_path に保存する。"""
+    """Gemini Imagen で画像を生成して output_path に保存する。
+    実API呼び出しには compact な api_prompt を使い、空だった場合は fallback_prompt で1回リトライする。
+    """
     if dry_run:
-        _print_dry_run(prompt, output_path, metadata or {})
+        _print_dry_run(verbose_prompt, api_prompt, fallback_prompt, output_path, metadata or {})
         return None
 
     api_key = os.environ.get("GEMINI_API_KEY", "")
@@ -351,37 +487,49 @@ def generate_image(
         sys.exit(1)
 
     model_name = os.environ.get("GEMINI_IMAGE_MODEL", "imagen-4.0-generate-001")
-    print("画像生成中...")
-    print(f"  モデル: {model_name}")
-    print(f"  プロンプト（先頭120字）: {prompt[:120]}")
+    people_mode = (metadata or {}).get("people_mode", "none")
+    person_gen = PERSON_GENERATION_MAP.get(people_mode, "dont_allow")
 
-    try:
-        client = genai.Client(api_key=api_key)
-        response = client.models.generate_images(
-            model=model_name,
-            prompt=prompt,
-            config=types.GenerateImagesConfig(
-                number_of_images=1,
-                output_mime_type="image/png",
-                aspect_ratio="16:9",
-                person_generation="dont_allow",
-            ),
-        )
-    except Exception as e:
-        print(f"[ERROR] 画像生成APIエラー: {e}")
-        print("  以下を確認してください:")
-        print("  - GEMINI_API_KEY が正しいか")
-        print("  - APIの課金・利用制限が有効か")
-        print("  - ご利用の地域で Imagen API が利用可能か")
-        print("  - モデル名が正しいか（GEMINI_IMAGE_MODEL 環境変数で上書き可能）")
-        print("  - google-genai SDK が最新か: pip install -U google-genai")
+    def _call_api(prompt_text: str, label: str) -> Optional[object]:
+        print(f"画像生成中... ({label})")
+        print(f"  モデル: {model_name}")
+        print(f"  プロンプト先頭: {prompt_text[:100]}")
+        try:
+            client = genai.Client(api_key=api_key)
+            return client.models.generate_images(
+                model=model_name,
+                prompt=prompt_text,
+                config=types.GenerateImagesConfig(
+                    number_of_images=1,
+                    output_mime_type="image/png",
+                    aspect_ratio="16:9",
+                    person_generation=person_gen,
+                ),
+            )
+        except Exception as e:
+            print(f"[ERROR] 画像生成APIエラー ({label}): {e}")
+            print("  以下を確認してください:")
+            print("  - GEMINI_API_KEY が正しいか")
+            print("  - APIの課金・利用制限が有効か")
+            print("  - ご利用の地域で Imagen API が利用可能か")
+            print("  - モデル名が正しいか（GEMINI_IMAGE_MODEL 環境変数で上書き可能）")
+            print("  - google-genai SDK が最新か: pip install -U google-genai")
+            return None
+
+    response = _call_api(api_prompt, "main")
+    if response is None:
         return None
 
     if not response.generated_images:
-        print("[ERROR] 画像が生成されませんでした。")
-        print("  プロンプトが安全フィルターで拒否された可能性があります。")
-        print("  プロンプトを見直して再試行してください。")
-        return None
+        print("[INFO] メインプロンプトで画像が返りませんでした。fallback promptで1回リトライします...")
+        response = _call_api(fallback_prompt, "fallback")
+        if response is None:
+            return None
+        if not response.generated_images:
+            print("[ERROR] API呼び出しは成功しましたが、どちらのプロンプトでも画像が返りませんでした。")
+            print("  プロンプトがモデル側で画像化されなかった可能性があります。")
+            print("  --dry-run で api prompt / fallback prompt を確認してください。")
+            return None
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_bytes(response.generated_images[0].image.image_bytes)
@@ -439,9 +587,17 @@ def main() -> None:
     if args.image_type:
         if not args.title:
             parser.error("--type を使う場合は --title も指定してください。")
-        prompt, metadata = build_image_prompt(args.image_type, args.title)
+        verbose_prompt, metadata = build_image_prompt(args.image_type, args.title)
+        if args.image_type == "general" and metadata:
+            api_prompt = build_api_prompt(args.title, metadata)
+            fallback_prompt = build_fallback_prompt(args.title, metadata)
+        else:
+            api_prompt = verbose_prompt
+            fallback_prompt = verbose_prompt
     else:
-        prompt = args.prompt + _DIRECT_PROMPT_SUFFIX
+        verbose_prompt = args.prompt + _DIRECT_PROMPT_SUFFIX
+        api_prompt = verbose_prompt
+        fallback_prompt = verbose_prompt
 
     if args.output:
         output_path = Path(args.output)
@@ -452,7 +608,7 @@ def main() -> None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         output_path = IMAGES_DIR / f"{timestamp}.png"
 
-    generate_image(prompt, output_path, dry_run=args.dry_run, metadata=metadata)
+    generate_image(verbose_prompt, api_prompt, fallback_prompt, output_path, dry_run=args.dry_run, metadata=metadata)
 
 
 if __name__ == "__main__":
