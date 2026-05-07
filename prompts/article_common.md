@@ -131,16 +131,31 @@
 - URLが不明確な場合は深いURLを推測せず、省庁トップページや公式検索ページを使う
 - URLがPDFの場合は資料名がわかるタイトルにする
 - 架空URLは禁止
+- 同一URLを別ラベルで複数回掲載しない
 - 明らかな404 / 410は禁止
 - 403 / 405 / 429 はbotブロック・HEAD拒否の可能性があるため、それだけで不正URL扱いしない
 - リダイレクト後の最終URLも確認対象にする
 - 最終URLに `/notfound`、`notfound`、`404`、`not-found`、`page-not-found` が含まれる場合は使用禁止
-- HTML本文に「ページが見つかりません」「ご利用のページが見つかりません」「Not Found」が含まれる場合は使用禁止
+- HTML本文に以下の文言が含まれる場合は使用禁止
+  - 「ページが見つかりません」「ご利用のページが見つかりません」「お探しのページが見つかりません」
+  - 「指定されたページは存在しません」「ページが存在しません」
+  - 「Not Found」「404 Not Found」「404 File Not Found」
 - リンク先ページのtitle・h1・URLパスのいずれにも、リンクテキストの主要語が確認できない場合は使用しない
+- ラベルの機関名とURLドメインが明らかに不一致の場合は使用しない
 - 公的情報・参考リンクの一覧は目次と同じ SWELL link-list 構造で実装する
 - `is-style-crease` は使わない（目次と区別するため）
 - 外部リンクには必ず `target="_blank" rel="noopener noreferrer"` を付ける
 - 実在する公式URLのみ使用する（架空URLは絶対禁止）
+
+**ラベルとドメインの整合性チェック例：**
+- ラベルに「国土交通省」 → URLは原則 `mlit.go.jp`
+- ラベルに「国税庁」 → URLは原則 `nta.go.jp`
+- ラベルに「法務省」 → URLは原則 `moj.go.jp`
+- ラベルに「法務局」 → URLは原則 `moj.go.jp` または法務局系の公式ドメイン
+- ラベルに「裁判所」 → URLは原則 `courts.go.jp`
+- ラベルに「総務省」 → URLは原則 `soumu.go.jp`
+- ラベルに「e-Gov」 → URLは原則 `laws.e-gov.go.jp` または `elaws.e-gov.go.jp`
+- ラベルに「自治体名」が含まれる場合は汎用判定が難しいため、notfound検知を優先する
 
 **参考リンクの必須HTMLクラス構造：**
 - `ul`: `class="swell-block-linkList is-style-default"`
@@ -206,7 +221,8 @@
 
 - 3カラムのカード構成には `wp:columns` を使う
 - `verticalAlignment: "stretch"` を必ず付ける（縦幅を揃えるため）
-- 各カラム内のテキスト量が異なる場合、`wp:spacer` を末尾に置いて縦幅を揃える
+- カード高さを揃える主手段は group の `minHeight` 指定とする（`min-height:560px` を基本値にする）
+- `wp:spacer` は補助として使用してよいが、spacerだけで高さ調整しない
 
 ---
 
@@ -275,6 +291,10 @@
 - 明らかな404 / 410は使用しない。
 - リダイレクト後の最終URLに `notfound` が含まれる場合は使用禁止。
 - e-Govの `lawid` は推測しない。不確かな場合は `https://laws.e-gov.go.jp/` へ誘導する。
+- 同一URLを別ラベルで複数回掲載しない。
+- ラベルの機関名とURLドメインが明らかに不一致の場合は使用しない（例：「国土交通省」→ `mlit.go.jp` 以外のURLは禁止）。
+  - 「国土交通省」 → `mlit.go.jp` / 「国税庁」 → `nta.go.jp` / 「法務省・法務局」 → `moj.go.jp`
+  - 「裁判所」 → `courts.go.jp` / 「総務省」 → `soumu.go.jp` / 「e-Gov」 → `laws.e-gov.go.jp` または `elaws.e-gov.go.jp`
 - 通常のリスト / 通常リンクだけで出力しない。必ず以下の link-list 構造を使う。
 
 **参考リンク（外部リンク）の標準構造：**
@@ -450,18 +470,18 @@
 ### まとめ3ポイント・複数カラムカード
 
 - 複数カードを横並びにする場合は `columns` / `column` に `"verticalAlignment":"stretch"` を使う。
-- カード間で本文量に差がある場合は `wp:spacer` を必要最小限で使い、目視上の高さを揃える。
-- spacerは過剰に乱用しない。
+- カード高さを揃える主手段は group の `minHeight` 指定とする（`min-height:560px` を基本値にする）。
+- `wp:spacer` は補助として使用してよいが、spacerだけで高さ調整しない。
 
 **まとめ3ポイントの禁止構造：**
 - `<p class="is-style-big_icon_point">Point1</p>` のように、Point表記だけをparagraphで出す形式は禁止。
 
 **まとめ3ポイントの標準構造：**
 
-- 各カードのgroupには `has-border -border02 is-style-big_icon_point` を指定する。
+- 各カードのgroupには `has-border -border02 is-style-big_icon_point` を指定し、`"style":{"dimensions":{"minHeight":"560px"}}` を必ず付ける。
 - 各カード内の順番は、H3（Point 1 / Point 2 / Point 3）→ 太字要点paragraph → 補足本文paragraph とする。
-- 各カードの本文量は80〜120字程度で揃える。
-- 各カードの `<!-- /wp:group -->` 直前に必ず以下のspacerを入れる。
+- 各カードの本文量は120〜160字程度で揃える。
+- 3カードすべて同じ `minHeight` 値（`560px`）にする。
 - `columns` / `column` の `verticalAlignment:"stretch"` は維持する。
 
 ```html
@@ -470,8 +490,8 @@
 
   <!-- wp:column {"verticalAlignment":"stretch"} -->
   <div class="wp-block-column is-vertically-aligned-stretch">
-    <!-- wp:group {"className":"has-border -border02 is-style-big_icon_point"} -->
-    <div class="wp-block-group has-border -border02 is-style-big_icon_point">
+    <!-- wp:group {"className":"has-border -border02 is-style-big_icon_point","style":{"dimensions":{"minHeight":"560px"}}} -->
+    <div class="wp-block-group has-border -border02 is-style-big_icon_point" style="min-height:560px">
       <!-- wp:heading {"level":3} -->
       <h3 class="wp-block-heading">Point 1</h3>
       <!-- /wp:heading -->
@@ -479,7 +499,7 @@
       <p><strong>太字の要点テキスト（Point 1）</strong></p>
       <!-- /wp:paragraph -->
       <!-- wp:paragraph -->
-      <p>補足本文テキスト。読者が理解しやすいよう80〜120字程度でまとめる。</p>
+      <p>補足本文テキスト。読者が理解しやすいよう120〜160字程度でまとめる。</p>
       <!-- /wp:paragraph -->
       <!-- wp:spacer {"height":"10px"} -->
       <div style="height:10px" aria-hidden="true" class="wp-block-spacer"></div>
@@ -491,8 +511,8 @@
 
   <!-- wp:column {"verticalAlignment":"stretch"} -->
   <div class="wp-block-column is-vertically-aligned-stretch">
-    <!-- wp:group {"className":"has-border -border02 is-style-big_icon_point"} -->
-    <div class="wp-block-group has-border -border02 is-style-big_icon_point">
+    <!-- wp:group {"className":"has-border -border02 is-style-big_icon_point","style":{"dimensions":{"minHeight":"560px"}}} -->
+    <div class="wp-block-group has-border -border02 is-style-big_icon_point" style="min-height:560px">
       <!-- wp:heading {"level":3} -->
       <h3 class="wp-block-heading">Point 2</h3>
       <!-- /wp:heading -->
@@ -500,7 +520,7 @@
       <p><strong>太字の要点テキスト（Point 2）</strong></p>
       <!-- /wp:paragraph -->
       <!-- wp:paragraph -->
-      <p>補足本文テキスト。読者が理解しやすいよう80〜120字程度でまとめる。</p>
+      <p>補足本文テキスト。読者が理解しやすいよう120〜160字程度でまとめる。</p>
       <!-- /wp:paragraph -->
       <!-- wp:spacer {"height":"10px"} -->
       <div style="height:10px" aria-hidden="true" class="wp-block-spacer"></div>
@@ -512,8 +532,8 @@
 
   <!-- wp:column {"verticalAlignment":"stretch"} -->
   <div class="wp-block-column is-vertically-aligned-stretch">
-    <!-- wp:group {"className":"has-border -border02 is-style-big_icon_point"} -->
-    <div class="wp-block-group has-border -border02 is-style-big_icon_point">
+    <!-- wp:group {"className":"has-border -border02 is-style-big_icon_point","style":{"dimensions":{"minHeight":"560px"}}} -->
+    <div class="wp-block-group has-border -border02 is-style-big_icon_point" style="min-height:560px">
       <!-- wp:heading {"level":3} -->
       <h3 class="wp-block-heading">Point 3</h3>
       <!-- /wp:heading -->
@@ -521,7 +541,7 @@
       <p><strong>太字の要点テキスト（Point 3）</strong></p>
       <!-- /wp:paragraph -->
       <!-- wp:paragraph -->
-      <p>補足本文テキスト。読者が理解しやすいよう80〜120字程度でまとめる。</p>
+      <p>補足本文テキスト。読者が理解しやすいよう120〜160字程度でまとめる。</p>
       <!-- /wp:paragraph -->
       <!-- wp:spacer {"height":"10px"} -->
       <div style="height:10px" aria-hidden="true" class="wp-block-spacer"></div>
