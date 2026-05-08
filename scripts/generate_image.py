@@ -655,8 +655,10 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         "concurrent activities visible in the illustration.",
         "Composition is dense and informative — multiple things are happening or visible at once, "
         "distributed across the full canvas. No single area is left empty or sparse.",
-        "Only the very outer borders fade softly to white via watercolor — "
-        "no empty interior areas, no dividers, no colored margins.",
+        "Watercolor washes flow in continuous overlapping patches across the entire canvas — "
+        "all elements share the same unframed white background, blending naturally into each other.",
+        "Only the outermost edges dissolve softly to white — "
+        "no oval vignette, no circular spotlight, no bubble-like scene islands, no framed medallions.",
         "Warm vivid colors throughout: amber, golden yellow, fresh green, warm brown. "
         "Colors are rich and warm — not pale, not faded. Visible and warm like a published illustration.",
         "Natural medium-weight ink lines with soft watercolor washes — "
@@ -711,7 +713,7 @@ def build_fallback_prompt(title: str, metadata: dict) -> str:
         "Several elements — people (small scale), house, tools, environment — "
         "visible in different areas of the full canvas. No single element dominant.",
         "Warm ambient colors throughout. Soft hand-drawn lines. "
-        "Elements extend to near all edges; only borders fade to white.",
+        "Elements extend near all edges — one continuous scene on white, no oval vignettes; only the outermost edges fade to white.",
         f"{scene}.",
         people_note,
         blank_note,
