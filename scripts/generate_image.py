@@ -54,24 +54,26 @@ _DIRECT_PROMPT_SUFFIX = " hand-drawn watercolor style, blank papers only with no
 
 POST_CHECK_LIST = [
     # ── 暴走チェック（最優先・NG即廃棄） ──
-    "【NG】写真風・3D・CG・物撮り・人物ポートレート・動物・食べ物になっていないか",
-    "【NG】緑や青の色付き外枠・カード枠・角丸フレームが出ていないか",
+    "【NG】写真風・3D・CG・物撮り・動物・食べ物になっていないか",
+    "【NG】人物2名の大きなバストアップ・会話クローズアップ・ポートレートになっていないか",
+    "【NG】緑や青の色付き外枠・カード枠・ベタ塗り背景が出ていないか",
     "【NG】文字・数字・記号・ロゴが混入していないか（書類内・看板・コイン面も含む）",
     # ── 人物チェック ──
-    "人物が出るべきカテゴリ（up_to_2以上 / hands_only）で人物ゼロになっていないか",
-    "人物がポートレート（顔の大アップ）になっていないか（小〜中サイズのシーン参加者か）",
-    "人物が自然な相談・確認・作業・案内の動作をしているか",
-    # ── 構図・密度チェック ──
-    "前景に記事テーマを説明する道具・書類・鍵などの説明モチーフがあるか",
-    "家だけ / 道具だけ / 書類だけ / 人物だけ の単一要素に偏っていないか",
-    "道具を横一列に展示台的に並べただけになっていないか（自然な配置か）",
-    "画面左右に大きな空白がなく、横長16:9全体を自然に使えているか",
-    "構図が左右対称すぎず、自然な非対称・流れがあるか",
-    "公開中アイキャッチより情報密度が著しく低くないか",
+    "人物が出るべきカテゴリで人物ゼロになっていないか",
+    "人物が画像高の28%以下の小〜中サイズか（大きすぎないか）",
+    "人物は自然な相談・確認・作業などの生活シーンの一部として配置されているか",
+    # ── 構図・多要素チェック ──
+    "4分割・説明図・アイコン集・スライド風になっていないか（1枚の自然な絵か）",
+    "単一シーンに偏っていないか（家・人・道具・環境が異なる部分に自然に存在しているか）",
+    "道具・書類・鍵が巨大化して前景を支配していないか",
+    "画面中央だけに絵が固まり、左右・端が空きすぎていないか（端近くまで描画されているか）",
+    "水彩のにじみで要素が自然につながっているか（直線的な区切りや枠がないか）",
     # ── スタイル・色チェック ──
+    "背景色が特定エリアに集中していないか（中央ハロー・ベタ塗り外枠がないか）",
     "外周が水彩として自然に白へ溶けているか",
-    "線が縮小表示でも視認できる濃さか",
+    "線が縮小表示でも視認できる濃さか（薄すぎず、硬い漫画線でもないか）",
     "色が淡すぎず、暖かいアンバー・緑・茶が適度に鮮やかか",
+    "公開中アキカツ記事のアイキャッチに比べて、人物・家・道具・背景の密度が近いか",
 ]
 
 COMPOSITION_DESCRIPTIONS = {
@@ -203,17 +205,16 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
         "tone":        "bright, reassuring, organized, practical",
         # リッチな自然文（APIプロンプト用。ラベルなし）
         "api_scene": (
-            "A homeowner and a garden specialist are in a neatly kept Japanese garden, "
-            "having a friendly consultation about the garden maintenance. "
-            "The specialist gestures toward the freshly trimmed shrubs while the homeowner "
-            "reviews a blank clipboard — both shown at comfortable medium viewing scale, "
-            "upper bodies and faces clearly visible in a natural three-quarter angle. "
-            "They stand on a warm stone garden path that leads toward a traditional Japanese "
-            "house with a tiled roof in the background. "
-            "Pruning shears, work gloves, and a broom rest naturally on the nearby stone path. "
-            "A blank paper sheet and pencil lie on one of the path stones. "
-            "Golden-orange autumn trees and rounded green shrubs frame the warm scene. "
-            "Warm amber light fills the garden. The outer canvas edges fade softly to clean white."
+            "A rich illustrated scene depicting a garden maintenance consultation and its context. "
+            "The center and background show a traditional Japanese house with freshly trimmed garden "
+            "trees, rounded shrubs, and a stone path — the well-maintained property environment. "
+            "To the left, a homeowner and garden specialist are in brief natural conversation "
+            "(small scale, about 20% of image height) — one gesturing toward the garden. "
+            "Lower right: pruning shears, work gloves, and a bundle of cut branches rest naturally "
+            "on the stone path; a blank notepad and pencil lie nearby as small props. "
+            "Upper corners: golden-orange autumn trees frame the scene with warm foliage. "
+            "Warm amber light is naturally distributed across the whole scene — not a central halo. "
+            "Elements appear near all four canvas edges; only the very borders fade softly to white."
         ),
     },
     "解体": {
@@ -241,15 +242,16 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
         "avoid":       "not a portrait, no close-up face, no readable text, no logo, no numbers, not three-dimensional render, no for-sale sign text, no price tags",
         "tone":        "calm, trustworthy, organized, hopeful — the registration and handover process feels clear and manageable",
         "api_scene": (
-            "A homeowner and a property advisor are meeting near a traditional Japanese house, "
-            "having a natural consultation about property registration and inquiry. "
-            "One reviews blank papers on a clipboard while the other gestures toward the house, "
-            "explaining details — both shown at comfortable medium viewing scale, "
-            "upper bodies and expressions clearly visible from a natural three-quarter angle. "
-            "An old iron house key and a plain folder rest on a nearby low stone surface. "
-            "The traditional Japanese house surrounded by fresh green garden trees fills the warm background. "
-            "Rich warm amber and golden tones fill the scene. "
-            "The outer canvas edges fade naturally to clean white."
+            "A rich illustrated scene depicting a property inquiry and registration process. "
+            "The center and background show a traditional Japanese house surrounded by green "
+            "garden trees — the central property clearly present as a scene environment. "
+            "To the left or center-left, a homeowner and property advisor are in brief natural "
+            "discussion (small scale, about 20-25% of image height) — one holding blank papers, "
+            "one gesturing toward the house. "
+            "Lower right or right: an iron house key and a plain folder rest naturally on a stone "
+            "surface as small contextual props — visible but not dominant. "
+            "Warm amber and golden tones are distributed evenly throughout the scene. "
+            "Elements appear near all four canvas edges; only the very borders fade softly to white."
         ),
     },
     "相続・生前対策": {
@@ -268,12 +270,15 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
         "avoid":       "not a portrait, no close-up face, no text anywhere, no numbers on coins, no price tags, no logo, not three-dimensional render",
         "tone":        "calm, practical, reassuring, organized — cost planning and subsidy review feels manageable",
         "api_scene": (
-            "A small Japanese house model sits at the center of a simple wooden desk, surrounded by plain round "
-            "coin shapes in warm gold tones. A simple calculator form without any readable numbers and a blank "
-            "clipboard with a white planning paper rest beside the house model. A plain pencil and a simple folder "
-            "complete the desk arrangement. The scene conveys calm cost planning or subsidy review, with warm "
-            "amber, gold, and cream watercolor tones filling the horizontal composition. Papers and coins are "
-            "arranged neatly around the house model, creating a balanced and organized desk scene."
+            "A rich illustrated scene depicting a subsidy and cost planning process. "
+            "Center: a small Japanese house model and plain round coin shapes arranged naturally — "
+            "the cost planning context as a scene element, not the sole focus. "
+            "Left or center-left: a homeowner and advisor are seated in brief consultation "
+            "(small scale, about 20% of image height) — blank papers between them on a simple surface. "
+            "Right: a calculator form without readable numbers and a plain folder "
+            "rest as small natural planning props. "
+            "Warm amber and cream tones distributed evenly throughout. "
+            "Elements appear near all four canvas edges; only the very borders fade softly to white."
         ),
     },
     "建築リフォーム": {
@@ -613,31 +618,16 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         avoid_str   = "not a portrait, no close-up face, no text, no logo, no numbers, not three-dimensional rendering"
         tone        = "calm, warm, organized, reassuring"
 
-    # B. 人物描写（人物がシーンの主役。物だけの静物構図は禁止）
+    # B. 人物描写（人物はシーン要素の1つ。単一主役にしない）
     if people_mode == "none":
-        people_note = "The scene is depicted through objects, tools, and setting only — no human figures."
-    elif people_mode == "hands_only":
+        people_note = "No human figures — the scene is conveyed through objects, setting, and atmosphere."
+    else:
         people_note = (
-            "One or two people are the primary scene participants — "
-            "shown at medium scale from a natural three-quarter angle, "
-            "upper bodies and activity gestures clearly visible, "
-            "engaged in a work review, inspection, or consultation activity. "
-            "They are the main subject; tools and props are their natural context."
-        )
-    elif people_mode == "up_to_2":
-        people_note = (
-            "One to two people are the primary scene participants — "
-            "shown at medium scale from a natural three-quarter angle, "
-            "upper bodies and expressions clearly visible, "
-            "in a natural consultation, property review, or advisory activity. "
-            "They are the main subject; the house and objects are their natural context."
-        )
-    else:  # up_to_4
-        people_note = (
-            "Two to three people are the primary scene participants — "
-            "shown at medium scale in natural working, consulting, or advisory activity, "
-            "upper bodies and gestures clearly visible from a natural viewing angle. "
-            "They are the main subject; props, house, and setting are their natural context."
+            "People appear at natural small-to-medium scale (about 15-28% of image height), "
+            "visible as one element among the house, garden, and other props — "
+            "in a brief consultation, work, or confirmation activity. "
+            "Shown in natural full-scene context, not filling the frame. "
+            "People are part of the rich scene, not the primary subject."
         )
 
     blank_note = "Simple blank papers and clipboards appear naturally as props." if allow_blank else ""
@@ -653,17 +643,21 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         scene_prose = f"{s}. {obj}. {sup}. {cmp}."
 
     lines = [
-        # ──── A. Style contract（全カテゴリ共通・固定） ────
-        # 人物活動シーンが主役・道具・家・書類は補助要素
-        "Warm hand-painted commercial watercolor illustration for a Japanese home information media website.",
-        "The central scene shows people engaged in a natural activity — consultation, confirmation, work, or handover — related to the article theme.",
-        "Human figures are the primary scene focus, shown at comfortable medium scale: upper bodies and faces visible, activity and gestures clearly readable.",
-        "Supporting objects (tools, documents, keys, house model) appear naturally around the people as contextual props, never as the sole focus.",
-        "Medium-weight ink outlines with colored-pencil warmth — lines visible at small display size.",
-        "Warm color palette: deep amber, golden yellow, fresh green, soft brown, cream white, pale sky blue.",
-        "Wide 16:9 canvas with warm amber watercolor warmth at the center; outer edges fade softly into clean white.",
+        # ──── A. Style Contract（全カテゴリ共通・固定） ────
+        "Warm hand-painted commercial watercolor illustration with a rich, naturally mixed scene.",
+        "The illustration contains several elements — people, house, garden, tools or documents — "
+        "each visible at a different area of the wide 16:9 canvas, creating a naturally informative scene.",
+        "No single element is dominant. People appear at natural small-to-medium scale "
+        "(about 15-28% of image height), part of the scene alongside house, props, and environment.",
+        "The composition uses the full wide canvas generously; elements appear near all four edges.",
+        "Only the very borders fade softly to white via watercolor — no empty white areas inside, "
+        "no dividers, no colored outer margins, outer edges remain as gentle watercolor white fade.",
+        "Warm colors distributed naturally throughout: amber, golden yellow, fresh green, warm brown. "
+        "Ambient warmth, not a central blob, not a flat solid background.",
+        "Medium-thin hand-drawn ink lines with soft watercolor washes and gentle color bleeding. "
+        "Hand-painted illustration style, not anime-style outlines, not diagram-like.",
         "",
-        # ──── B. Scene contract（カテゴリ別） ────
+        # ──── B. Scene Contract（カテゴリ別） ────
         scene_prose,
         people_note,
     ]
@@ -698,15 +692,16 @@ def build_fallback_prompt(title: str, metadata: dict) -> str:
     tone       = contract.get("tone", "calm, warm, organized") if contract else "calm, warm, organized"
 
     if people_mode == "none":
-        people_note = "Scene depicted through objects and setting only."
+        people_note = "No human figures — scene conveyed through objects and atmosphere."
     else:
-        people_note = "People are the primary scene participants — shown at comfortable medium scale, upper bodies visible, naturally engaged in the activity."
+        people_note = "People at small-to-medium scale (15-28% of image height) as one element among house, garden, and props — not the primary focus."
 
     return "\n".join([
-        "Warm hand-painted commercial watercolor illustration, wide 16:9, for a Japanese home information website.",
-        "Central scene: people engaged in a natural activity (consultation, review, work). Human figures at medium viewing scale as primary focus.",
-        "Supporting context: house, garden, tools, documents naturally arranged around the people.",
-        "Rich warm watercolor, medium ink outlines, vivid amber and green, warm golden tones. Canvas edges fade to clean white.",
+        "Warm hand-painted commercial watercolor illustration, wide 16:9, rich naturally mixed scene.",
+        "Several elements — people (small scale), house, tools, environment — "
+        "visible in different areas of the full canvas. No single element dominant.",
+        "Warm ambient colors throughout. Soft hand-drawn lines. "
+        "Elements extend to near all edges; only borders fade to white.",
         f"{scene}.",
         people_note,
         blank_note,
