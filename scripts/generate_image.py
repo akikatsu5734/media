@@ -202,15 +202,17 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
         "tone":        "bright, reassuring, organized, practical",
         # リッチな自然文（APIプロンプト用。ラベルなし）
         "api_scene": (
-            "A traditional Japanese vacant house with a warm tiled roof stands in the center background, surrounded "
-            "by neatly trimmed rounded green shrubs and autumn-toned garden trees. A winding stone garden path "
-            "leads from the foreground toward the house, flanked by a low wooden fence on the right and a "
-            "well-trimmed green hedge on the left. Directly on the warm stone path, a pair of pruning shears and "
-            "gardening gloves are placed together. A small broom leans against the hedge, with a bundled pile of "
-            "cut branches beside it. A simple blank white paper sheet with a plain pencil rests flat on one of "
-            "the path stones. Fallen amber and orange leaves are scattered softly across the path. Soft golden "
-            "sunlight fills the whole scene — warm amber grass tones, soft greens of shrubs, cream-colored path "
-            "stones, and pale sky blue above the rooftop — all creating a warm, balanced, and organized garden scene."
+            "FOREGROUND (large and close, filling the lower canvas): A pair of pruning shears rests prominently "
+            "in the lower-left, large and close to the viewer. Gardening gloves, a small bundled pile of cut "
+            "branches, and a simple blank paper sheet with a pencil are arranged across the lower-center and "
+            "lower-right, filling the near foreground naturally. A small broom leans against a stone on the left. "
+            "MIDGROUND (center, medium size): A stone garden path winds gently toward a traditional Japanese house "
+            "with a warm tiled roof positioned at the center. Rounded green shrubs and a low wooden fence frame "
+            "the path. "
+            "BACKGROUND (distant, soft): Autumn-toned trees with golden-orange foliage and a pale sky complete "
+            "the scene behind the house. "
+            "The visual journey flows: large foreground tools → winding path → warm house → soft sky. "
+            "Warm amber, fresh green, and cream tones fill the scene. Soft golden sunlight fills the canvas."
         ),
     },
     "解体": {
@@ -238,15 +240,17 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
         "avoid":       "not a portrait, no close-up face, no readable text, no logo, no numbers, not three-dimensional render, no for-sale sign text, no price tags",
         "tone":        "calm, trustworthy, organized, hopeful — the registration and handover process feels clear and manageable",
         "api_scene": (
-            "A traditional Japanese house stands warmly in the center background, framed by fresh green trees "
-            "and a soft sky. A garden path leads from the foreground toward the house. In the foreground, spread "
-            "across a low stone garden surface, an old-fashioned iron house key and a stack of blank white papers "
-            "are arranged beside a plain brown folder. A simple pencil lies diagonally across the papers. "
-            "To the left, a blank clipboard and additional blank sheets fill the near-left area. "
-            "To the right, a small potted green plant and soft foliage add warm natural depth. "
-            "Rich amber and golden sunlight fill the background and mid-ground, with fresh green foliage on "
-            "both sides and cream-toned papers in the foreground. The scene fills the full wide horizontal "
-            "canvas from left edge to right edge — a balanced, warm, and organized composition."
+            "FOREGROUND (large and close, filling the lower canvas): An old-fashioned iron house key rests "
+            "prominently in the lower-left, large and close to the viewer. A blank clipboard with blank white "
+            "papers and a simple pencil fill the lower-center. A plain brown folder and additional blank sheets "
+            "are arranged naturally in the lower-right area. These foreground props are large and clearly visible, "
+            "suggesting a property registration and planning process. "
+            "MIDGROUND (center, medium size): A stone garden path leads from the foreground toward a traditional "
+            "Japanese house centered in the midground, framed by fresh green trees on both sides. "
+            "BACKGROUND (distant, soft): Lush green foliage and a soft warm sky complete the scene behind "
+            "the house. "
+            "The visual journey flows: large foreground key and papers → garden path → warm centered house → "
+            "green trees and sky. Rich warm amber and fresh green fill the scene naturally from edge to edge."
         ),
     },
     "相続・生前対策": {
@@ -636,9 +640,11 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         "Vivid but warm color palette: rich deep amber, fresh vibrant green, golden honey yellow, warm brown, cream white, clear sky blue.",
         "Lines are moderately strong and clearly visible at small card display size — every main motif has confident ink outlines.",
         "Colors are moderately vivid — warm amber and fresh green read clearly even when the image is displayed small.",
-        "Central watercolor scene with props spread naturally to the left and right, filling the full horizontal canvas.",
+        "Layered depth composition: large prominent props in the close foreground, main house motif in the midground, ambient trees and sky in the background.",
+        "Foreground props are placed close and large, filling the lower portion of the wide canvas — they are the first thing the viewer sees.",
+        "Visual journey flows naturally from large foreground props to the central house in the midground to the soft ambient background.",
         "Outer canvas edges remain clean white — central watercolor cluster dissolves softly into white at all outer edges.",
-        "Dense balanced composition with four to six supporting props arranged across the wide frame alongside the main motif.",
+        "Full horizontal canvas with natural left-to-right information spread — nothing is crowded to one side, no large empty gaps.",
         "",
         # ──── 場面描写（自然文・ラベルなし） ────
         scene_prose,
