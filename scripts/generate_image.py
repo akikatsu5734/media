@@ -50,29 +50,27 @@ IMAGE_TYPES = {
 }
 
 # --prompt 直接指定（旧方式）のみで付加する安全付記
-_DIRECT_PROMPT_SUFFIX = " --style photorealistic, no people, no text overlay"
+_DIRECT_PROMPT_SUFFIX = " hand-drawn watercolor style, blank papers only with no readable text anywhere"
 
 POST_CHECK_LIST = [
-    # ── 文字・記号 ──
-    "文字・数字・記号が画像内に一切ないか（NG: 書類内・看板・コイン面・電卓ボタンも含む）",
-    "FOR SALE / OPEN / 価格 / 申請 等のテキストがないか",
-    # ── スタイル ──
-    "写真風・3D・CG風でないか（手描き水彩か確認）（NG: 建築パース・3Dレンダリング・フラットベクター漫画）",
-    "人物ポートレートになっていないか（NG: 人物の顔・バストアップ・クローズアップ）",
-    "単体物撮り・素材カット風になっていないか（NG: 白背景に物だけ置いた商品写真）",
-    # ── 背景・フレーム ──
-    "外枠・カード枠・角丸フレーム・色付き余白・緑背景がないか（NG: 枠線、背景に色ブロック）",
-    "背景は白〜薄い生成り。水彩ウォッシュが外周で自然に白へ溶けているか",
-    "背景に独立した青・黄・紫などの色パッチ（blobs）が出ていないか",
-    # ── 構図・密度 ──
-    "コントラストが淡すぎないか（線とモチーフが縮小表示でも見えるか）",
-    "余白が広すぎないか（NG: 左右どちらか・上部に大きな空白）",
-    "画面の左右どちらかに偏っていないか。横長キャンバスをバランスよく使えているか",
-    "主役モチーフが明確にあり、周辺モチーフが横長画面内にバランスよく配置されているか",
-    "理想画像と比べて情報密度が著しく低くないか",
-    # ── 全体 ──
-    "記事一覧で縮小表示しても主題カテゴリが伝わるか",
-    "不安を煽る表現がないか（整理・前進の印象があるか）",
+    # ── スタイル暴走チェック（最優先） ──
+    "写真風・物撮り・人物ポートレート・動物・食べ物になっていないか（これらはNG）",
+    "写真のようにリアルな陰影・質感になっていないか（手描き水彩か）",
+    # ── 背景・フレームチェック ──
+    "緑・青などの色付き外枠が出ていないか",
+    "明確なカード枠・角丸枠・境界線が出ていないか",
+    "外周が水彩として自然に白へ溶けているか（白〜生成りの背景か）",
+    "背景に独立した色パッチ（blue blob / amber halo）が出ていないか",
+    # ── コントラスト・色チェック ──
+    "線が薄すぎないか（縮小表示で線とモチーフが見えるか）",
+    "色が淡すぎないか（理想画像に近い暖かい鮮やかさがあるか）",
+    # ── 構図チェック ──
+    "横長16:9として画面全体を使えているか",
+    "右側または左側に大きな空白がないか",
+    "主役モチーフ＋複数の補助モチーフが画面内にバランスよく配置されているか",
+    "理想画像に近い商用水彩アイキャッチ感があるか",
+    # ── 文字チェック ──
+    "文字・数字・記号・ロゴが混入していないか（書類内・看板・コイン面も含む）",
 ]
 
 COMPOSITION_DESCRIPTIONS = {
@@ -357,27 +355,42 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
 }
 
 # APIプロンプト preflight チェック用（誘発語リスト）
+# 否定形でも Imagen が拾う可能性があるため、原則として API プロンプトに含めない
 _PROMPT_PREFLIGHT_WORDS = [
-    "editorial", "magazine", "thumbnail", "poster", "cover",
+    # スタイル誘発語（否定形でも原則NG）
+    "photorealistic", "photo",
+    "portrait",
+    "3d rendering", "cgi",
+    "product photo",
+    "food", "animal", "lizard", "reptile",
+    # レイアウト誘発語
+    "card frame", "thumbnail", "magazine", "editorial", "poster", "cover",
+    # その他
     "eyecatch", "アイキャッチ", "記事", "タイトル", "日本語",
-    "portrait", "close-up face",
+]
+# text prohibition として必要なため例外的に許可する語（preflight 対象外）
+_PREFLIGHT_ALLOWED_PHRASES = [
+    "no readable text", "blank papers", "no numbers", "no symbols", "no logos",
+    "no letters", "no kanji", "no hiragana",
 ]
 
 
 def _preflight_check_api_prompt(prompt: str) -> list[str]:
     """APIプロンプトに誘発語が含まれていたら警告リストを返す。
-    'no X' / 'not X' / 'avoid' の否定文内は許容する。
+    否定形・肯定形いずれでも検出する（Imagen は否定語の対象語も拾うため）。
+    _PREFLIGHT_ALLOWED_PHRASES に含まれるフレーズ内の語は例外とする。
     """
     warnings: list[str] = []
     lower = prompt.lower()
+
+    # 許可フレーズを除外してからチェック
+    clean = lower
+    for allowed in _PREFLIGHT_ALLOWED_PHRASES:
+        clean = clean.replace(allowed, " " * len(allowed))
+
     for word in _PROMPT_PREFLIGHT_WORDS:
-        idx = lower.find(word.lower())
-        while idx != -1:
-            prefix = lower[max(0, idx - 10):idx]
-            if not any(neg in prefix for neg in ("no ", "not ", "avoid", "without")):
-                warnings.append(f"  ⚠  誘発語 '{word}' がAPIプロンプトに含まれています（否定文以外）")
-                break
-            idx = lower.find(word.lower(), idx + 1)
+        if word.lower() in clean:
+            warnings.append(f"  ⚠  誘発語 '{word}' がAPIプロンプトに含まれています（否定形も含む）")
     return warnings
 
 
@@ -596,20 +609,19 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         avoid_str   = "not a portrait, no close-up face, no text, no logo, no numbers, not three-dimensional rendering"
         tone        = "calm, warm, organized, reassuring"
 
-    # 人物制約（自然文）
+    # 人物制約（肯定文で記述。「顔なし」「ポートレートなし」等の否定語はAPIに送らない）
     if people_mode in ("none", "hands_only"):
-        people_note = "No people or faces are visible in this scene"
+        people_note = "The scene is told entirely through objects, tools, and setting — the arrangement of props carries the story."
     else:
-        people_note = "Only small simple distant figures may appear if needed — no close-up faces, not a portrait, figures are always secondary to the objects and scene"
+        people_note = "Small figures appear naturally as part of the scene, shown in natural working or conversation poses from the side or mid-distance — the scene setting and objects remain the primary focus."
 
-    blank_note = "Simple blank papers and clipboards without any writing appear naturally as props." if allow_blank else ""
+    blank_note = "Simple blank papers and clipboards appear naturally as props." if allow_blank else ""
 
     # api_scene がある場合はそれを使用（自然文・ラベルなし）
     # ない場合はフィールドから自然文を組み立てる
     if contract and "api_scene" in contract:
         scene_prose = contract["api_scene"]
     else:
-        # ラベルなしで自然文を組み立て
         s   = subject if subject else "a small Japanese vacant house with related objects"
         obj = objects_req if objects_req else ""
         sup = objects_sup if objects_sup else ""
@@ -617,20 +629,18 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         scene_prose = f"{s}. {obj}. {sup}. {cmp}."
 
     lines = [
-        # ──── 共通スタイル宣言（誘発語なし・構図・色・線を強制） ────
-        "Wide 16:9 horizontal warm hand-drawn watercolor scene illustration.",
-        "Rich warm watercolor painting style with soft brush strokes and gentle color bleeding — not flat cartoon, not uniform vector style.",
-        "Moderately saturated warm color palette: warm amber, honey yellow, soft green, cream white, gentle brown, pale sky blue.",
-        "Clear colored-pencil and thin pen outlines with natural line weight variation, visible clearly even at small sizes.",
-        "White to warm cream base background — warm golden-amber watercolor fills the central area, fading softly into white at all outer edges.",
-        "No separate color patches, no blobs of unrelated color in the background.",
-        "No border, no frame, no card frame, no colored outer margin, no corner-rounded frame.",
-        "Moderately dense composition using the full wide horizontal canvas — not sparse, not a single isolated object, not a centered product photo.",
-        "Not photorealistic, not three-dimensional rendering, not CGI, not a flat cartoon, not a portrait.",
+        # ──── 共通スタイル宣言（肯定文のみ・誘発語ゼロ） ────
+        "Wide 16:9 horizontal warm commercial watercolor illustration.",
+        "Hand-painted watercolor with colored-pencil outlines, medium-brown linework.",
+        "Warm color palette: warm amber, honey yellow, fresh green, soft brown, cream white, pale sky blue.",
+        "Rich but gentle contrast — colors have enough saturation and line clarity for small display visibility.",
+        "White to warm cream base background, warm golden-amber watercolor fills the central area.",
+        "Outer canvas edges remain clean white — soft watercolor fades gently into white at all edges.",
+        "Full horizontal composition using the wide canvas, with a main house-related motif and several supporting props spread across the scene.",
         "",
-        # ──── 場面描写（自然文、ラベルなし） ────
+        # ──── 場面描写（自然文・ラベルなし） ────
         scene_prose,
-        f"{people_note}.",
+        people_note,
     ]
 
     if blank_note:
@@ -638,10 +648,8 @@ def build_api_prompt(title: str, metadata: dict) -> str:
 
     lines += [
         "",
-        # ──── 禁止事項 ────
-        f"Carefully avoid: {avoid_str}.",
-        "No readable writing anywhere in the image — no letters, no kanji, no hiragana, no numbers, no symbols, no logos.",
-        "No border frame, no card frame, no colored outer margin.",
+        # ──── 最小限の文字禁止（肯定形ベース） ────
+        "All papers, clipboards, signs, and surfaces remain blank — no readable text, no numbers, no symbols.",
         "",
         # ──── トーン ────
         f"Overall impression: {tone}.",
@@ -660,22 +668,24 @@ def build_fallback_prompt(title: str, metadata: dict) -> str:
 
     contract   = CATEGORY_SCENE_CONTRACTS.get(category)
     subject    = contract["subject"] if contract else f"a small Japanese vacant house with {CATEGORY_EN.get(category, 'vacant house')} objects"
-    avoid_str  = contract["avoid"] if contract else "not a portrait, no close-up face, no text, no logo, not three-dimensional rendering"
-    no_people  = "no people, no face" if people_mode in ("none", "hands_only") else "no close-up face, not a portrait, small distant figures only"
-    blank_note = "Blank papers as props are allowed (no writing)." if allow_blank else ""
+    blank_note = "Simple blank papers appear as props." if allow_blank else ""
+    scene      = contract.get("api_scene", subject) if contract else subject
+    tone       = contract.get("tone", "calm, warm, organized") if contract else "calm, warm, organized"
 
-    scene = contract.get("api_scene", subject) if contract else subject
+    if people_mode in ("none", "hands_only"):
+        people_note = "The scene is told through objects, tools, and setting."
+    else:
+        people_note = "Small figures appear naturally in the scene from mid-distance — the setting and props remain the primary focus."
 
     return "\n".join([
-        "Wide 16:9 horizontal warm hand-drawn watercolor scene. Rich warm colors, soft brush strokes, not flat cartoon. Not photorealistic, not three-dimensional rendering.",
+        "Wide 16:9 horizontal warm commercial watercolor illustration.",
+        "Hand-painted watercolor with colored-pencil outlines, warm amber and green tones, rich but gentle contrast.",
+        "White to warm cream base, warm golden-amber fills center, soft watercolor fades into white at outer edges.",
         f"{scene}.",
-        f"{no_people}.",
-        "Warm amber, soft green, cream, pale blue palette. Clear outlines visible at small sizes. Colors moderately saturated, not pale.",
-        "Smooth uniform warm cream background, watercolor fades gently into white at all edges. No color patches, no border frame, no card frame.",
+        people_note,
         blank_note,
-        f"Avoid: {avoid_str}.",
-        "No readable writing, no letters, no numbers, no logos anywhere in the image.",
-        "Calm, warm, organized, commercially polished watercolor impression.",
+        "All papers and surfaces remain blank — no readable text, no numbers, no symbols.",
+        f"Overall impression: {tone}.",
     ])
 
 
