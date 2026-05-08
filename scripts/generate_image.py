@@ -161,7 +161,7 @@ PEOPLE_EN = {
 
 PERSON_GENERATION_MAP = {
     "none":       "dont_allow",
-    "hands_only": "dont_allow",  # ポートレート誘発防止のため allow_adult から変更
+    "hands_only": "allow_adult",  # 人物をシーン要素として自然に入れる（scene描写でサイズ・スタイルを制御）
     "up_to_2":    "allow_adult",
     "up_to_4":    "allow_adult",
 }
@@ -207,8 +207,11 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
             "gardening gloves in the center, and a neat bundle of cut branches to the right. A blank paper sheet "
             "and a plain pencil rest on the stones beside the gloves. A broom leans at the left edge. "
             "These close tools are large and detailed, dominating the lower canvas. "
-            "Beyond and above them, a winding stone path leads away to a traditional Japanese house with a warm "
-            "tiled roof, centered in the scene, flanked by rounded green shrubs and a low wooden fence. "
+            "Beyond and above them, two small figures stand in the midground beside the winding stone path — "
+            "a homeowner and a garden specialist seen from the side at medium distance, one gesturing toward "
+            "the trimmed garden while reviewing the work together. "
+            "The stone path leads toward a traditional Japanese house with a warm tiled roof, centered in the "
+            "scene, flanked by rounded green shrubs and a low wooden fence. "
             "Golden-orange autumn trees fill the soft upper background above the house. "
             "Warm amber ground, fresh greens, and cream stone tones fill the scene. "
             "The outer canvas edges fade softly to clean white."
@@ -242,12 +245,13 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
             "Close to the viewer, the lower portion of the wide frame is dominated by three property-related "
             "items shown large and clearly: an old iron house key lying on the left, a blank open clipboard "
             "with blank white papers centered prominently, and a plain brown folder to the lower-right — "
-            "all arranged in a natural, slightly asymmetric layout. A simple pencil rests across the blank "
-            "papers. These items fill the lower canvas, large enough to see their shapes clearly. "
-            "Beyond and above these foreground props, a stone garden path winds toward a traditional Japanese "
-            "house centered in the middle distance, surrounded by fresh green trees. "
-            "Two small simple figures near the house suggest a quiet property viewing. "
-            "Rich warm amber and golden tones fill the background behind the house. "
+            "arranged in a natural, slightly asymmetric layout. A simple pencil rests across the blank papers. "
+            "These items fill the lower canvas, large enough to see their shapes clearly. "
+            "In the midground beyond these props, two small figures stand near the house — a homeowner and "
+            "an advisor seen from the side at medium distance, one holding blank papers while the other "
+            "gestures toward the property, suggesting a registration or property review conversation. "
+            "A traditional Japanese house stands centered behind them, surrounded by fresh green trees. "
+            "Rich warm amber and golden tones fill the background. "
             "The outer canvas edges fade naturally to clean white."
         ),
     },
@@ -612,9 +616,11 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         avoid_str   = "not a portrait, no close-up face, no text, no logo, no numbers, not three-dimensional rendering"
         tone        = "calm, warm, organized, reassuring"
 
-    # 人物制約（肯定文で記述。「顔なし」「ポートレートなし」等の否定語はAPIに送らない）
-    if people_mode in ("none", "hands_only"):
-        people_note = "The scene is told entirely through objects, tools, and setting — the arrangement of props carries the story."
+    # 人物制約（肯定文で記述。シーン要素として自然に人物を組み込む）
+    if people_mode == "none":
+        people_note = "The scene is told through objects, tools, and setting — no human figures."
+    elif people_mode == "hands_only":
+        people_note = "One or two small figures appear naturally in the midground, engaged in a work preparation or consultation activity — seen from the side at medium distance, integrated as natural scene participants alongside the tools and props."
     else:
         people_note = "Small figures appear naturally as part of the scene, shown in natural working or conversation poses from the side or mid-distance — the scene setting and objects remain the primary focus."
 
@@ -678,8 +684,10 @@ def build_fallback_prompt(title: str, metadata: dict) -> str:
     scene      = contract.get("api_scene", subject) if contract else subject
     tone       = contract.get("tone", "calm, warm, organized") if contract else "calm, warm, organized"
 
-    if people_mode in ("none", "hands_only"):
-        people_note = "The scene is told through objects, tools, and setting."
+    if people_mode == "none":
+        people_note = "The scene is told through objects and setting."
+    elif people_mode == "hands_only":
+        people_note = "One or two small figures at medium distance, naturally engaged in the scene alongside the tools and props."
     else:
         people_note = "Small figures appear naturally in the scene from mid-distance — the setting and props remain the primary focus."
 
