@@ -238,14 +238,15 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
         "avoid":       "not a portrait, no close-up face, no readable text, no logo, no numbers, not three-dimensional render, no for-sale sign text, no price tags",
         "tone":        "calm, trustworthy, organized, hopeful — the registration and handover process feels clear and manageable",
         "api_scene": (
-            "A small traditional Japanese two-story house model sits at the center of a simple warm wooden desk. "
-            "To the left of the house model, an old-fashioned iron house key and a blank white sheet of paper lie "
-            "flat on the desk. To the right, a plain brown folder and a blank clipboard rest on the desk surface. "
-            "A simple pencil lies diagonally across a blank white paper in the foreground. Small green plants or "
-            "leaves add a gentle accent behind the house model. The entire background behind the desk is a smooth, "
-            "uniform warm cream and amber watercolor wash — no separate color blocks, no unrelated color patches, "
-            "just a gently unified warm background fading to white at all edges. Props are spread naturally to the "
-            "left and right of the house, filling the full wide horizontal composition with a calm, organized feel."
+            "A traditional Japanese house stands warmly in the center background, framed by fresh green trees "
+            "and a soft sky. A garden path leads from the foreground toward the house. In the foreground, spread "
+            "across a low stone garden surface, an old-fashioned iron house key and a stack of blank white papers "
+            "are arranged beside a plain brown folder. A simple pencil lies diagonally across the papers. "
+            "To the left, a blank clipboard and additional blank sheets fill the near-left area. "
+            "To the right, a small potted green plant and soft foliage add warm natural depth. "
+            "Rich amber and golden sunlight fill the background and mid-ground, with fresh green foliage on "
+            "both sides and cream-toned papers in the foreground. The scene fills the full wide horizontal "
+            "canvas from left edge to right edge — a balanced, warm, and organized composition."
         ),
     },
     "相続・生前対策": {
@@ -629,14 +630,15 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         scene_prose = f"{s}. {obj}. {sup}. {cmp}."
 
     lines = [
-        # ──── 共通スタイル宣言（肯定文のみ・誘発語ゼロ） ────
-        "Wide 16:9 horizontal warm commercial watercolor illustration.",
-        "Hand-painted watercolor with colored-pencil outlines, medium-brown linework.",
-        "Warm color palette: warm amber, honey yellow, fresh green, soft brown, cream white, pale sky blue.",
-        "Rich but gentle contrast — colors have enough saturation and line clarity for small display visibility.",
-        "White to warm cream base background, warm golden-amber watercolor fills the central area.",
-        "Outer canvas edges remain clean white — soft watercolor fades gently into white at all edges.",
-        "Full horizontal composition using the wide canvas, with a main house-related motif and several supporting props spread across the scene.",
+        # ──── 共通スタイル宣言（肯定文のみ・線・色・密度を強化） ────
+        "Wide 16:9 horizontal warm hand-painted watercolor scene illustration.",
+        "Rich warm watercolor with slightly stronger medium-brown ink outlines and clear colored-pencil linework.",
+        "Vivid but warm color palette: rich deep amber, fresh vibrant green, golden honey yellow, warm brown, cream white, clear sky blue.",
+        "Lines are moderately strong and clearly visible at small card display size — every main motif has confident ink outlines.",
+        "Colors are moderately vivid — warm amber and fresh green read clearly even when the image is displayed small.",
+        "Central watercolor scene with props spread naturally to the left and right, filling the full horizontal canvas.",
+        "Outer canvas edges remain clean white — central watercolor cluster dissolves softly into white at all outer edges.",
+        "Dense balanced composition with four to six supporting props arranged across the wide frame alongside the main motif.",
         "",
         # ──── 場面描写（自然文・ラベルなし） ────
         scene_prose,
@@ -678,9 +680,9 @@ def build_fallback_prompt(title: str, metadata: dict) -> str:
         people_note = "Small figures appear naturally in the scene from mid-distance — the setting and props remain the primary focus."
 
     return "\n".join([
-        "Wide 16:9 horizontal warm commercial watercolor illustration.",
-        "Hand-painted watercolor with colored-pencil outlines, warm amber and green tones, rich but gentle contrast.",
-        "White to warm cream base, warm golden-amber fills center, soft watercolor fades into white at outer edges.",
+        "Wide 16:9 horizontal warm hand-painted watercolor scene illustration.",
+        "Rich warm watercolor with stronger medium-brown ink outlines, vivid amber and fresh green, golden tones.",
+        "White to warm cream base, warm golden-amber fills center, watercolor fades softly into clean white at outer edges.",
         f"{scene}.",
         people_note,
         blank_note,
