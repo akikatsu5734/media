@@ -202,17 +202,16 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
         "tone":        "bright, reassuring, organized, practical",
         # リッチな自然文（APIプロンプト用。ラベルなし）
         "api_scene": (
-            "FOREGROUND (large and close, filling the lower canvas): A pair of pruning shears rests prominently "
-            "in the lower-left, large and close to the viewer. Gardening gloves, a small bundled pile of cut "
-            "branches, and a simple blank paper sheet with a pencil are arranged across the lower-center and "
-            "lower-right, filling the near foreground naturally. A small broom leans against a stone on the left. "
-            "MIDGROUND (center, medium size): A stone garden path winds gently toward a traditional Japanese house "
-            "with a warm tiled roof positioned at the center. Rounded green shrubs and a low wooden fence frame "
-            "the path. "
-            "BACKGROUND (distant, soft): Autumn-toned trees with golden-orange foliage and a pale sky complete "
-            "the scene behind the house. "
-            "The visual journey flows: large foreground tools → winding path → warm house → soft sky. "
-            "Warm amber, fresh green, and cream tones fill the scene. Soft golden sunlight fills the canvas."
+            "Close to the ground, the lower half of the wide frame is filled by large garden tools resting on "
+            "warm stone pavers: pruning shears on the left with their metal blades clearly visible, a pair of "
+            "gardening gloves in the center, and a neat bundle of cut branches to the right. A blank paper sheet "
+            "and a plain pencil rest on the stones beside the gloves. A broom leans at the left edge. "
+            "These close tools are large and detailed, dominating the lower canvas. "
+            "Beyond and above them, a winding stone path leads away to a traditional Japanese house with a warm "
+            "tiled roof, centered in the scene, flanked by rounded green shrubs and a low wooden fence. "
+            "Golden-orange autumn trees fill the soft upper background above the house. "
+            "Warm amber ground, fresh greens, and cream stone tones fill the scene. "
+            "The outer canvas edges fade softly to clean white."
         ),
     },
     "解体": {
@@ -240,17 +239,16 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
         "avoid":       "not a portrait, no close-up face, no readable text, no logo, no numbers, not three-dimensional render, no for-sale sign text, no price tags",
         "tone":        "calm, trustworthy, organized, hopeful — the registration and handover process feels clear and manageable",
         "api_scene": (
-            "FOREGROUND (large and close, filling the lower canvas): An old-fashioned iron house key rests "
-            "prominently in the lower-left, large and close to the viewer. A blank clipboard with blank white "
-            "papers and a simple pencil fill the lower-center. A plain brown folder and additional blank sheets "
-            "are arranged naturally in the lower-right area. These foreground props are large and clearly visible, "
-            "suggesting a property registration and planning process. "
-            "MIDGROUND (center, medium size): A stone garden path leads from the foreground toward a traditional "
-            "Japanese house centered in the midground, framed by fresh green trees on both sides. "
-            "BACKGROUND (distant, soft): Lush green foliage and a soft warm sky complete the scene behind "
-            "the house. "
-            "The visual journey flows: large foreground key and papers → garden path → warm centered house → "
-            "green trees and sky. Rich warm amber and fresh green fill the scene naturally from edge to edge."
+            "Close to the viewer, the lower portion of the wide frame is dominated by three property-related "
+            "items shown large and clearly: an old iron house key lying on the left, a blank open clipboard "
+            "with blank white papers centered prominently, and a plain brown folder to the lower-right — "
+            "all arranged in a natural, slightly asymmetric layout. A simple pencil rests across the blank "
+            "papers. These items fill the lower canvas, large enough to see their shapes clearly. "
+            "Beyond and above these foreground props, a stone garden path winds toward a traditional Japanese "
+            "house centered in the middle distance, surrounded by fresh green trees. "
+            "Two small simple figures near the house suggest a quiet property viewing. "
+            "Rich warm amber and golden tones fill the background behind the house. "
+            "The outer canvas edges fade naturally to clean white."
         ),
     },
     "相続・生前対策": {
@@ -640,9 +638,9 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         "Vivid but warm color palette: rich deep amber, fresh vibrant green, golden honey yellow, warm brown, cream white, clear sky blue.",
         "Lines are moderately strong and clearly visible at small card display size — every main motif has confident ink outlines.",
         "Colors are moderately vivid — warm amber and fresh green read clearly even when the image is displayed small.",
-        "Layered depth composition: large prominent props in the close foreground, main house motif in the midground, ambient trees and sky in the background.",
-        "Foreground props are placed close and large, filling the lower portion of the wide canvas — they are the first thing the viewer sees.",
-        "Visual journey flows naturally from large foreground props to the central house in the midground to the soft ambient background.",
+        "Depth perspective composition: the viewer stands close to the foreground objects, which appear large in the lower half of the frame.",
+        "The house and main scene are at medium distance, visible clearly beyond the large foreground props.",
+        "Visual layering: large close-up props dominate the bottom half, medium-size house and scene in the center, soft ambient background above.",
         "Outer canvas edges remain clean white — central watercolor cluster dissolves softly into white at all outer edges.",
         "Full horizontal canvas with natural left-to-right information spread — nothing is crowded to one side, no large empty gaps.",
         "",
