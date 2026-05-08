@@ -205,16 +205,17 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
         "tone":        "bright, reassuring, organized, practical",
         # リッチな自然文（APIプロンプト用。ラベルなし）
         "api_scene": (
-            "A rich illustrated scene depicting a garden maintenance consultation and its context. "
-            "The center and background show a traditional Japanese house with freshly trimmed garden "
-            "trees, rounded shrubs, and a stone path — the well-maintained property environment. "
-            "To the left, a homeowner and garden specialist are in brief natural conversation "
-            "(small scale, about 20% of image height) — one gesturing toward the garden. "
-            "Lower right: pruning shears, work gloves, and a bundle of cut branches rest naturally "
-            "on the stone path; a blank notepad and pencil lie nearby as small props. "
-            "Upper corners: golden-orange autumn trees frame the scene with warm foliage. "
-            "Warm amber light is naturally distributed across the whole scene — not a central halo. "
-            "Elements appear near all four canvas edges; only the very borders fade softly to white."
+            "A densely illustrated warm scene showing a garden maintenance consultation. "
+            "The traditional Japanese house with freshly trimmed garden trees, rounded shrubs, and a stone "
+            "path occupies the central background — the well-maintained property is clearly the subject. "
+            "A homeowner and garden specialist walk together through the garden at small scale "
+            "(about 20% of image height), the specialist demonstrating or pointing at trimmed shrubs. "
+            "Pruning shears in use or actively placed on a stone surface are visible in one area of the scene. "
+            "Work gloves and a bundle of cut branches are visible in another part, suggesting active work. "
+            "A blank notepad and pencil appear near a garden wall or stone, open as if in use. "
+            "Golden-orange autumn trees fill upper portions; warm greens and amber fill the lower ground. "
+            "Every part of the canvas is richly detailed — house, garden, people, tools all visible "
+            "throughout. Warm amber and fresh green throughout. Only the very outer borders fade to white."
         ),
     },
     "解体": {
@@ -242,16 +243,17 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
         "avoid":       "not a portrait, no close-up face, no readable text, no logo, no numbers, not three-dimensional render, no for-sale sign text, no price tags",
         "tone":        "calm, trustworthy, organized, hopeful — the registration and handover process feels clear and manageable",
         "api_scene": (
-            "A rich illustrated scene depicting a property inquiry and registration process. "
-            "The center and background show a traditional Japanese house surrounded by green "
-            "garden trees — the central property clearly present as a scene environment. "
-            "To the left or center-left, a homeowner and property advisor are in brief natural "
-            "discussion (small scale, about 20-25% of image height) — one holding blank papers, "
-            "one gesturing toward the house. "
-            "Lower right or right: an iron house key and a plain folder rest naturally on a stone "
-            "surface as small contextual props — visible but not dominant. "
-            "Warm amber and golden tones are distributed evenly throughout the scene. "
-            "Elements appear near all four canvas edges; only the very borders fade softly to white."
+            "A densely illustrated warm scene showing a property inquiry and registration process. "
+            "The traditional Japanese house surrounded by green garden trees is clearly the central "
+            "subject property — it occupies the upper-center of the composition and is fully visible. "
+            "A homeowner and property advisor discuss together at small scale (about 20% of image height), "
+            "one reviewing blank papers while the other points toward the house. "
+            "An iron house key is visible as an active prop in one part of the scene, "
+            "suggesting a handover or review process. "
+            "A blank folder and plain papers are visible in another area — open and in use, not piled. "
+            "Garden greenery, the stone path, and natural surroundings fill the remaining areas warmly. "
+            "Every part of the canvas is richly filled — house, people, props, garden all visible "
+            "simultaneously. Warm amber and golden tones throughout. Only outer borders fade to white."
         ),
     },
     "相続・生前対策": {
@@ -644,18 +646,19 @@ def build_api_prompt(title: str, metadata: dict) -> str:
 
     lines = [
         # ──── A. Style Contract（全カテゴリ共通・固定） ────
-        "Warm hand-painted commercial watercolor illustration with a rich, naturally mixed scene.",
-        "The illustration contains several elements — people, house, garden, tools or documents — "
-        "each visible at a different area of the wide 16:9 canvas, creating a naturally informative scene.",
-        "No single element is dominant. People appear at natural small-to-medium scale "
-        "(about 15-28% of image height), part of the scene alongside house, props, and environment.",
-        "The composition uses the full wide canvas generously; elements appear near all four edges.",
-        "Only the very borders fade softly to white via watercolor — no empty white areas inside, "
-        "no dividers, no colored outer margins, outer edges remain as gentle watercolor white fade.",
-        "Warm colors distributed naturally throughout: amber, golden yellow, fresh green, warm brown. "
-        "Ambient warmth, not a central blob, not a flat solid background.",
-        "Medium-thin hand-drawn ink lines with soft watercolor washes and gentle color bleeding. "
-        "Hand-painted illustration style, not anime-style outlines, not diagram-like.",
+        "Warm hand-painted commercial watercolor illustration with a densely composed, multi-focal scene.",
+        "The full wide 16:9 canvas is richly filled — every part of the image contains warm detail: "
+        "house, people, garden or setting, tools or documents, all present and active simultaneously.",
+        "People appear at small-to-medium scale (about 20% of image height), one activity among several "
+        "concurrent activities visible in the illustration.",
+        "Composition is dense and informative — multiple things are happening or visible at once, "
+        "distributed across the full canvas. No single area is left empty or sparse.",
+        "Only the very outer borders fade softly to white via watercolor — "
+        "no empty interior areas, no dividers, no colored margins.",
+        "Warm vivid colors throughout: amber, golden yellow, fresh green, warm brown. "
+        "Colors are rich and warm — not pale, not faded. Visible and warm like a published illustration.",
+        "Natural medium-weight ink lines with soft watercolor washes — "
+        "visible and confident, not heavy anime outlines, not faint pencil sketch.",
         "",
         # ──── B. Scene Contract（カテゴリ別） ────
         scene_prose,
