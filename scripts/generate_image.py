@@ -210,9 +210,11 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
             "path occupies the central background — the well-maintained property is clearly the subject. "
             "A homeowner and garden specialist walk together through the garden at small scale "
             "(about 20% of image height), the specialist demonstrating or pointing at trimmed shrubs. "
-            "Pruning shears in use or actively placed on a stone surface are visible in one area of the scene. "
-            "Work gloves and a bundle of cut branches are visible in another part, suggesting active work. "
-            "A blank notepad and pencil appear near a garden wall or stone, open as if in use. "
+            "Pruning shears rest on the garden stone path or against a trimmed shrub, "
+            "naturally part of the garden scene — not on a separate platform. "
+            "Work gloves lie on the path nearby; a bundle of cut branches is stacked beside a hedge. "
+            "A blank notepad and plain pencil rest on a flat garden stone, open as if in use — "
+            "part of the garden ground, not a floating surface. "
             "Golden-orange autumn trees fill upper portions; warm greens and amber fill the lower ground. "
             "Every part of the canvas is richly detailed — house, garden, people, tools all visible "
             "throughout. Warm amber and fresh green throughout. Only the very outer borders fade to white."
@@ -248,9 +250,9 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
             "subject property — it occupies the upper-center of the composition and is fully visible. "
             "A homeowner and property advisor discuss together at small scale (about 20% of image height), "
             "one reviewing blank papers while the other points toward the house. "
-            "An iron house key is visible as an active prop in one part of the scene, "
-            "suggesting a handover or review process. "
-            "A blank folder and plain papers are visible in another area — open and in use, not piled. "
+            "An iron house key rests on a stone garden step or is held in someone's hand — "
+            "a natural prop in the scene, not a floating symbol. "
+            "One person holds blank white papers to review; the papers are physical pages, not icons. "
             "Garden greenery, the stone path, and natural surroundings fill the remaining areas warmly. "
             "Every part of the canvas is richly filled — house, people, props, garden all visible "
             "simultaneously. Warm amber and golden tones throughout. Only outer borders fade to white."
@@ -659,6 +661,11 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         "Colors are rich and warm — not pale, not faded. Visible and warm like a published illustration.",
         "Natural medium-weight ink lines with soft watercolor washes — "
         "visible and confident, not heavy anime outlines, not faint pencil sketch.",
+        "Documents and papers appear as physical pages lying on natural surfaces "
+        "(garden path, tatami, ground, stone step) or held in someone's hands — "
+        "not as floating icons, popup windows, or isolated document symbols.",
+        "Tools and objects rest on the natural ground, path, or grass of the scene — "
+        "connected to the same continuous world, not on a separate foreground platform.",
         "",
         # ──── B. Scene Contract（カテゴリ別） ────
         scene_prose,
