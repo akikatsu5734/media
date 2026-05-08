@@ -53,13 +53,25 @@ IMAGE_TYPES = {
 _DIRECT_PROMPT_SUFFIX = " --style photorealistic, no people, no text overlay"
 
 POST_CHECK_LIST = [
-    "文字・数字・記号が画像内に一切ないか",
-    "看板・書類・画面・ラベル・封筒に文字が混入していないか",
+    # ── 文字・記号 ──
+    "文字・数字・記号が画像内に一切ないか（NG: 書類内・看板・コイン面・電卓ボタンも含む）",
     "FOR SALE / OPEN / 価格 / 申請 等のテキストがないか",
-    "写真風・3D・CGに寄っていないか（手描き水彩か確認）",
-    "背景が白〜淡いクリーム色か",
-    "主役モチーフが明確に一つ存在するか",
-    "記事一覧で他記事と差別化できるか（縮小時にカテゴリが伝わるか）",
+    # ── スタイル ──
+    "写真風・3D・CG風でないか（手描き水彩か確認）（NG: 建築パース・3Dレンダリング・フラットベクター漫画）",
+    "人物ポートレートになっていないか（NG: 人物の顔・バストアップ・クローズアップ）",
+    "単体物撮り・素材カット風になっていないか（NG: 白背景に物だけ置いた商品写真）",
+    # ── 背景・フレーム ──
+    "外枠・カード枠・角丸フレーム・色付き余白・緑背景がないか（NG: 枠線、背景に色ブロック）",
+    "背景は白〜薄い生成り。水彩ウォッシュが外周で自然に白へ溶けているか",
+    "背景に独立した青・黄・紫などの色パッチ（blobs）が出ていないか",
+    # ── 構図・密度 ──
+    "コントラストが淡すぎないか（線とモチーフが縮小表示でも見えるか）",
+    "余白が広すぎないか（NG: 左右どちらか・上部に大きな空白）",
+    "画面の左右どちらかに偏っていないか。横長キャンバスをバランスよく使えているか",
+    "主役モチーフが明確にあり、周辺モチーフが横長画面内にバランスよく配置されているか",
+    "理想画像と比べて情報密度が著しく低くないか",
+    # ── 全体 ──
+    "記事一覧で縮小表示しても主題カテゴリが伝わるか",
     "不安を煽る表現がないか（整理・前進の印象があるか）",
 ]
 
@@ -151,7 +163,7 @@ PEOPLE_EN = {
 
 PERSON_GENERATION_MAP = {
     "none":       "dont_allow",
-    "hands_only": "allow_adult",
+    "hands_only": "dont_allow",  # ポートレート誘発防止のため allow_adult から変更
     "up_to_2":    "allow_adult",
     "up_to_4":    "allow_adult",
 }
@@ -179,6 +191,194 @@ PEOPLE_JA = {
     "up_to_2":    "数名の人物を、自然な相談・確認のシーンとして登場させる",
     "up_to_4":    "複数名の人物を、相談・案内・作業の場面として自然に登場させる",
 }
+
+# Imagen API 送信用 英語 scene contract（カテゴリ別）
+# 誘発語（editorial/magazine/article/thumbnail）を使わず視覚場面のみで記述
+CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
+    "庭木剪定": {
+        "subject":     "neatly trimmed garden trees beside a small Japanese vacant house",
+        "objects":     "pruning shears, gardening gloves, small broom, bundled cut branches, blank checklist paper, plain pencil",
+        "support":     "stone garden path, low wooden fence, trimmed green hedge, scattered amber leaves, warm amber tones",
+        "composition": "calm horizontal scene, house visible in background, tools and papers fill the foreground garden path, warm amber and green fills the canvas, watercolor fades into white edges",
+        "avoid":       "not a portrait, no close-up face, no people as main subject, no readable writing, no signboard text, no logo, no numbers, not three-dimensional render, no dark forest, no horror abandoned house",
+        "tone":        "bright, reassuring, organized, practical",
+        # リッチな自然文（APIプロンプト用。ラベルなし）
+        "api_scene": (
+            "A traditional Japanese vacant house with a warm tiled roof stands in the center background, surrounded "
+            "by neatly trimmed rounded green shrubs and autumn-toned garden trees. A winding stone garden path "
+            "leads from the foreground toward the house, flanked by a low wooden fence on the right and a "
+            "well-trimmed green hedge on the left. Directly on the warm stone path, a pair of pruning shears and "
+            "gardening gloves are placed together. A small broom leans against the hedge, with a bundled pile of "
+            "cut branches beside it. A simple blank white paper sheet with a plain pencil rests flat on one of "
+            "the path stones. Fallen amber and orange leaves are scattered softly across the path. Soft golden "
+            "sunlight fills the whole scene — warm amber grass tones, soft greens of shrubs, cream-colored path "
+            "stones, and pale sky blue above the rooftop — all creating a warm, balanced, and organized garden scene."
+        ),
+    },
+    "解体": {
+        "subject":     "a small Japanese vacant house model as the central focus of a calm planning scene",
+        "objects":     "safety helmet, work gloves, blank planning paper, plain pencil, basic work tools",
+        "support":     "fresh green plant sprouts from clean earth, simple wooden boards, warm amber and earth tones",
+        "composition": "horizontal watercolor scene, house and safety tools as main subjects, sprouts in foreground, warm amber fills canvas, watercolor fades into white edges",
+        "avoid":       "not a portrait, no close-up face, no text, no logo, no numbers, not three-dimensional render, not a horror scene, no collapsing building, no warning sign text, no disaster imagery",
+        "tone":        "calm, resolved, practical, forward-looking — demolition as a new beginning",
+        "api_scene": (
+            "A small traditional Japanese vacant house model stands as the central focus of a calm planning scene. "
+            "A bright yellow safety helmet rests beside the house, together with a pair of work gloves placed "
+            "neatly on the ground. A blank white planning paper and a plain pencil lie nearby on a simple surface. "
+            "Small fresh green plant sprouts emerge from clean warm earth in the foreground, suggesting renewal and "
+            "a new beginning. Simple wooden boards and a pair of basic work tools complete the background. Warm "
+            "amber, earth brown, and soft cream tones fill the composition, with gentle green sprouts and white "
+            "paper providing natural color contrast."
+        ),
+    },
+    "売買": {
+        "subject":     "a small Japanese house model next to a house key and blank registration papers on a simple desk",
+        "objects":     "small Japanese house model, old-fashioned house key, blank white papers, plain folder, simple pencil",
+        "support":     "blank clipboard in background, warm amber and cream tones, simple wooden desk texture",
+        "composition": "horizontal desk-view watercolor scene, house model and key prominent, papers and folder arranged around them, warm amber fills canvas, watercolor fades into white edges",
+        "avoid":       "not a portrait, no close-up face, no readable text, no logo, no numbers, not three-dimensional render, no for-sale sign text, no price tags",
+        "tone":        "calm, trustworthy, organized, hopeful — the registration and handover process feels clear and manageable",
+        "api_scene": (
+            "A small traditional Japanese two-story house model sits at the center of a simple warm wooden desk. "
+            "To the left of the house model, an old-fashioned iron house key and a blank white sheet of paper lie "
+            "flat on the desk. To the right, a plain brown folder and a blank clipboard rest on the desk surface. "
+            "A simple pencil lies diagonally across a blank white paper in the foreground. Small green plants or "
+            "leaves add a gentle accent behind the house model. The entire background behind the desk is a smooth, "
+            "uniform warm cream and amber watercolor wash — no separate color blocks, no unrelated color patches, "
+            "just a gently unified warm background fading to white at all edges. Props are spread naturally to the "
+            "left and right of the house, filling the full wide horizontal composition with a calm, organized feel."
+        ),
+    },
+    "相続・生前対策": {
+        "subject":     "an elderly couple and adult child sitting around a low Japanese table with a small house model",
+        "objects":     "small Japanese house model, blank documents on table, teacup, simple indoor table",
+        "support":     "soft indoor light, small potted plant, warm amber watercolor wash",
+        "composition": "horizontal watercolor scene, small simple figures around a table, house model prominent, warm amber wash, watercolor fades into white edges, no border frame",
+        "avoid":       "no close-up face, not a portrait, no text, no logo, no numbers, not three-dimensional render",
+        "tone":        "gentle, warm, organized, thoughtful",
+    },
+    "お金の手配": {
+        "subject":     "a small Japanese house model surrounded by coins, a calculator form, and blank planning documents on a desk",
+        "objects":     "small Japanese house model, plain round coin shapes, calculator form without readable numbers, blank planning paper, plain pencil, simple folder",
+        "support":     "warm amber and gold watercolor tones, cream paper whites, soft desk light",
+        "composition": "horizontal desk-view watercolor scene, house model and coins prominent, papers and folder arranged around them, warm amber and gold fills canvas, watercolor fades into white edges",
+        "avoid":       "not a portrait, no close-up face, no text anywhere, no numbers on coins, no price tags, no logo, not three-dimensional render",
+        "tone":        "calm, practical, reassuring, organized — cost planning and subsidy review feels manageable",
+        "api_scene": (
+            "A small Japanese house model sits at the center of a simple wooden desk, surrounded by plain round "
+            "coin shapes in warm gold tones. A simple calculator form without any readable numbers and a blank "
+            "clipboard with a white planning paper rest beside the house model. A plain pencil and a simple folder "
+            "complete the desk arrangement. The scene conveys calm cost planning or subsidy review, with warm "
+            "amber, gold, and cream watercolor tones filling the horizontal composition. Papers and coins are "
+            "arranged neatly around the house model, creating a balanced and organized desk scene."
+        ),
+    },
+    "建築リフォーム": {
+        "subject":     "a small Japanese house being renovated with helmeted workers around it",
+        "objects":     "small Japanese house model, safety helmet, paint roller shape, simple wooden planks, basic tools",
+        "support":     "warm amber watercolor wash, construction activity around house, soft natural light",
+        "composition": "horizontal watercolor scene, house at center with workers and tools around it, warm amber wash, watercolor fades into white edges, no border frame",
+        "avoid":       "not a portrait, no close-up face, no text, no logo, no numbers, not three-dimensional render",
+        "tone":        "active, hopeful, practical, warm",
+    },
+    "片付け": {
+        "subject":     "a neatly organized Japanese vacant house room with cardboard boxes and cleaning items",
+        "objects":     "cardboard boxes, small broom shape, cleaning cloth, neatly stacked household items",
+        "support":     "clean room interior, soft window light, warm cream watercolor wash",
+        "composition": "horizontal watercolor scene, organized room interior, warm cream wash, watercolor fades into white edges, no border frame",
+        "avoid":       "not a portrait, no close-up face, no text, no logo, no numbers, not three-dimensional render",
+        "tone":        "organized, calm, clean, resolved",
+    },
+    "買取": {
+        "subject":     "a small Japanese house model next to a handshake and simple coin shapes on a desk",
+        "objects":     "small Japanese house model, two hands in a handshake gesture, plain round coin shapes, blank papers",
+        "support":     "warm amber watercolor wash, soft desk light, simple indoor setting",
+        "composition": "horizontal watercolor scene, house and handshake as main subjects, warm amber wash, watercolor fades into white edges, no border frame",
+        "avoid":       "not a portrait, no close-up face, no text, no logo, no numbers, not three-dimensional render",
+        "tone":        "trustworthy, organized, calm, reassuring",
+    },
+    "賃貸": {
+        "subject":     "a small Japanese house for rent with a small family group and a key nearby",
+        "objects":     "small Japanese house model, blank key set, small family figures in the distance, blank floor plan shape",
+        "support":     "warm amber watercolor wash, garden path, soft outdoor light",
+        "composition": "horizontal watercolor scene, house at center, small distant figures around, warm amber wash, watercolor fades into white edges, no border frame",
+        "avoid":       "no close-up face, not a portrait, no text, no logo, no numbers, not three-dimensional render",
+        "tone":        "warm, practical, trustworthy, organized",
+    },
+    "管理": {
+        "subject":     "a small Japanese vacant house with a calendar shape and inspection tools nearby",
+        "objects":     "small Japanese house model, simple calendar form, inspection clipboard without writing, simple tools",
+        "support":     "warm amber watercolor wash, neatly maintained surroundings, soft outdoor light",
+        "composition": "horizontal watercolor scene, house and maintenance tools prominent, warm amber wash, watercolor fades into white edges, no border frame",
+        "avoid":       "not a portrait, no close-up face, no text, no logo, no numbers, not three-dimensional render",
+        "tone":        "responsible, organized, calm, reliable",
+    },
+    "保険": {
+        "subject":     "a small Japanese house sheltered under a simple open umbrella shape",
+        "objects":     "small Japanese house model, simple open umbrella shape, plain round coin shapes, blank document form",
+        "support":     "warm cream watercolor wash, soft light, a few leaves or small plants",
+        "composition": "horizontal watercolor scene, house under umbrella as main subject, warm cream wash, watercolor fades into white edges, no border frame",
+        "avoid":       "not a portrait, no close-up face, no text, no logo, no numbers, not three-dimensional render",
+        "tone":        "safe, calm, reassuring, warm",
+    },
+    "民泊": {
+        "subject":     "a small inviting Japanese house with open door and a small traveler figure with luggage",
+        "objects":     "small Japanese house with open door, small traveler figure with suitcase, simple welcome mat",
+        "support":     "warm amber watercolor wash, garden path, soft outdoor light",
+        "composition": "horizontal watercolor scene, house and welcoming scene prominent, warm amber wash, watercolor fades into white edges, no border frame",
+        "avoid":       "no close-up face, not a portrait, no text, no logo, no numbers, not three-dimensional render",
+        "tone":        "welcoming, warm, organized, hopeful",
+    },
+    "駐車場": {
+        "subject":     "a simple parking area with a small car parked on a clean paved surface",
+        "objects":     "simple car shape, parking space lines on ground, simple low fence, plain round coin shapes",
+        "support":     "warm amber watercolor wash, soft outdoor light, small vacant lot feel",
+        "composition": "horizontal watercolor scene, parking area and car as main subjects, warm amber wash, watercolor fades into white edges, no border frame",
+        "avoid":       "not a portrait, no close-up face, no text, no logo, no numbers, not three-dimensional render",
+        "tone":        "practical, organized, calm, forward-looking",
+    },
+    "解決事例": {
+        "subject":     "a small restored Japanese house with a satisfied couple standing in front",
+        "objects":     "small Japanese house model, simple checkmark shape, small couple figures, green plants",
+        "support":     "warm amber watercolor wash, blue sky suggestion, soft outdoor light",
+        "composition": "horizontal watercolor scene, restored house and satisfied couple prominent, warm amber wash, watercolor fades into white edges, no border frame",
+        "avoid":       "no close-up face, not a portrait, no text, no logo, no numbers, not three-dimensional render",
+        "tone":        "resolved, warm, hopeful, reassuring",
+    },
+    "その他": {
+        "subject":     "a small traditional Japanese vacant house on a quiet calm street",
+        "objects":     "small Japanese house model, simple key shape, a few green leaves, blank clipboard",
+        "support":     "warm cream watercolor wash, soft natural light, simple surroundings",
+        "composition": "horizontal watercolor scene, house as main subject, warm cream wash, watercolor fades into white edges, no border frame",
+        "avoid":       "not a portrait, no close-up face, no text, no logo, no numbers, not three-dimensional render",
+        "tone":        "calm, warm, organized, reassuring",
+    },
+}
+
+# APIプロンプト preflight チェック用（誘発語リスト）
+_PROMPT_PREFLIGHT_WORDS = [
+    "editorial", "magazine", "thumbnail", "poster", "cover",
+    "eyecatch", "アイキャッチ", "記事", "タイトル", "日本語",
+    "portrait", "close-up face",
+]
+
+
+def _preflight_check_api_prompt(prompt: str) -> list[str]:
+    """APIプロンプトに誘発語が含まれていたら警告リストを返す。
+    'no X' / 'not X' / 'avoid' の否定文内は許容する。
+    """
+    warnings: list[str] = []
+    lower = prompt.lower()
+    for word in _PROMPT_PREFLIGHT_WORDS:
+        idx = lower.find(word.lower())
+        while idx != -1:
+            prefix = lower[max(0, idx - 10):idx]
+            if not any(neg in prefix for neg in ("no ", "not ", "avoid", "without")):
+                warnings.append(f"  ⚠  誘発語 '{word}' がAPIプロンプトに含まれています（否定文以外）")
+                break
+            idx = lower.find(word.lower(), idx + 1)
+    return warnings
 
 
 def load_file(path: Path) -> str:
@@ -364,88 +564,118 @@ def build_image_prompt(image_type: str, title: str) -> tuple[str, dict]:
 
 
 def build_api_prompt(title: str, metadata: dict) -> str:
-    """Imagen API に送る日本語自然文プロンプトを生成する。
-    変数名はAPIプロンプトに出さず、すべて情景描写として埋め込む。
-    成功ChatGPTプロンプトの役割設定・推論構造・感情的ゴールを踏襲する。
+    """Imagen API に送る英語 scene contract プロンプトを生成する。
+    誘発語（editorial/magazine/article/thumbnail など）を一切使わず、
+    視覚的な場面記述のみで構成する。
+    日本語の記事タイトルは API プロンプトに含めない。
+    カテゴリ別 scene contract から subject/objects/composition などを取得する。
     """
     category    = metadata.get("detected_category", "その他")
-    center_motif = metadata.get("center_motif", "")
-    supporting  = metadata.get("supporting_motifs", [])
-    layout      = metadata.get("layout_family", "central_storyboard")
-    density     = metadata.get("density", "medium")
     people_mode = metadata.get("people_mode", "none")
     allow_blank = metadata.get("allow_blank_documents", False)
 
-    layout_desc  = LAYOUT_JA.get(layout, "中央に主役モチーフを配置し、周辺に関連要素を自然に配置した構図")
-    density_desc = DENSITY_JA.get(density, "要素はやや多め、画面全体に情報が整理されて配置されている")
-    people_desc  = PEOPLE_JA.get(people_mode, "人物は必要に応じて登場させる")
-    support_str  = "・".join(supporting[:5]) if supporting else "関連する小物"
+    # scene contract の取得（カテゴリ固有 or フォールバック）
+    contract = CATEGORY_SCENE_CONTRACTS.get(category)
+    if contract:
+        subject     = contract["subject"]
+        objects_req = contract["objects"]
+        objects_sup = contract["support"]
+        composition = contract["composition"]
+        avoid_str   = contract["avoid"]
+        tone        = contract["tone"]
+    else:
+        # フォールバック: 既存の英語マッピングから生成
+        cat_en      = CATEGORY_EN.get(category, "vacant house")
+        center_motif = metadata.get("center_motif", "")
+        supporting   = metadata.get("supporting_motifs", [])
+        layout       = metadata.get("layout_family", "central_storyboard")
+        subject     = f"a small traditional Japanese vacant house with objects related to {cat_en}"
+        objects_req = f"small Japanese house model, {center_motif}" if center_motif else "small Japanese house model, house key"
+        objects_sup = ", ".join(supporting[:3]) if supporting else "warm watercolor background, soft light, simple props"
+        composition = LAYOUT_EN.get(layout, "centered horizontal composition, warm amber wash, watercolor fades into white edges, no border frame")
+        avoid_str   = "not a portrait, no close-up face, no text, no logo, no numbers, not three-dimensional rendering"
+        tone        = "calm, warm, organized, reassuring"
+
+    # 人物制約（自然文）
+    if people_mode in ("none", "hands_only"):
+        people_note = "No people or faces are visible in this scene"
+    else:
+        people_note = "Only small simple distant figures may appear if needed — no close-up faces, not a portrait, figures are always secondary to the objects and scene"
+
+    blank_note = "Simple blank papers and clipboards without any writing appear naturally as props." if allow_blank else ""
+
+    # api_scene がある場合はそれを使用（自然文・ラベルなし）
+    # ない場合はフィールドから自然文を組み立てる
+    if contract and "api_scene" in contract:
+        scene_prose = contract["api_scene"]
+    else:
+        # ラベルなしで自然文を組み立て
+        s   = subject if subject else "a small Japanese vacant house with related objects"
+        obj = objects_req if objects_req else ""
+        sup = objects_sup if objects_sup else ""
+        cmp = composition if composition else "centered horizontal composition, warm amber wash, watercolor fades into white edges"
+        scene_prose = f"{s}. {obj}. {sup}. {cmp}."
 
     lines = [
-        "あなたは、日本の情報メディア向けの最高峰の商用イラストレーターです。",
-        "日本の空き家情報メディア「アキカツ」の記事アイキャッチ画像を1枚生成してください。",
+        # ──── 共通スタイル宣言（誘発語なし・構図・色・線を強制） ────
+        "Wide 16:9 horizontal warm hand-drawn watercolor scene illustration.",
+        "Rich warm watercolor painting style with soft brush strokes and gentle color bleeding — not flat cartoon, not uniform vector style.",
+        "Moderately saturated warm color palette: warm amber, honey yellow, soft green, cream white, gentle brown, pale sky blue.",
+        "Clear colored-pencil and thin pen outlines with natural line weight variation, visible clearly even at small sizes.",
+        "White to warm cream base background — warm golden-amber watercolor fills the central area, fading softly into white at all outer edges.",
+        "No separate color patches, no blobs of unrelated color in the background.",
+        "No border, no frame, no card frame, no colored outer margin, no corner-rounded frame.",
+        "Moderately dense composition using the full wide horizontal canvas — not sparse, not a single isolated object, not a centered product photo.",
+        "Not photorealistic, not three-dimensional rendering, not CGI, not a flat cartoon, not a portrait.",
         "",
-        "【記事タイトル】",
-        title,
-        "",
-        "【カテゴリと描くシーン】",
-        f"カテゴリ：{category}",
-        f"このイラストの中心：「{center_motif}」",
-        f"周辺に配置する要素：{support_str}",
-        f"構図：{layout_desc}",
-        f"情報密度：{density_desc}",
-        f"人物の扱い：{people_desc}",
+        # ──── 場面描写（自然文、ラベルなし） ────
+        scene_prose,
+        f"{people_note}.",
     ]
 
-    if allow_blank:
-        lines.append("小道具：白紙の書類やクリップボードは文字なしの形のみで使用可。")
+    if blank_note:
+        lines.append(blank_note)
 
     lines += [
         "",
-        "【テイスト】",
-        "水彩絵の具で薄く塗ったような少しにじみのある手描きタッチ。鉛筆・色鉛筆・ペンで描いたやわらかい輪郭線。",
-        "写真風・リアル3D・CGにしない。上品で親しみやすい挿絵風。",
-        "背景は白〜薄い生成りベース。淡い水色・淡い黄色・薄い緑・やさしい茶色の水彩にじみをうっすら入れる。",
+        # ──── 禁止事項 ────
+        f"Carefully avoid: {avoid_str}.",
+        "No readable writing anywhere in the image — no letters, no kanji, no hiragana, no numbers, no symbols, no logos.",
+        "No border frame, no card frame, no colored outer margin.",
         "",
-        "【構図】",
-        "横長のアイキャッチ構図。余白を広く取りすぎず、主題要素をしっかり配置する。",
-        "記事一覧で並んだとき他記事と見分けがつきやすい1枚にする。",
-        "",
-        "【文字禁止ルール】",
-        "画像内のどこにも文字・数字・記号・ロゴを入れない。",
-        "コインは文字・記号のないシンプルな金属円盤として描く。",
-        "電卓は数字ボタン・画面表示を描かず、形だけで表現する。",
-        "書類・クリップボードは白紙または読めない横線のみ。看板やラベルは形だけ。",
-        "",
-        "【仕上がりの印象】",
-        "不安を煽るより「整理できそう」「読めば前に進めそう」という前向きな印象を与える。",
-        "記事タイトルを知らなくても、記事テーマがイラストで直感的に伝わる仕上がりにする。",
+        # ──── トーン ────
+        f"Overall impression: {tone}.",
     ]
 
     return "\n".join(lines)
 
 
 def build_fallback_prompt(title: str, metadata: dict) -> str:
-    """generated_images が空だった場合の短縮リトライプロンプト（日本語自然文）。
-    役割設定・中心シーン・テイスト・文字禁止だけを残した短縮版。
+    """generated_images が空だった場合の短縮リトライプロンプト。
+    英語 scene contract の短縮版。誘発語は使わない。
     """
     category    = metadata.get("detected_category", "その他")
-    center_motif = metadata.get("center_motif", "")
     people_mode = metadata.get("people_mode", "none")
     allow_blank = metadata.get("allow_blank_documents", False)
 
-    people_desc = PEOPLE_JA.get(people_mode, "人物は必要に応じて登場させる")
-    subject     = center_motif[:80] if center_motif else "日本の家と関連する小物"
-    blank_note  = "白紙の書類や形だけのクリップボードは使用可。" if allow_blank else ""
+    contract   = CATEGORY_SCENE_CONTRACTS.get(category)
+    subject    = contract["subject"] if contract else f"a small Japanese vacant house with {CATEGORY_EN.get(category, 'vacant house')} objects"
+    avoid_str  = contract["avoid"] if contract else "not a portrait, no close-up face, no text, no logo, not three-dimensional rendering"
+    no_people  = "no people, no face" if people_mode in ("none", "hands_only") else "no close-up face, not a portrait, small distant figures only"
+    blank_note = "Blank papers as props are allowed (no writing)." if allow_blank else ""
+
+    scene = contract.get("api_scene", subject) if contract else subject
 
     return "\n".join([
-        "あなたは日本の情報メディア向けの商用イラストレーターです。",
-        f"「{title}」のアイキャッチ画像を手描き水彩スタイルで生成してください。",
-        f"カテゴリ：{category}。描くシーン：{subject}。",
-        people_desc,
-        f"手描き水彩。薄い生成り背景。淡い水色・黄色・緑のにじみ。関連する小物を周囲に自然に配置。{blank_note}",
-        "画像内に文字・数字・記号・ロゴを入れない。コインは無地の金属円盤のみ。電卓は形のみ。",
-        "「整理できそう」「前に進めそう」という明るい印象にする。",
+        "Wide 16:9 horizontal warm hand-drawn watercolor scene. Rich warm colors, soft brush strokes, not flat cartoon. Not photorealistic, not three-dimensional rendering.",
+        f"{scene}.",
+        f"{no_people}.",
+        "Warm amber, soft green, cream, pale blue palette. Clear outlines visible at small sizes. Colors moderately saturated, not pale.",
+        "Smooth uniform warm cream background, watercolor fades gently into white at all edges. No color patches, no border frame, no card frame.",
+        blank_note,
+        f"Avoid: {avoid_str}.",
+        "No readable writing, no letters, no numbers, no logos anywhere in the image.",
+        "Calm, warm, organized, commercially polished watercolor impression.",
     ])
 
 
@@ -465,7 +695,10 @@ def _print_dry_run(
     print("\n=== DRY-RUN: 画像生成パラメータ確認 ===\n")
     if metadata:
         w = 20
-        print(f"  {'記事タイトル':<{w}}: {metadata.get('article_title', '-')}")
+        raw_title = metadata.get("article_title", "-")
+        title_theme = raw_title[:25] + "…" if len(raw_title) > 25 else raw_title
+        print(f"  {'記事タイトル':<{w}}: {raw_title}")
+        print(f"  {'変換後テーマ':<{w}}: {title_theme}")
         print(f"  {'検出カテゴリ':<{w}}: {metadata.get('detected_category', '-')}")
         kws = metadata.get("matched_keywords", [])
         print(f"  {'マッチキーワード':<{w}}: {', '.join(kws) if kws else '（なし）'}")
@@ -484,6 +717,15 @@ def _print_dry_run(
         print(f"  {'回避モチーフ':<{w}}: {', '.join(avoid[:4]) + (' …' if len(avoid) > 4 else '') if avoid else '-'}")
     print(f"  {'出力先（予定）':<20}: {output_path}")
     _print_post_checklist()
+    # preflight チェック
+    pf_warnings = _preflight_check_api_prompt(api_prompt)
+    if pf_warnings:
+        print("\n--- ⚠ Preflight チェック（誘発語検出） ---")
+        for w in pf_warnings:
+            print(w)
+        print("---")
+    else:
+        print("\n  ✓ Preflight チェック: 誘発語なし")
     print("\n--- API送信プロンプト（compact） ---")
     print(api_prompt)
     print("---")
