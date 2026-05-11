@@ -240,23 +240,23 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
         ),
     },
     "売買": {
-        "subject":     "a small Japanese house model next to a house key and blank registration papers on a simple desk",
-        "objects":     "small Japanese house model, old-fashioned house key, blank white papers, plain folder, simple pencil",
-        "support":     "blank clipboard in background, warm amber and cream tones, simple wooden desk texture",
-        "composition": "horizontal desk-view watercolor scene, house model and key prominent, papers and folder arranged around them, warm amber fills canvas, watercolor fades into white edges",
-        "avoid":       "not a portrait, no close-up face, no readable text, no logo, no numbers, not three-dimensional render, no for-sale sign text, no price tags",
+        "subject":     "a traditional Japanese vacant house in a garden with a homeowner and property advisor",
+        "objects":     "traditional Japanese house with tiled roof, house key, blank plain papers, garden path",
+        "support":     "garden trees, stepping stones, warm amber fallen leaves, green shrubs",
+        "composition": "horizontal garden-view watercolor scene, house visible left-center, people in garden, props scattered naturally, warm amber fills canvas, watercolor fades into white edges",
+        "avoid":       "not a portrait, no close-up face, no readable text, no logo, no numbers, not three-dimensional render, no for-sale sign text, no price tags, no door frame, no gateway framing",
         "tone":        "calm, trustworthy, organized, hopeful — the registration and handover process feels clear and manageable",
         "api_scene": (
             "Illustrated scene — hand-drawn ink-outline watercolor, NOT photorealistic. "
-            "A traditional Japanese house surrounded by green garden trees forms the setting. "
-            "A homeowner and property advisor stand at small scale (about 20% of image height), "
-            "one holding blank plain papers, the other gesturing toward the house. "
-            "A small house key and a small blank notepad rest on the garden path nearby — "
-            "small scene props, not isolated foreground objects. "
-            "A stone garden path winds through green plants and warm soft amber fallen leaves. "
-            "The scene is balanced and readable — house, people, key, and props "
-            "distributed across the canvas at natural, consistent scale. "
-            "Warm soft amber and golden tones fill the canvas; outermost edges dissolve to white."
+            "A traditional Japanese house with tiled roof and garden trees fills the left background — "
+            "the house stands openly in the scene, no door frame or gateway borders the composition. "
+            "A homeowner in a casual sweater and a property consultant in a light jacket with a clipboard "
+            "stand at about 25% of image height in the center garden, one gesturing toward the house. "
+            "A house key and a blank notepad rest on a flat stepping stone nearby — natural scene props. "
+            "Green shrubs, stepping stones, and warm amber fallen leaves cover the garden ground. "
+            "The scene spreads across the full canvas — house left-center, figures center, "
+            "garden path and props distributed naturally across the composition. "
+            "Rich warm amber and golden tones fill the canvas throughout; outermost edges dissolve to white."
         ),
     },
     "相続・生前対策": {
@@ -268,34 +268,38 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
         "tone":        "gentle, warm, organized, thoughtful",
         "api_scene": (
             "Illustrated scene — hand-drawn ink-outline watercolor, NOT photorealistic. "
-            "A traditional Japanese house with garden trees forms the warm background setting. "
-            "An elderly couple and an adult family member sit and stand together at small scale "
-            "(about 20-25% of image height), looking at a small house model on a garden table. "
-            "An adult holds a blank plain paper; a teacup and small potted plant rest on the table. "
-            "Garden stones, a warm amber path, and green plants fill the surrounding scene. "
-            "The scene is balanced and readable — house, family, and props "
-            "distributed across the canvas at natural, consistent scale. "
-            "Warm soft amber and golden tones fill the canvas; outermost edges dissolve to white."
+            "Wide garden view: a large traditional Japanese house with tiled roof fills most of the background. "
+            "Three small family members — elderly couple in casual sweaters and vests, adult child in light jacket — "
+            "stand together at about 20% of image height in the garden foreground, "
+            "gathered around a low garden table with a small house model and teacup. "
+            "All wearing modern everyday casual clothing — sweaters, vests, light jacket — not kimono. "
+            "The house dominates the background; figures are small relative to the overall garden scene. "
+            "Green garden trees, stepping stones, and warm amber ground fill the surroundings. "
+            "This is a wide establishing shot — the full house, full garden, and small figures "
+            "are all visible at once, not a close-up portrait of the people. "
+            "Rich warm amber and golden tones fill the canvas throughout; outermost edges dissolve to white."
         ),
     },
     "お金の手配": {
-        "subject":     "a small Japanese house model surrounded by coins, a calculator form, and blank planning documents on a desk",
-        "objects":     "small Japanese house model, plain round coin shapes, calculator form without readable numbers, blank planning paper, plain pencil, simple folder",
-        "support":     "warm amber and gold watercolor tones, cream paper whites, soft desk light",
-        "composition": "horizontal desk-view watercolor scene, house model and coins prominent, papers and folder arranged around them, warm amber and gold fills canvas, watercolor fades into white edges",
-        "avoid":       "not a portrait, no close-up face, no text anywhere, no numbers on coins, no price tags, no logo, not three-dimensional render",
+        "subject":     "a Japanese garden scene with a house, a consulting couple, and cost-related props",
+        "objects":     "traditional Japanese house, small house model, stacked coin shapes, blank calculator-form shape, blank planning papers",
+        "support":     "garden trees, stone path, warm amber ground, green plants",
+        "composition": "horizontal multi-zone watercolor scene: consulting figures left, house center-back, props right, warm amber fills canvas, watercolor fades into white edges",
+        "avoid":       "not a portrait, no close-up face, no text anywhere, no numbers on coins, no price tags, no logo, not three-dimensional render, no kimono, no traditional formal wear",
         "tone":        "calm, practical, reassuring, organized — cost planning and subsidy review feels manageable",
         "api_scene": (
             "Illustrated scene — hand-drawn ink-outline watercolor, NOT photorealistic. "
-            "A traditional Japanese house in a garden forms the warm background. "
-            "A homeowner and advisor sit together at small scale (about 20% of image height), "
-            "reviewing blank plain papers in a brief consultation. "
-            "A small house model and a few stacked coins are visible nearby in the scene. "
-            "A plain folder rests naturally in the setting. "
-            "Garden path, warm earth, and green plants fill the surroundings. "
-            "The scene is balanced and readable — house, people, and props "
-            "distributed across the canvas at natural, consistent scale. "
-            "Warm soft amber and cream tones fill the canvas; outermost edges dissolve to white."
+            "A traditional Japanese house in a garden forms the warm background at center. "
+            "On the left, a homeowner in a casual sweater and an advisor in a light jacket "
+            "sit at a small outdoor table at about 25% of image height, reviewing blank plain papers together. "
+            "Both wear modern casual everyday clothing — sweater, jacket, slacks — not kimono or formal suit. "
+            "In the center-background, the house with tiled roof is clearly visible with garden trees around it. "
+            "On the right, a small house model, a few stacked coin shapes, "
+            "and a blank calculator-form rest on a flat garden stone as natural props. "
+            "Garden stones, green shrubs, and warm amber ground fill the foreground. "
+            "The scene is balanced — consulting figures left, house center-back, props right — "
+            "all distributed across the full canvas at natural scale. "
+            "Rich warm amber and golden tones fill the canvas throughout; outermost edges dissolve to white."
         ),
     },
     "建築リフォーム": {
@@ -708,9 +712,10 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         people_note = "No human figures — the scene is conveyed through objects, setting, and atmosphere."
     else:
         people_note = (
-            "People appear at natural small-to-medium scale (about 15-28% of image height), "
+            "People appear at natural scale (about 20-30% of image height), "
             "visible as one element among the house, garden, and other props — "
             "in a brief consultation, work, or confirmation activity. "
+            "All figures in modern everyday casual clothing: sweater, light jacket, slacks. "
             "Shown in natural full-scene context, not filling the frame. "
             "People are part of the rich scene, not the primary subject."
         )
@@ -736,13 +741,16 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         "with warm watercolor fills — the style of a published Japanese commercial illustration.",
         "The full 16:9 canvas shows a balanced, readable scene: house clearly visible, "
         "people and props distributed across the canvas — all elements at natural, consistent scale.",
-        "People appear at about 15-25% of image height — small enough that the house, "
-        "garden, and props are equally prominent — one element among many in the scene.",
+        "People appear at about 20-30% of image height — present and readable, "
+        "but the house, garden, and props are equally prominent around them.",
+        "All human figures wear modern everyday casual clothing: sweater, light jacket, slacks, "
+        "casual shirt — not traditional kimono, not formal business suit.",
+        "No door frame, gate, or architectural opening frames or borders the scene composition.",
         "Props and small items appear at appropriate scale within the overall scene — "
         "visible but not dominant, placed naturally, not filling the frame.",
-        "Colors are warm but soft: gentle amber, pale cream, soft golden yellow, light green — "
-        "watercolor washes with a warm illustrated tone, not deeply saturated.",
-        "A pale cream and soft amber watercolor wash fills the background; "
+        "Colors are warm and moderately vivid: rich amber, golden yellow, warm cream, fresh green — "
+        "watercolor washes with a warm commercial illustration tone, not washed out and not overly dark.",
+        "A warm amber and golden watercolor wash fills the background throughout the canvas; "
         "only the very outermost edges dissolve gently into white.",
         "The composition is balanced and readable across the full canvas — "
         "no strong near/far perspective, no oval spotlight, no empty zones.",
@@ -786,15 +794,16 @@ def build_fallback_prompt(title: str, metadata: dict) -> str:
     if people_mode == "none":
         people_note = "No human figures — scene conveyed through objects and atmosphere."
     else:
-        people_note = "People at small-to-medium scale (15-28% of image height) as one element among house, garden, and props — not the primary focus."
+        people_note = "People at natural scale (20-30% of image height), modern casual clothing, as one element among house, garden, and props — not the primary focus."
 
     return "\n".join([
-        "Commercial hand-painted watercolor illustration: soft ink outlines, "
-        "warm soft watercolor washes. Hand-drawn, NOT photorealistic.",
-        "Balanced scene: house, people (15-25% of image height), props, environment — "
+        "Commercial hand-painted watercolor illustration: clear ink outlines, "
+        "warm vivid watercolor washes. Hand-drawn, NOT photorealistic.",
+        "Balanced scene: house, people (20-30% of image height), props, environment — "
         "distributed across the full 16:9 canvas at natural, consistent scale.",
-        "Warm soft colors — gentle amber, pale cream, soft golden yellow. "
-        "Pale cream and amber wash throughout; only the outermost edges dissolve to white.",
+        "All figures in modern casual clothing: sweater, light jacket, slacks — not kimono.",
+        "Warm vivid colors — rich amber, golden yellow, warm cream. "
+        "Warm amber and golden wash fills the background throughout; only the outermost edges dissolve to white.",
         f"{scene}.",
         people_note,
         blank_note,
