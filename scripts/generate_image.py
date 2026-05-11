@@ -215,9 +215,9 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
             "a blank notepad and pencil sit on a garden stone. "
             "Golden-orange autumn trees fill the upper canvas; "
             "stone path and amber fallen leaves spread across the ground. "
-            "The scene has natural depth — house and trees behind, "
-            "consultant and homeowners in the midground, tools across the foreground. "
-            "Warm amber and fresh green fill the canvas; outermost edges dissolve to white."
+            "The scene is balanced and readable — house, people, and tools "
+            "distributed across the canvas at natural, consistent scale. "
+            "Warm soft amber and fresh green fill the canvas; outermost edges dissolve to white."
         ),
     },
     "解体": {
@@ -234,9 +234,9 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
             "A blank white planning paper and a plain pencil lie on a flat surface in the scene. "
             "Small fresh green plant sprouts emerge from warm earth, suggesting renewal and new beginnings. "
             "Simple wooden boards and basic work tools are part of the surroundings. "
-            "The scene has natural depth — cleared land and warm surroundings in the background, "
-            "tools and props naturally placed throughout the setting. "
-            "Warm amber, earth brown, and soft cream fill the canvas; outermost edges dissolve to white."
+            "The scene is balanced and readable — house, tools, and props "
+            "distributed across the canvas at natural, consistent scale. "
+            "Warm soft amber, earth brown, and soft cream fill the canvas; outermost edges dissolve to white."
         ),
     },
     "売買": {
@@ -251,12 +251,11 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
             "A traditional Japanese house surrounded by green garden trees forms the setting. "
             "A homeowner and property advisor stand at small scale (about 20% of image height), "
             "one holding blank plain papers, the other gesturing toward the house. "
-            "An iron house key rests on a garden stone step nearby. "
-            "An open blank notepad and pencil lie on a flat stone surface. "
-            "A stone garden path winds through green plants and warm amber fallen leaves. "
-            "The scene has natural depth — house and trees behind, "
-            "people in the midground, key and papers close in the foreground. "
-            "Warm amber and golden tones fill the canvas; outermost edges dissolve to white."
+            "An iron house key and a blank notepad are naturally part of the scene nearby. "
+            "A stone garden path winds through green plants and warm soft amber fallen leaves. "
+            "The scene is balanced and readable — house, people, key, and props "
+            "distributed across the canvas at natural, consistent scale. "
+            "Warm soft amber and golden tones fill the canvas; outermost edges dissolve to white."
         ),
     },
     "相続・生前対策": {
@@ -273,9 +272,9 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
             "(about 20-25% of image height), looking at a small house model on a garden table. "
             "An adult holds a blank plain paper; a teacup and small potted plant rest on the table. "
             "Garden stones, a warm amber path, and green plants fill the surrounding scene. "
-            "The scene has natural depth — house and trees behind, "
-            "family naturally gathered around the garden table in the midground. "
-            "Warm amber and golden tones fill the canvas; outermost edges dissolve to white."
+            "The scene is balanced and readable — house, family, and props "
+            "distributed across the canvas at natural, consistent scale. "
+            "Warm soft amber and golden tones fill the canvas; outermost edges dissolve to white."
         ),
     },
     "お金の手配": {
@@ -288,15 +287,14 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
         "api_scene": (
             "Illustrated scene — hand-drawn ink-outline watercolor, NOT photorealistic. "
             "A traditional Japanese house in a garden forms the warm background. "
-            "A homeowner and advisor sit together at a low garden table at small scale (about 20% of image height), "
-            "reviewing blank plain papers spread between them on the table. "
-            "A small house model and a few stacked coins rest on one side of the table — "
-            "natural objects in a cost consultation setting. "
-            "A plain folder lies beside the table on the garden ground. "
-            "Garden path, warm earth, and green plants surround the scene. "
-            "The scene has natural depth — house and trees behind, "
-            "people at the table in the midground, garden ground in the foreground. "
-            "Warm amber and golden tones fill the canvas; outermost edges dissolve to white."
+            "A homeowner and advisor sit together at small scale (about 20% of image height), "
+            "reviewing blank plain papers in a brief consultation. "
+            "A small house model and a few stacked coins are visible nearby in the scene. "
+            "A plain folder rests naturally in the setting. "
+            "Garden path, warm earth, and green plants fill the surroundings. "
+            "The scene is balanced and readable — house, people, and props "
+            "distributed across the canvas at natural, consistent scale. "
+            "Warm soft amber and cream tones fill the canvas; outermost edges dissolve to white."
         ),
     },
     "建築リフォーム": {
@@ -330,9 +328,9 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
             "A small house model rests on a garden stone nearby. "
             "Blank papers and a few coins lie on a simple flat surface beside them. "
             "Garden trees, green shrubs, and a stone path fill the surroundings. "
-            "The scene has natural depth — house in the background, "
-            "people and props in the midground, garden ground in the foreground. "
-            "Warm amber and golden tones fill the canvas; outermost edges dissolve to white."
+            "The scene is balanced and readable — house, people, and props "
+            "distributed across the canvas at natural, consistent scale. "
+            "Warm soft amber and golden tones fill the canvas; outermost edges dissolve to white."
         ),
     },
     "賃貸": {
@@ -382,9 +380,9 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
             "A traditional Japanese house or building is visible in the background. "
             "A few coins rest on a flat stone ledge beside the lot — a natural prop suggesting income. "
             "Warm amber trees and soft natural light fill the surroundings. "
-            "The scene has natural depth — house behind, car and pavement in the midground, "
-            "fence and plants framing the sides, coins and stone in the near foreground. "
-            "Warm amber and golden tones fill the canvas; outermost edges dissolve to white."
+            "The scene is balanced and readable — house, car, fence, plants, and coins "
+            "distributed across the canvas at natural, consistent scale. "
+            "Warm soft amber and golden tones fill the canvas; outermost edges dissolve to white."
         ),
     },
     "解決事例": {
@@ -665,9 +663,9 @@ def _build_multi_zone_scene(
         f"In this scene, {primary} are naturally present in the environment."
         f"{secondary_part} "
         f"The surroundings include {env}, giving the scene warm texture and depth. "
-        "Near props, midground figures, and background house and garden "
-        "are all part of the same continuous illustrated world. "
-        "Warm amber tones throughout; outermost edges dissolve to white."
+        "The scene is balanced and readable — house, people, and props "
+        "distributed across the canvas at natural, consistent scale. "
+        "Warm soft amber tones throughout; outermost edges dissolve to white."
     ).strip()
 
 
@@ -731,24 +729,22 @@ def build_api_prompt(title: str, metadata: dict) -> str:
 
     lines = [
         # ──── A. Style Contract（全カテゴリ共通・固定） ────
-        "Hand-painted commercial illustration: confident ink outlines on every element, "
+        "Hand-painted commercial illustration: clear ink outlines on every element, "
         "filled with vivid warm watercolor. Hand-drawn style, NOT photorealistic.",
         "Every figure, building, tool, and prop has a distinct ink outline "
         "with warm watercolor fills — the style of a published Japanese commercial illustration.",
-        "The illustration depicts a rich, cohesive scene: people, house, garden, and props "
-        "all coexist naturally in the same warm illustrated environment, with depth and texture.",
-        "The full 16:9 canvas is filled with layered detail — foreground props near the viewer, "
-        "midground figures in natural activity, background house and setting extending to the edges.",
-        "People appear at about 20-30% of image height, engaged in a natural activity "
-        "(consultation, checking, pointing) — one element among house, garden, and props.",
-        "Props and tools appear as physical objects within the scene — resting on surfaces, "
-        "held in hands, or placed naturally in the setting — part of the scene, not floating icons.",
-        "Colors are vivid, warm, and saturated: rich amber, golden yellow, fresh green, warm brown. "
-        "Warm ambient light fills the scene with depth and a welcoming atmosphere.",
-        "A warm amber and cream watercolor wash fills the background; "
+        "The full 16:9 canvas shows a balanced, readable scene: house clearly visible, "
+        "people and props distributed across the canvas — all elements at natural, consistent scale.",
+        "People appear at about 15-25% of image height — small enough that the house, "
+        "garden, and props are equally prominent — one element among many in the scene.",
+        "Props and small items appear at appropriate scale within the overall scene — "
+        "visible but not dominant, placed naturally, not filling the frame.",
+        "Colors are warm but soft: gentle amber, pale cream, soft golden yellow, light green — "
+        "watercolor washes with a warm illustrated tone, not deeply saturated.",
+        "A pale cream and soft amber watercolor wash fills the background; "
         "only the very outermost edges dissolve gently into white.",
-        "The composition spreads across the full canvas — "
-        "no oval spotlight, no single centered subject, no empty zones.",
+        "The composition is balanced and readable across the full canvas — "
+        "no strong near/far perspective, no oval spotlight, no empty zones.",
         "Documents and papers are blank plain sheets — physical pages on surfaces or in hands, "
         "with no writing, marks, printed content, or symbols of any kind.",
         # ──── C. Safety（Scene Contractより前に配置し優先度を上げる） ────
@@ -792,12 +788,12 @@ def build_fallback_prompt(title: str, metadata: dict) -> str:
         people_note = "People at small-to-medium scale (15-28% of image height) as one element among house, garden, and props — not the primary focus."
 
     return "\n".join([
-        "Hand-painted commercial illustration: ink outlines on every element, "
-        "vivid warm watercolor fills. Hand-drawn, NOT photorealistic.",
-        "Multi-element scene: house, people (20-30% of image height), tools, environment — "
-        "distributed across left, center, right of the full 16:9 canvas.",
-        "Vivid warm colors — rich amber, golden yellow, fresh green. "
-        "Amber wash throughout; only the outermost edges dissolve to white.",
+        "Commercial hand-painted watercolor illustration: soft ink outlines, "
+        "warm soft watercolor washes. Hand-drawn, NOT photorealistic.",
+        "Balanced scene: house, people (15-25% of image height), props, environment — "
+        "distributed across the full 16:9 canvas at natural, consistent scale.",
+        "Warm soft colors — gentle amber, pale cream, soft golden yellow. "
+        "Pale cream and amber wash throughout; only the outermost edges dissolve to white.",
         f"{scene}.",
         people_note,
         blank_note,
