@@ -208,7 +208,7 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
             "Illustrated scene — hand-drawn ink-outline watercolor, NOT photorealistic. "
             "A Japanese residential garden with a traditional house and freshly trimmed trees in the background. "
             "A garden consultant in work jacket and yellow safety helmet stands at small scale "
-            "(about 20% of image height), showing a blank clipboard to a homeowner couple nearby. "
+            "(about 15% of image height), showing a blank clipboard to a homeowner couple nearby. "
             "A work truck is parked beside the garden. "
             "Pruning shears and gardening gloves lie on the stone garden path. "
             "A bundle of cut branches rests near a trimmed hedge; "
@@ -250,10 +250,10 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
             "Illustrated scene — hand-drawn ink-outline watercolor, NOT photorealistic. "
             "A traditional Japanese house with tiled roof and garden trees fills the left background — "
             "the house stands openly in the scene, no door frame or gateway borders the composition. "
-            "A homeowner in a casual sweater and a property consultant in a light jacket with a clipboard "
-            "stand at about 25% of image height in the center garden, one gesturing toward the house. "
-            "A house key and a blank notepad rest on a flat stepping stone nearby — natural scene props. "
-            "Green shrubs, stepping stones, and warm amber fallen leaves cover the garden ground. "
+            "A homeowner in a casual sweater and a property consultant in a light jacket "
+            "stand at about 15% of image height in the center garden — small figures in a wide scene. "
+            "A house key and a blank notepad rest flat on a stepping stone — small grounded props, not floating. "
+            "Green shrubs, stepping stones, and warm amber fallen leaves line the garden ground. "
             "The scene spreads across the full canvas — house left-center, figures center, "
             "garden path and props distributed naturally across the composition. "
             "Rich warm amber and golden tones fill the canvas throughout; outermost edges dissolve to white."
@@ -269,14 +269,14 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
         "api_scene": (
             "Illustrated scene — hand-drawn ink-outline watercolor, NOT photorealistic. "
             "Wide garden view: a large traditional Japanese house with tiled roof fills most of the background. "
-            "Three small family members — elderly couple in casual sweaters and vests, adult child in light jacket — "
-            "stand together at about 20% of image height in the garden foreground, "
-            "gathered around a low garden table with a small house model and teacup. "
-            "All wearing modern everyday casual clothing — sweaters, vests, light jacket — not kimono. "
-            "The house dominates the background; figures are small relative to the overall garden scene. "
+            "Three small figures — elderly couple in casual sweaters and vests, adult child in a light jacket — "
+            "stand at about 12-15% of image height near a low garden table in the foreground. "
+            "Small house model and teacup on the table. "
+            "Modern casual clothing — sweaters, vests, light jacket — not kimono. "
+            "The house dominates the background; figures are small elements in the wide garden scene. "
             "Green garden trees, stepping stones, and warm amber ground fill the surroundings. "
             "This is a wide establishing shot — the full house, full garden, and small figures "
-            "are all visible at once, not a close-up portrait of the people. "
+            "are all visible at once, not a single-person close-up, not a face-focused image. "
             "Rich warm amber and golden tones fill the canvas throughout; outermost edges dissolve to white."
         ),
     },
@@ -290,9 +290,9 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
         "api_scene": (
             "Illustrated scene — hand-drawn ink-outline watercolor, NOT photorealistic. "
             "A traditional Japanese house in a garden forms the warm background at center. "
-            "On the left, a homeowner in a casual sweater and an advisor in a light jacket "
-            "sit at a small outdoor table at about 25% of image height, reviewing blank plain papers together. "
-            "Both wear modern casual everyday clothing — sweater, jacket, slacks — not kimono or formal suit. "
+            "On the left, two small figures — a homeowner in a casual sweater and an advisor in a light jacket — "
+            "sit at a small outdoor table at about 15% of image height, reviewing blank plain papers. "
+            "Modern casual clothing — sweater, jacket, slacks — not kimono or formal suit. "
             "In the center-background, the house with tiled roof is clearly visible with garden trees around it. "
             "On the right, a small house model, a few stacked coin shapes, "
             "and a blank calculator-form rest on a flat garden stone as natural props. "
@@ -433,6 +433,12 @@ _PREFLIGHT_ALLOWED_PHRASES = [
     "ink-outline watercolor.",
     # 商用イラスト表現（editorial の代替）
     "commercial illustration",
+    # 写真化防止ロック（否定文として安全に使用・長いフレーズを先に並べて部分一致を防ぐ）
+    "not a portrait photograph",    # longer first: prevents "not a portrait" matching inside this
+    "not a photo",
+    "not a portrait",
+    "no chest-up business portrait",
+    "no single-person hero portrait",
 ]
 
 
@@ -712,12 +718,11 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         people_note = "No human figures — the scene is conveyed through objects, setting, and atmosphere."
     else:
         people_note = (
-            "People appear at natural scale (about 20-30% of image height), "
-            "visible as one element among the house, garden, and other props — "
-            "in a brief consultation, work, or confirmation activity. "
+            "People are small full-body or three-quarter figures — 12-22% of image height — "
+            "NOT a portrait, NOT a close-up face. "
+            "No single centered adult hero — house and garden dominate visually. "
             "All figures in modern everyday casual clothing: sweater, light jacket, slacks. "
-            "Shown in natural full-scene context, not filling the frame. "
-            "People are part of the rich scene, not the primary subject."
+            "People are supporting elements in a wide illustrated scene, not the main subject."
         )
 
     blank_note = "Simple blank papers and clipboards appear naturally as props." if allow_blank else ""
@@ -734,6 +739,13 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         )
 
     lines = [
+        # ──── A0. Style Lock（写真化防止・最優先） ────
+        "This is a hand-drawn ink-outline watercolor illustration — "
+        "NOT a photo, NOT a portrait photograph, NOT a realistic human face render. "
+        "Every element has clear flat ink outlines with flat watercolor fills — "
+        "the look of a published Japanese commercial picture book illustration, not a camera image.",
+        "No realistic skin texture, no selfie, no single-person hero portrait, "
+        "no chest-up business portrait, no close-up face, no camera-lens look.",
         # ──── A. Style Contract（全カテゴリ共通・固定） ────
         "Hand-painted commercial illustration: clear ink outlines on every element, "
         "filled with vivid warm watercolor. Hand-drawn style, NOT photorealistic.",
@@ -741,13 +753,13 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         "with warm watercolor fills — the style of a published Japanese commercial illustration.",
         "The full 16:9 canvas shows a balanced, readable scene: house clearly visible, "
         "people and props distributed across the canvas — all elements at natural, consistent scale.",
-        "People appear at about 20-30% of image height — present and readable, "
-        "but the house, garden, and props are equally prominent around them.",
+        "People are small full-body figures — 12-22% of image height — supporting elements; "
+        "house, garden, and props remain more visually dominant than any person.",
         "All human figures wear modern everyday casual clothing: sweater, light jacket, slacks, "
         "casual shirt — not traditional kimono, not formal business suit.",
         "No door frame, gate, or architectural opening frames or borders the scene composition.",
         "Props and small items appear at appropriate scale within the overall scene — "
-        "visible but not dominant, placed naturally, not filling the frame.",
+        "visible but not dominant, placed naturally resting on surfaces, not floating.",
         "Colors are warm and moderately vivid: rich amber, golden yellow, warm cream, fresh green — "
         "watercolor washes with a warm commercial illustration tone, not washed out and not overly dark.",
         "A warm amber and golden watercolor wash fills the background throughout the canvas; "
@@ -794,12 +806,20 @@ def build_fallback_prompt(title: str, metadata: dict) -> str:
     if people_mode == "none":
         people_note = "No human figures — scene conveyed through objects and atmosphere."
     else:
-        people_note = "People at natural scale (20-30% of image height), modern casual clothing, as one element among house, garden, and props — not the primary focus."
+        people_note = (
+            "People are small full-body figures — 12-22% of image height — "
+            "NOT a portrait, NOT a close-up face. "
+            "Supporting elements in the scene; house and garden remain visually dominant."
+        )
 
     return "\n".join([
-        "Commercial hand-painted watercolor illustration: clear ink outlines, "
-        "warm vivid watercolor washes. Hand-drawn, NOT photorealistic.",
-        "Balanced scene: house, people (20-30% of image height), props, environment — "
+        "Hand-drawn ink-outline watercolor illustration — "
+        "NOT a photo, NOT a portrait photograph, NOT a realistic human face render. "
+        "Clear flat ink outlines with flat watercolor fills throughout — "
+        "the look of a published Japanese commercial picture book, not a camera image.",
+        "No realistic skin texture, no selfie, no single-person hero portrait, "
+        "no chest-up business portrait, no close-up face.",
+        "Balanced illustrated scene: house, small figures (12-22% of image height), props — "
         "distributed across the full 16:9 canvas at natural, consistent scale.",
         "All figures in modern casual clothing: sweater, light jacket, slacks — not kimono.",
         "Warm vivid colors — rich amber, golden yellow, warm cream. "
