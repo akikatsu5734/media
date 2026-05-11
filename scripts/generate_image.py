@@ -225,13 +225,13 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
         "avoid":       "not a portrait, no close-up face, no text, no logo, no numbers, not three-dimensional render, not a horror scene, no collapsing building, no warning sign text, no disaster imagery",
         "tone":        "calm, resolved, practical, forward-looking — demolition as a new beginning",
         "api_scene": (
-            "A small traditional Japanese vacant house model stands as the central focus of a calm planning scene. "
-            "A bright yellow safety helmet rests beside the house, together with a pair of work gloves placed "
-            "neatly on the ground. A blank white planning paper and a plain pencil lie nearby on a simple surface. "
-            "Small fresh green plant sprouts emerge from clean warm earth in the foreground, suggesting renewal and "
-            "a new beginning. Simple wooden boards and a pair of basic work tools complete the background. Warm "
-            "amber, earth brown, and soft cream tones fill the composition, with gentle green sprouts and white "
-            "paper providing natural color contrast."
+            "Illustrated scene — hand-drawn ink-outline watercolor, NOT photorealistic. "
+            "Background: simple vacant land with a traditional Japanese house and wooden boards nearby. "
+            "Left area: a bright yellow safety helmet and a pair of work gloves placed on the ground. "
+            "Right area: a blank white planning paper and a plain pencil resting on a flat surface. "
+            "Foreground: small fresh green plant sprouts emerging from clean warm earth, suggesting renewal. "
+            "Elements spread across left, center, right, and foreground zones. "
+            "Warm amber, earth brown, and soft cream tones fill the canvas; outermost edges dissolve to white."
         ),
     },
     "売買": {
@@ -260,6 +260,17 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
         "composition": "horizontal watercolor scene, small simple figures around a table, house model prominent, warm amber wash, watercolor fades into white edges, no border frame",
         "avoid":       "no close-up face, not a portrait, no text, no logo, no numbers, not three-dimensional render",
         "tone":        "gentle, warm, organized, thoughtful",
+        "api_scene": (
+            "Illustrated scene — hand-drawn ink-outline watercolor, NOT photorealistic. "
+            "Background: a traditional Japanese house with garden trees fully visible. "
+            "Left area: an elderly couple at small scale (about 20% of image height), "
+            "seated in a garden, looking at a small house model placed on a garden table. "
+            "Right area: an adult child holding a blank plain paper; "
+            "a teacup and a small potted plant on the garden table nearby. "
+            "Foreground: warm amber garden path, green grass, garden stones, soft natural light. "
+            "Elements spread across left, center, right, foreground, and background. "
+            "Warm amber and golden tones fill the canvas; outermost edges dissolve to white."
+        ),
     },
     "お金の手配": {
         "subject":     "a small Japanese house model surrounded by coins, a calculator form, and blank planning documents on a desk",
@@ -269,15 +280,14 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
         "avoid":       "not a portrait, no close-up face, no text anywhere, no numbers on coins, no price tags, no logo, not three-dimensional render",
         "tone":        "calm, practical, reassuring, organized — cost planning and subsidy review feels manageable",
         "api_scene": (
-            "A rich illustrated scene depicting a subsidy and cost planning process. "
-            "Center: a small Japanese house model and plain round coin shapes arranged naturally — "
-            "the cost planning context as a scene element, not the sole focus. "
-            "Left or center-left: a homeowner and advisor are seated in brief consultation "
-            "(small scale, about 20% of image height) — blank papers between them on a simple surface. "
-            "Right: a calculator form without readable numbers and a plain folder "
-            "rest as small natural planning props. "
-            "Warm amber and cream tones distributed evenly throughout. "
-            "Elements appear near all four canvas edges; only the very borders fade softly to white."
+            "Illustrated scene — hand-drawn ink-outline watercolor, NOT photorealistic. "
+            "Background: a traditional Japanese house surrounded by garden trees. "
+            "Center: a small Japanese house model and plain round coin shapes as scene elements. "
+            "Left area: a homeowner and advisor at small scale (about 20% of image height), "
+            "blank papers between them on a simple surface. "
+            "Right area: a plain calculator shape and a plain folder as planning props. "
+            "Foreground: warm amber garden path, earth ground, soft natural light. "
+            "Warm amber and cream tones distributed evenly; outermost edges dissolve to white."
         ),
     },
     "建築リフォーム": {
@@ -314,7 +324,7 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
     },
     "管理": {
         "subject":     "a small Japanese vacant house with a calendar shape and inspection tools nearby",
-        "objects":     "small Japanese house model, simple calendar form, inspection clipboard without writing, simple tools",
+        "objects":     "small Japanese house model, blank calendar grid shape, blank clipboard, simple tools",
         "support":     "warm amber watercolor wash, neatly maintained surroundings, soft outdoor light",
         "composition": "horizontal watercolor scene, house and maintenance tools prominent, warm amber wash, watercolor fades into white edges, no border frame",
         "avoid":       "not a portrait, no close-up face, no text, no logo, no numbers, not three-dimensional render",
@@ -322,7 +332,7 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
     },
     "保険": {
         "subject":     "a small Japanese house sheltered under a simple open umbrella shape",
-        "objects":     "small Japanese house model, simple open umbrella shape, plain round coin shapes, blank document form",
+        "objects":     "small Japanese house model, simple open umbrella shape, plain round coin shapes, blank plain paper sheet",
         "support":     "warm cream watercolor wash, soft light, a few leaves or small plants",
         "composition": "horizontal watercolor scene, house under umbrella as main subject, warm cream wash, watercolor fades into white edges, no border frame",
         "avoid":       "not a portrait, no close-up face, no text, no logo, no numbers, not three-dimensional render",
@@ -380,6 +390,13 @@ _PROMPT_PREFLIGHT_WORDS = [
 _PREFLIGHT_ALLOWED_PHRASES = [
     "no readable text", "blank papers", "no numbers", "no symbols", "no logos",
     "no letters", "no kanji", "no hiragana",
+    # スタイルロック用途での使用を許可（否定語付きで使われるため問題なし）
+    "not photorealistic",
+    "hand-drawn style, not photorealistic",
+    "ink-outline watercolor, not photorealistic",
+    "ink-outline watercolor.",
+    # 商用イラスト表現（editorial の代替）
+    "commercial illustration",
 ]
 
 
@@ -584,6 +601,38 @@ def build_image_prompt(image_type: str, title: str) -> tuple[str, dict]:
     return combined, metadata
 
 
+def _build_multi_zone_scene(
+    subject: str,
+    objects_req: str,
+    objects_sup: str,
+) -> str:
+    """カテゴリ固有 api_scene がない場合の多ゾーン scene description を生成する。
+
+    subject     → background zone（家・物件の外観など）
+    objects_req → left / right zone（前半・後半で分配）
+    objects_sup → foreground / supporting zone（背景色・地面・補助要素）
+    """
+    bg = subject.strip().rstrip(".")
+    obj_parts = [o.strip() for o in objects_req.split(",") if o.strip()]
+    sup_parts = [o.strip() for o in objects_sup.split(",") if o.strip()]
+
+    left_items  = ", ".join(obj_parts[:2]) if obj_parts else "scene props"
+    right_items = ", ".join(obj_parts[2:]) if len(obj_parts) > 2 else ""
+    fg_items    = ", ".join(sup_parts[:3]) if sup_parts else "natural garden ground"
+
+    right_zone = f"Right area: {right_items}. " if right_items else ""
+
+    return (
+        "Illustrated scene — hand-drawn ink-outline watercolor. "
+        f"Background: {bg}. "
+        f"Left area: {left_items}. "
+        f"{right_zone}"
+        f"Foreground: {fg_items}. "
+        "Elements spread across left, center, right, foreground, and background. "
+        "Warm amber tones throughout; outermost edges dissolve to white."
+    ).strip()
+
+
 def build_api_prompt(title: str, metadata: dict) -> str:
     """Imagen API に送る英語 scene contract プロンプトを生成する。
     誘発語（editorial/magazine/article/thumbnail など）を一切使わず、
@@ -635,18 +684,19 @@ def build_api_prompt(title: str, metadata: dict) -> str:
     if contract and "api_scene" in contract:
         scene_prose = contract["api_scene"]
     else:
-        s   = subject if subject else "a small Japanese vacant house with related objects"
-        obj = objects_req if objects_req else ""
-        sup = objects_sup if objects_sup else ""
-        cmp = composition if composition else "centered horizontal composition, warm amber wash, watercolor fades into white edges"
-        scene_prose = f"{s}. {obj}. {sup}. {cmp}."
+        # 多ゾーン統合型テンプレートで scene_prose を構築
+        scene_prose = _build_multi_zone_scene(
+            subject     = subject     if subject     else "a small Japanese vacant house",
+            objects_req = objects_req if objects_req else "house key, blank clipboard",
+            objects_sup = objects_sup if objects_sup else "warm amber garden, natural surroundings",
+        )
 
     lines = [
         # ──── A. Style Contract（全カテゴリ共通・固定） ────
         "Hand-painted commercial illustration: clear ink outlines on every element, "
         "filled with vivid warm watercolor. Hand-drawn style, NOT photorealistic.",
         "Every figure, building, tool, and prop has a distinct ink outline "
-        "with warm watercolor fills — the style of a published Japanese editorial illustration.",
+        "with warm watercolor fills — the style of a published Japanese commercial illustration.",
         "The full 16:9 canvas is filled with multiple elements in different areas: "
         "house and environment in the background, people at small-to-medium scale in the middle, "
         "tools and documents in the foreground — all simultaneously visible.",
