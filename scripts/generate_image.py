@@ -374,6 +374,18 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
         "composition": "horizontal watercolor scene, parking area and car as main subjects, warm amber wash, watercolor fades into white edges, no border frame",
         "avoid":       "not a portrait, no close-up face, no text, no logo, no numbers, not three-dimensional render",
         "tone":        "practical, organized, calm, forward-looking",
+        "api_scene": (
+            "Illustrated scene — hand-drawn ink-outline watercolor. "
+            "A small vacant lot converted into a tidy parking area. "
+            "A car is parked neatly on a clean paved surface with simple ground lane markings. "
+            "A low wooden fence borders the lot; green shrubs grow along the fence line. "
+            "A traditional Japanese house or building is visible in the background. "
+            "A few coins rest on a flat stone ledge beside the lot — a natural prop suggesting income. "
+            "Warm amber trees and soft natural light fill the surroundings. "
+            "The scene has natural depth — house behind, car and pavement in the midground, "
+            "fence and plants framing the sides, coins and stone in the near foreground. "
+            "Warm amber and golden tones fill the canvas; outermost edges dissolve to white."
+        ),
     },
     "解決事例": {
         "subject":     "a small restored Japanese house with a satisfied couple standing in front",
