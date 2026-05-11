@@ -287,15 +287,16 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
         "tone":        "calm, practical, reassuring, organized — cost planning and subsidy review feels manageable",
         "api_scene": (
             "Illustrated scene — hand-drawn ink-outline watercolor, NOT photorealistic. "
-            "A traditional Japanese house in a garden setting forms the background. "
-            "A homeowner and advisor sit together at small scale (about 20% of image height), "
-            "discussing with blank plain papers between them on a simple surface. "
-            "A small house model rests on the surface nearby, naturally part of the scene. "
-            "Plain round coin shapes and a plain folder are placed in the setting as natural props. "
-            "The garden path, warm earth, and surrounding garden fill the scene. "
-            "The scene has natural depth — house in the background, "
-            "people and props naturally placed throughout the warm setting. "
-            "Warm amber and cream tones fill the canvas; outermost edges dissolve to white."
+            "A traditional Japanese house in a garden forms the warm background. "
+            "A homeowner and advisor sit together at a low garden table at small scale (about 20% of image height), "
+            "reviewing blank plain papers spread between them on the table. "
+            "A small house model and a few stacked coins rest on one side of the table — "
+            "natural objects in a cost consultation setting. "
+            "A plain folder lies beside the table on the garden ground. "
+            "Garden path, warm earth, and green plants surround the scene. "
+            "The scene has natural depth — house and trees behind, "
+            "people at the table in the midground, garden ground in the foreground. "
+            "Warm amber and golden tones fill the canvas; outermost edges dissolve to white."
         ),
     },
     "建築リフォーム": {
@@ -316,15 +317,27 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
     },
     "買取": {
         "subject":     "a small Japanese house model next to a handshake and simple coin shapes on a desk",
-        "objects":     "small Japanese house model, two hands in a handshake gesture, plain round coin shapes, blank papers",
+        "objects":     "small Japanese house model, two people shaking hands in greeting, a few stacked coins on a surface, blank papers",
         "support":     "warm amber watercolor wash, soft desk light, simple indoor setting",
         "composition": "horizontal watercolor scene, house and handshake as main subjects, warm amber wash, watercolor fades into white edges, no border frame",
         "avoid":       "not a portrait, no close-up face, no text, no logo, no numbers, not three-dimensional render",
         "tone":        "trustworthy, organized, calm, reassuring",
+        "api_scene": (
+            "Illustrated scene — hand-drawn ink-outline watercolor, NOT photorealistic. "
+            "A traditional Japanese house with garden trees forms the warm background setting. "
+            "A homeowner and a property advisor shake hands warmly at small scale (about 20% of image height), "
+            "standing in the garden in front of the house. "
+            "A small house model rests on a garden stone nearby. "
+            "Blank papers and a few coins lie on a simple flat surface beside them. "
+            "Garden trees, green shrubs, and a stone path fill the surroundings. "
+            "The scene has natural depth — house in the background, "
+            "people and props in the midground, garden ground in the foreground. "
+            "Warm amber and golden tones fill the canvas; outermost edges dissolve to white."
+        ),
     },
     "賃貸": {
         "subject":     "a small Japanese house for rent with a small family group and a key nearby",
-        "objects":     "small Japanese house model, blank key set, small family figures in the distance, blank floor plan shape",
+        "objects":     "small Japanese house model, blank key set, small family figures in the distance, blank plain papers",
         "support":     "warm amber watercolor wash, garden path, soft outdoor light",
         "composition": "horizontal watercolor scene, house at center, small distant figures around, warm amber wash, watercolor fades into white edges, no border frame",
         "avoid":       "no close-up face, not a portrait, no text, no logo, no numbers, not three-dimensional render",
@@ -348,7 +361,7 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
     },
     "民泊": {
         "subject":     "a small inviting Japanese house with open door and a small traveler figure with luggage",
-        "objects":     "small Japanese house with open door, small traveler figure with suitcase, simple welcome mat",
+        "objects":     "small Japanese house with open door, small traveler figure with suitcase, garden path to the entrance",
         "support":     "warm amber watercolor wash, garden path, soft outdoor light",
         "composition": "horizontal watercolor scene, house and welcoming scene prominent, warm amber wash, watercolor fades into white edges, no border frame",
         "avoid":       "no close-up face, not a portrait, no text, no logo, no numbers, not three-dimensional render",
