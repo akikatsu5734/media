@@ -2,8 +2,18 @@
   "categories": {
     "解決事例": {
       "priority": 1,
-      "primary_keywords": ["解決事例", "成功事例", "対応事例", "体験談"],
-      "keywords": ["事例", "ケース", "実例", "体験"],
+      "primary_keywords": [
+        "解決事例",
+        "成功事例",
+        "対応事例",
+        "体験談"
+      ],
+      "keywords": [
+        "事例",
+        "ケース",
+        "実例",
+        "体験"
+      ],
       "reader_concerns": [
         "自分のケースでも同じように解決できるか不安",
         "どう対処すればよいか具体的なイメージが持てない"
@@ -13,15 +23,46 @@
         "手入れされた庭と落ち着いた家の外観",
         "すっきりした室内と窓から差し込む朝の光"
       ],
-      "supporting_motifs": ["青空", "穏やかな光", "緑の木々", "整えられた庭"],
-      "avoid_motifs": ["ビフォーアフターの左右分割", "廃墟風の暗い家", "書類テキスト", "判子・印鑑"],
-      "composition_patterns": ["single_scene", "foreground_background", "center_object_cluster"],
-      "fallback_center_motif": "穏やかな光に包まれた整理された空き家の外観"
+      "supporting_motifs": [
+        "青空",
+        "穏やかな光",
+        "緑の木々",
+        "整えられた庭"
+      ],
+      "avoid_motifs": [
+        "ビフォーアフターの左右分割",
+        "廃墟風の暗い家",
+        "書類テキスト",
+        "判子・印鑑"
+      ],
+      "composition_patterns": [
+        "single_scene",
+        "foreground_background",
+        "center_object_cluster"
+      ],
+      "fallback_center_motif": "穏やかな光に包まれた整理された空き家の外観",
+      "layout_family": "infographic_scene",
+      "density": "medium",
+      "people_mode": "up_to_2",
+      "allow_blank_documents": true,
+      "allow_blank_signs": false,
+      "allow_ui_like_props": false,
+      "visual_style_profile": "public_card_v1"
     },
     "買取": {
       "priority": 2,
-      "primary_keywords": ["買取", "即買取", "不動産買取", "空き家買取", "訳あり買取", "現金化"],
-      "keywords": ["買い取り", "引取"],
+      "primary_keywords": [
+        "買取",
+        "即買取",
+        "不動産買取",
+        "空き家買取",
+        "訳あり買取",
+        "現金化"
+      ],
+      "keywords": [
+        "買い取り",
+        "引取"
+      ],
       "reader_concerns": [
         "適正価格で買い取ってもらえるか不安",
         "手続きが複雑で時間がかかりそう"
@@ -31,15 +72,49 @@
         "すっきりした空き家外観と青空",
         "家のシルエットと穏やかな朝の光"
       ],
-      "supporting_motifs": ["青空", "緑の葉", "穏やかな光", "整えられた玄関"],
-      "avoid_motifs": ["現金・紙幣", "価格タグ", "SOLD看板", "契約書テキスト", "査定額表示", "看板テキスト"],
-      "composition_patterns": ["single_scene", "center_object_cluster", "foreground_background"],
-      "fallback_center_motif": "穏やかな光に包まれた空き家の外観と静かな庭"
+      "supporting_motifs": [
+        "青空",
+        "緑の葉",
+        "穏やかな光",
+        "整えられた玄関"
+      ],
+      "avoid_motifs": [
+        "現金・紙幣",
+        "価格タグ",
+        "SOLD看板",
+        "契約書テキスト",
+        "査定額表示",
+        "看板テキスト"
+      ],
+      "composition_patterns": [
+        "single_scene",
+        "center_object_cluster",
+        "foreground_background"
+      ],
+      "fallback_center_motif": "穏やかな光に包まれた空き家の外観と静かな庭",
+      "layout_family": "central_storyboard",
+      "density": "medium_high",
+      "people_mode": "up_to_2",
+      "allow_blank_documents": true,
+      "allow_blank_signs": false,
+      "allow_ui_like_props": false,
+      "visual_style_profile": "public_card_v1"
     },
     "庭木剪定": {
       "priority": 3,
-      "primary_keywords": ["庭木剪定", "庭木", "剪定", "草刈り", "庭手入れ"],
-      "keywords": ["植木", "雑草", "生垣", "庭の手入れ"],
+      "primary_keywords": [
+        "庭木剪定",
+        "庭木",
+        "剪定",
+        "草刈り",
+        "庭手入れ"
+      ],
+      "keywords": [
+        "植木",
+        "雑草",
+        "生垣",
+        "庭の手入れ"
+      ],
       "reader_concerns": [
         "どこまで剪定すればよいか基準が分からない",
         "業者に頼む費用や手順が不明"
@@ -49,15 +124,49 @@
         "整えられた植木と穏やかな家の外観",
         "庭の小道と手入れされた緑の生垣"
       ],
-      "supporting_motifs": ["緑の木々", "青空", "小道", "きれいな芝", "整えられた生垣"],
-      "avoid_motifs": ["業者の看板テキスト", "作業料金表示", "剪定費用の書類", "刃物の誇張表現"],
-      "composition_patterns": ["single_scene", "foreground_background", "center_object_cluster"],
-      "fallback_center_motif": "すっきりと手入れされた庭の緑と青空"
+      "supporting_motifs": [
+        "緑の木々",
+        "青空",
+        "小道",
+        "きれいな芝",
+        "整えられた生垣"
+      ],
+      "avoid_motifs": [
+        "業者の看板テキスト",
+        "作業料金表示",
+        "剪定費用の書類",
+        "刃物の誇張表現"
+      ],
+      "composition_patterns": [
+        "single_scene",
+        "foreground_background",
+        "center_object_cluster"
+      ],
+      "fallback_center_motif": "すっきりと手入れされた庭の緑と青空",
+      "layout_family": "infographic_scene",
+      "density": "medium",
+      "people_mode": "hands_only",
+      "allow_blank_documents": false,
+      "allow_blank_signs": false,
+      "allow_ui_like_props": false,
+      "visual_style_profile": "public_card_v1"
     },
     "片付け": {
       "priority": 4,
-      "primary_keywords": ["片付け", "遺品整理", "ゴミ屋敷", "家財整理"],
-      "keywords": ["不用品", "残置物", "特殊清掃", "遺品", "不用品処分", "家財処分"],
+      "primary_keywords": [
+        "片付け",
+        "遺品整理",
+        "ゴミ屋敷",
+        "家財整理"
+      ],
+      "keywords": [
+        "不用品",
+        "残置物",
+        "特殊清掃",
+        "遺品",
+        "不用品処分",
+        "家財処分"
+      ],
       "reader_concerns": [
         "大量の家財をどう処分すればいいか分からない",
         "遺品や残置物の整理に気持ちの準備が追いつかない"
@@ -67,15 +176,56 @@
         "きれいになった和室と穏やかな空間",
         "整理された家の入口と庭"
       ],
-      "supporting_motifs": ["穏やかな光", "整えられた空間", "緑の小物", "清潔な床"],
-      "avoid_motifs": ["ゴミ・廃棄物の山（不安を煽る表現）", "汚れた室内の表現", "業者のロゴ", "処分費用の看板テキスト"],
-      "composition_patterns": ["single_scene", "center_object_cluster", "foreground_background"],
-      "fallback_center_motif": "すっきりと整理された明るい室内と差し込む光"
+      "supporting_motifs": [
+        "穏やかな光",
+        "整えられた空間",
+        "緑の小物",
+        "清潔な床"
+      ],
+      "avoid_motifs": [
+        "ゴミ・廃棄物の山（不安を煽る表現）",
+        "汚れた室内の表現",
+        "業者のロゴ",
+        "処分費用の看板テキスト"
+      ],
+      "composition_patterns": [
+        "single_scene",
+        "center_object_cluster",
+        "foreground_background"
+      ],
+      "fallback_center_motif": "すっきりと整理された明るい室内と差し込む光",
+      "layout_family": "process_collage",
+      "density": "medium_high",
+      "people_mode": "up_to_2",
+      "allow_blank_documents": true,
+      "allow_blank_signs": false,
+      "allow_ui_like_props": false,
+      "visual_style_profile": "public_card_v1"
     },
     "建築リフォーム": {
       "priority": 5,
-      "primary_keywords": ["リフォーム", "建築", "改修", "修繕", "雨漏り", "耐震", "シロアリ"],
-      "keywords": ["修理", "内装", "外壁", "屋根", "工事", "改装", "補強", "断熱", "塗装", "再生", "リノベ"],
+      "primary_keywords": [
+        "リフォーム",
+        "建築",
+        "改修",
+        "修繕",
+        "雨漏り",
+        "耐震",
+        "シロアリ"
+      ],
+      "keywords": [
+        "修理",
+        "内装",
+        "外壁",
+        "屋根",
+        "工事",
+        "改装",
+        "補強",
+        "断熱",
+        "塗装",
+        "再生",
+        "リノベ"
+      ],
       "reader_concerns": [
         "修繕費用の相場や優先順位が分からない",
         "どの業者に頼めばいいか判断できない"
@@ -85,15 +235,51 @@
         "修繕後の外観と青空",
         "手入れされた建具や窓枠と穏やかな光"
       ],
-      "supporting_motifs": ["清潔な窓", "木の建具", "白い壁", "差し込む光", "新しい床材"],
-      "avoid_motifs": ["契約書テキスト", "修繕費用の見積書テキスト", "印鑑・判子", "工事費用の看板テキスト", "建材メーカーのロゴ", "施工中の危険な状態"],
-      "composition_patterns": ["single_scene", "foreground_background", "center_object_cluster"],
-      "fallback_center_motif": "明るい光が差し込む修繕後のきれいな室内"
+      "supporting_motifs": [
+        "清潔な窓",
+        "木の建具",
+        "白い壁",
+        "差し込む光",
+        "新しい床材"
+      ],
+      "avoid_motifs": [
+        "契約書テキスト",
+        "修繕費用の見積書テキスト",
+        "印鑑・判子",
+        "工事費用の看板テキスト",
+        "建材メーカーのロゴ",
+        "施工中の危険な状態"
+      ],
+      "composition_patterns": [
+        "single_scene",
+        "foreground_background",
+        "center_object_cluster"
+      ],
+      "fallback_center_motif": "明るい光が差し込む修繕後のきれいな室内",
+      "layout_family": "center_with_corners",
+      "density": "high",
+      "people_mode": "up_to_4",
+      "allow_blank_documents": false,
+      "allow_blank_signs": false,
+      "allow_ui_like_props": false,
+      "visual_style_profile": "public_card_v1"
     },
     "保険": {
       "priority": 6,
-      "primary_keywords": ["保険", "火災保険", "地震保険", "家財保険", "空き家保険", "孤独死保険"],
-      "keywords": ["補償", "損害", "保障", "共済"],
+      "primary_keywords": [
+        "保険",
+        "火災保険",
+        "地震保険",
+        "家財保険",
+        "空き家保険",
+        "孤独死保険"
+      ],
+      "keywords": [
+        "補償",
+        "損害",
+        "保障",
+        "共済"
+      ],
       "reader_concerns": [
         "どの保険が自分の空き家に必要か分からない",
         "保険が適用されるかどうか判断できない"
@@ -103,15 +289,47 @@
         "小さな家のオブジェクトと自然の葉の囲み",
         "穏やかな日差しと整った家の外観"
       ],
-      "supporting_motifs": ["やわらかい傘（安心のシンボル）", "青空", "緑の葉", "日差し"],
-      "avoid_motifs": ["保険証書テキスト", "保険金額数字表示", "炎・水害・地震の誇張表現", "免責事項テキスト", "契約書テキスト"],
-      "composition_patterns": ["center_object_cluster", "single_scene", "foreground_background"],
-      "fallback_center_motif": "傘と家のオブジェクトが柔らかい光に包まれた場面"
+      "supporting_motifs": [
+        "やわらかい傘（安心のシンボル）",
+        "青空",
+        "緑の葉",
+        "日差し"
+      ],
+      "avoid_motifs": [
+        "保険証書テキスト",
+        "保険金額数字表示",
+        "炎・水害・地震の誇張表現",
+        "免責事項テキスト",
+        "契約書テキスト"
+      ],
+      "composition_patterns": [
+        "center_object_cluster",
+        "single_scene",
+        "foreground_background"
+      ],
+      "fallback_center_motif": "傘と家のオブジェクトが柔らかい光に包まれた場面",
+      "layout_family": "central_storyboard",
+      "density": "medium",
+      "people_mode": "up_to_2",
+      "allow_blank_documents": true,
+      "allow_blank_signs": false,
+      "allow_ui_like_props": false,
+      "visual_style_profile": "public_card_v1"
     },
     "駐車場": {
       "priority": 7,
-      "primary_keywords": ["駐車場", "月極", "車庫", "駐車スペース", "貸し駐車場"],
-      "keywords": ["パーキング", "駐輪場", "土地活用"],
+      "primary_keywords": [
+        "駐車場",
+        "月極",
+        "車庫",
+        "駐車スペース",
+        "貸し駐車場"
+      ],
+      "keywords": [
+        "パーキング",
+        "駐輪場",
+        "土地活用"
+      ],
       "reader_concerns": [
         "空き地を駐車場にする手順や費用が分からない",
         "収益性・採算が取れるか不安"
@@ -121,15 +339,51 @@
         "アスファルトと緑の植栽が調和した駐車場の景色",
         "空の駐車スペースと遠景の住宅街"
       ],
-      "supporting_motifs": ["青空", "整えられた区画（文字なし）", "緑の植栽", "遠景の建物"],
-      "avoid_motifs": ["価格看板テキスト", "料金表示テキスト", "駐車場名テキスト", "ナンバープレートの文字", "精算機のテキスト"],
-      "composition_patterns": ["foreground_background", "single_scene", "diagonal_flow"],
-      "fallback_center_motif": "整然とした区画と青空が広がる清潔な駐車スペース"
+      "supporting_motifs": [
+        "青空",
+        "整えられた区画（文字なし）",
+        "緑の植栽",
+        "遠景の建物"
+      ],
+      "avoid_motifs": [
+        "価格看板テキスト",
+        "料金表示テキスト",
+        "駐車場名テキスト",
+        "ナンバープレートの文字",
+        "精算機のテキスト"
+      ],
+      "composition_patterns": [
+        "foreground_background",
+        "single_scene",
+        "diagonal_flow"
+      ],
+      "fallback_center_motif": "整然とした区画と青空が広がる清潔な駐車スペース",
+      "layout_family": "single_scene",
+      "density": "medium",
+      "people_mode": "none",
+      "allow_blank_documents": false,
+      "allow_blank_signs": false,
+      "allow_ui_like_props": false,
+      "visual_style_profile": "public_card_v1"
     },
     "相続・生前対策": {
       "priority": 8,
-      "primary_keywords": ["相続", "生前対策", "遺言", "家族信託", "終活"],
-      "keywords": ["遺産", "相続人", "実家", "引き継ぐ", "相続税", "贈与", "相続登記"],
+      "primary_keywords": [
+        "相続",
+        "生前対策",
+        "遺言",
+        "家族信託",
+        "終活"
+      ],
+      "keywords": [
+        "遺産",
+        "相続人",
+        "実家",
+        "引き継ぐ",
+        "相続税",
+        "贈与",
+        "相続登記"
+      ],
       "reader_concerns": [
         "相続に関わる手続きや費用の全体像が分からない",
         "家族間でどう話し合えばいいか見当がつかない"
@@ -139,33 +393,111 @@
         "穏やかな縁側と代々使われた家の小物",
         "家と庭と小道の静かな俯瞰風景"
       ],
-      "supporting_motifs": ["古時計", "茶器", "縁側", "落ち着いた庭", "木漏れ日"],
-      "avoid_motifs": ["遺言書テキスト", "相続届テキスト", "書類テキスト", "印鑑・判子", "法務局看板テキスト", "金額数字表示"],
-      "composition_patterns": ["single_scene", "center_object_cluster", "foreground_background"],
-      "fallback_center_motif": "穏やかな縁側と世代をつなぐ家の小物"
+      "supporting_motifs": [
+        "古時計",
+        "茶器",
+        "縁側",
+        "落ち着いた庭",
+        "木漏れ日"
+      ],
+      "avoid_motifs": [
+        "遺言書テキスト",
+        "相続届テキスト",
+        "書類テキスト",
+        "印鑑・判子",
+        "法務局看板テキスト",
+        "金額数字表示"
+      ],
+      "composition_patterns": [
+        "single_scene",
+        "center_object_cluster",
+        "foreground_background"
+      ],
+      "fallback_center_motif": "穏やかな縁側と世代をつなぐ家の小物",
+      "layout_family": "consultation_card",
+      "density": "medium_high",
+      "people_mode": "up_to_4",
+      "allow_blank_documents": true,
+      "allow_blank_signs": false,
+      "allow_ui_like_props": false,
+      "visual_style_profile": "public_card_v1"
     },
     "お金の手配": {
       "priority": 9,
-      "primary_keywords": ["補助金", "助成金", "融資", "ローン", "資金調達"],
-      "keywords": ["資金", "融資制度", "住宅ローン", "借り入れ", "税金対策", "節税", "申請費用", "費用補助"],
+      "primary_keywords": [
+        "補助金",
+        "助成金",
+        "融資",
+        "ローン",
+        "資金調達"
+      ],
+      "keywords": [
+        "資金",
+        "融資制度",
+        "住宅ローン",
+        "借り入れ",
+        "税金対策",
+        "節税",
+        "申請費用",
+        "費用補助"
+      ],
       "reader_concerns": [
         "利用できる制度や補助金があるか調べ方が分からない",
         "申請手続きが複雑で自分でできるか不安"
       ],
       "main_motifs": [
-        "小さな家のミニチュアと自然の小物（葉・小花）",
-        "整った玄関と地域の緑の風景",
-        "家と庭の穏やかな全景"
+        "家の模型を中心に、コイン・電卓・文字なし書類が整然と並ぶ机上の俯瞰シーン",
+        "相談机の上の家模型と費用整理の小物（コイン・計算機・白紙の書類・鍵）",
+        "住まいと補助・費用整理が伝わる構成：中央の家模型＋周囲にコイン・白紙書類・電卓"
       ],
-      "supporting_motifs": ["緑の葉", "光の差し込み", "植木鉢", "小花"],
-      "avoid_motifs": ["申請書テキスト", "申込書テキスト", "補助金額の数字", "市役所看板テキスト", "判子・印鑑", "帳票テキスト", "封筒テキスト"],
-      "composition_patterns": ["center_object_cluster", "single_scene", "foreground_background"],
-      "fallback_center_motif": "自然の小物に囲まれた小さな家のミニチュア"
+      "supporting_motifs": [
+        "コイン",
+        "電卓",
+        "文字なし書類",
+        "鍵",
+        "緑の小物",
+        "穏やかな光"
+      ],
+      "avoid_motifs": [
+        "申請書テキスト",
+        "申込書テキスト",
+        "補助金額の数字",
+        "市役所看板テキスト",
+        "判子・印鑑",
+        "帳票テキスト",
+        "封筒テキスト",
+        "玄関単体",
+        "花だけの風景",
+        "緑の風景だけ"
+      ],
+      "composition_patterns": [
+        "center_object_cluster",
+        "single_scene",
+        "foreground_background"
+      ],
+      "fallback_center_motif": "家模型を中央に、コインと白紙書類が周囲に配置された費用整理のシーン",
+      "layout_family": "consultation_card",
+      "density": "medium_high",
+      "people_mode": "hands_only",
+      "allow_blank_documents": true,
+      "allow_blank_signs": false,
+      "allow_ui_like_props": false,
+      "visual_style_profile": "public_card_v1"
     },
     "民泊": {
       "priority": 10,
-      "primary_keywords": ["民泊", "ゲストハウス", "民宿"],
-      "keywords": ["ゲスト", "宿泊", "旅行者", "シェア", "宿泊施設"],
+      "primary_keywords": [
+        "民泊",
+        "ゲストハウス",
+        "民宿"
+      ],
+      "keywords": [
+        "ゲスト",
+        "宿泊",
+        "旅行者",
+        "シェア",
+        "宿泊施設"
+      ],
       "reader_concerns": [
         "民泊運営を始めるための手順や費用が分からない",
         "トラブルや法的なリスクが不安"
@@ -175,15 +507,52 @@
         "縁側に置かれたお茶セットと庭の緑",
         "畳の部屋と小さな旅の小物"
       ],
-      "supporting_motifs": ["旅行バッグ", "和風の小物", "緑の庭", "縁側", "茶器"],
-      "avoid_motifs": ["Airbnbロゴ", "宿泊料金表示テキスト", "星レビュー表示テキスト", "看板テキスト", "QRコード"],
-      "composition_patterns": ["single_scene", "foreground_background", "center_object_cluster"],
-      "fallback_center_motif": "縁側と緑の庭が見える和の空間"
+      "supporting_motifs": [
+        "旅行バッグ",
+        "和風の小物",
+        "緑の庭",
+        "縁側",
+        "茶器"
+      ],
+      "avoid_motifs": [
+        "Airbnbロゴ",
+        "宿泊料金表示テキスト",
+        "星レビュー表示テキスト",
+        "看板テキスト",
+        "QRコード"
+      ],
+      "composition_patterns": [
+        "single_scene",
+        "foreground_background",
+        "center_object_cluster"
+      ],
+      "fallback_center_motif": "縁側と緑の庭が見える和の空間",
+      "layout_family": "infographic_scene",
+      "density": "medium",
+      "people_mode": "up_to_2",
+      "allow_blank_documents": false,
+      "allow_blank_signs": false,
+      "allow_ui_like_props": false,
+      "visual_style_profile": "public_card_v1"
     },
     "賃貸": {
       "priority": 11,
-      "primary_keywords": ["賃貸", "貸す", "入居", "賃料"],
-      "keywords": ["テナント", "家賃", "賃借", "借主", "貸主", "貸し出す", "空き家賃貸", "賃貸活用"],
+      "primary_keywords": [
+        "賃貸",
+        "貸す",
+        "入居",
+        "賃料"
+      ],
+      "keywords": [
+        "テナント",
+        "家賃",
+        "賃借",
+        "借主",
+        "貸主",
+        "貸し出す",
+        "空き家賃貸",
+        "賃貸活用"
+      ],
       "reader_concerns": [
         "空き家を賃貸に出すための準備や費用が分からない",
         "入居者トラブルや管理の手間が心配"
@@ -193,33 +562,99 @@
         "小さな鍵と郵便受けのある玄関",
         "きれいに片付いた和室の縁側"
       ],
-      "supporting_motifs": ["観葉植物", "柔らかなカーテン", "窓からの自然光", "木の質感"],
-      "avoid_motifs": ["賃貸募集の看板テキスト", "家賃表示テキスト", "入居条件の掲示板テキスト", "契約書テキスト"],
-      "composition_patterns": ["single_scene", "foreground_background", "top_view_workspace"],
-      "fallback_center_motif": "窓から光が差し込む整った室内"
+      "supporting_motifs": [
+        "観葉植物",
+        "柔らかなカーテン",
+        "窓からの自然光",
+        "木の質感"
+      ],
+      "avoid_motifs": [
+        "賃貸募集の看板テキスト",
+        "家賃表示テキスト",
+        "入居条件の掲示板テキスト",
+        "契約書テキスト"
+      ],
+      "composition_patterns": [
+        "single_scene",
+        "foreground_background",
+        "top_view_workspace"
+      ],
+      "fallback_center_motif": "窓から光が差し込む整った室内",
+      "layout_family": "consultation_card",
+      "density": "high",
+      "people_mode": "up_to_4",
+      "allow_blank_documents": true,
+      "allow_blank_signs": false,
+      "allow_ui_like_props": false,
+      "visual_style_profile": "public_card_v1"
     },
     "解体": {
       "priority": 12,
-      "primary_keywords": ["解体", "取り壊し", "更地", "撤去"],
-      "keywords": ["除去", "老朽化", "建物解体", "解体工事"],
+      "primary_keywords": [
+        "解体",
+        "取り壊し",
+        "更地",
+        "撤去"
+      ],
+      "keywords": [
+        "除去",
+        "老朽化",
+        "建物解体",
+        "解体工事"
+      ],
       "reader_concerns": [
         "解体費用の相場や補助制度が分からない",
         "解体後の土地活用方法が見えない"
       ],
       "main_motifs": [
-        "更地になった土地と青空",
-        "整地されたきれいな土地と遠くの山並み",
+        "作業員のヘルメットと解体工具の手元",
+        "すっきりと片付いた土地と植物の芽生え",
         "すっきりとした広い土地と緑の草"
       ],
-      "supporting_motifs": ["青空", "遠景の山", "整えられた土地", "緑の草"],
-      "avoid_motifs": ["解体中の危険な状態の描写", "廃墟風の暗い家", "重機のロゴ", "工事費用の看板テキスト", "危険テープ", "廃材の山"],
-      "composition_patterns": ["single_scene", "foreground_background", "diagonal_flow"],
-      "fallback_center_motif": "青空が広がるすっきりとした更地"
+      "supporting_motifs": [
+        "青空",
+        "遠景の山",
+        "整えられた土地",
+        "緑の草"
+      ],
+      "avoid_motifs": [
+        "解体中の危険な状態の描写",
+        "廃墟風の暗い家",
+        "重機のロゴ",
+        "工事費用の看板テキスト",
+        "危険テープ",
+        "廃材の山"
+      ],
+      "composition_patterns": [
+        "single_scene",
+        "foreground_background",
+        "diagonal_flow"
+      ],
+      "fallback_center_motif": "青空が広がるすっきりとした更地",
+      "layout_family": "center_with_corners",
+      "density": "medium_high",
+      "people_mode": "up_to_2",
+      "allow_blank_documents": true,
+      "allow_blank_signs": false,
+      "allow_ui_like_props": false,
+      "visual_style_profile": "public_card_v1"
     },
     "管理": {
       "priority": 13,
-      "primary_keywords": ["空き家管理", "管理委託", "定期点検", "見回り"],
-      "keywords": ["管理", "点検", "維持", "保守", "防犯", "空き家対策"],
+      "primary_keywords": [
+        "空き家管理",
+        "管理委託",
+        "定期点検",
+        "見回り"
+      ],
+      "keywords": [
+        "管理",
+        "点検",
+        "維持",
+        "保守",
+        "防犯",
+        "空き家対策"
+      ],
       "reader_concerns": [
         "放置した空き家がどんな状態になっているか心配",
         "管理を委託する費用やサービス内容が分からない"
@@ -229,15 +664,51 @@
         "清潔に保たれた窓と穏やかな外観",
         "整えられた小道と静かな家の周囲"
       ],
-      "supporting_motifs": ["手入れされた庭", "清潔な窓", "緑の植木", "小道"],
-      "avoid_motifs": ["管理会社の看板テキスト", "クリップボードの文字", "チェックリスト用紙テキスト", "タブレット画面テキスト", "点検票テキスト"],
-      "composition_patterns": ["single_scene", "foreground_background", "center_object_cluster"],
-      "fallback_center_motif": "手入れが行き届いた庭と家の外観"
+      "supporting_motifs": [
+        "手入れされた庭",
+        "清潔な窓",
+        "緑の植木",
+        "小道"
+      ],
+      "avoid_motifs": [
+        "管理会社の看板テキスト",
+        "クリップボードの文字",
+        "チェックリスト用紙テキスト",
+        "タブレット画面テキスト",
+        "点検票テキスト"
+      ],
+      "composition_patterns": [
+        "single_scene",
+        "foreground_background",
+        "center_object_cluster"
+      ],
+      "fallback_center_motif": "手入れが行き届いた庭と家の外観",
+      "layout_family": "infographic_scene",
+      "density": "medium",
+      "people_mode": "hands_only",
+      "allow_blank_documents": false,
+      "allow_blank_signs": false,
+      "allow_ui_like_props": false,
+      "visual_style_profile": "public_card_v1"
     },
     "売買": {
       "priority": 14,
-      "primary_keywords": ["売却", "不動産売買", "売買", "査定"],
-      "keywords": ["売る", "売れる", "売り出し", "仲介", "購入", "買う", "買主", "売主"],
+      "primary_keywords": [
+        "売却",
+        "不動産売買",
+        "売買",
+        "査定"
+      ],
+      "keywords": [
+        "売る",
+        "売れる",
+        "売り出し",
+        "仲介",
+        "購入",
+        "買う",
+        "買主",
+        "売主"
+      ],
       "reader_concerns": [
         "売却価格の相場や手続きの流れが分からない",
         "どの不動産会社に相談すればいいか見当がつかない"
@@ -245,12 +716,37 @@
       "main_motifs": [
         "穏やかな光の中に佇む小さな一軒家",
         "玄関の鍵と小さな家のオブジェクト",
-        "広々とした縁側と庭の遠景"
+        "玄関ドアの鍵と小さな家の模型を持つ手"
       ],
-      "supporting_motifs": ["植木鉢", "やわらかい日差し", "緑の葉", "小道"],
-      "avoid_motifs": ["FOR SALEの看板テキスト", "価格タグテキスト", "OPEN看板テキスト", "契約書テキスト", "書類テキスト", "印鑑", "判子", "不動産会社の店舗看板テキスト"],
-      "composition_patterns": ["center_object_cluster", "single_scene", "foreground_background"],
-      "fallback_center_motif": "やさしい光に包まれた小さな一軒家の正面"
+      "supporting_motifs": [
+        "植木鉢",
+        "やわらかい日差し",
+        "緑の葉",
+        "小道"
+      ],
+      "avoid_motifs": [
+        "FOR SALEの看板テキスト",
+        "価格タグテキスト",
+        "OPEN看板テキスト",
+        "契約書テキスト",
+        "書類テキスト",
+        "印鑑",
+        "判子",
+        "不動産会社の店舗看板テキスト"
+      ],
+      "composition_patterns": [
+        "center_object_cluster",
+        "single_scene",
+        "foreground_background"
+      ],
+      "fallback_center_motif": "やさしい光に包まれた小さな一軒家の正面",
+      "layout_family": "central_storyboard",
+      "density": "medium_high",
+      "people_mode": "up_to_2",
+      "allow_blank_documents": true,
+      "allow_blank_signs": false,
+      "allow_ui_like_props": false,
+      "visual_style_profile": "public_card_v1"
     },
     "その他": {
       "priority": 15,
@@ -265,10 +761,31 @@
         "整った庭と落ち着いた家の外観",
         "季節の自然と家の風景"
       ],
-      "supporting_motifs": ["緑の木々", "やわらかい光", "小道", "植木"],
-      "avoid_motifs": ["看板テキスト全般", "書類テキスト全般", "価格・数字表示", "企業ロゴ"],
-      "composition_patterns": ["single_scene", "center_object_cluster", "foreground_background"],
-      "fallback_center_motif": "やさしい光の中の静かな日本の家"
+      "supporting_motifs": [
+        "緑の木々",
+        "やわらかい光",
+        "小道",
+        "植木"
+      ],
+      "avoid_motifs": [
+        "看板テキスト全般",
+        "書類テキスト全般",
+        "価格・数字表示",
+        "企業ロゴ"
+      ],
+      "composition_patterns": [
+        "single_scene",
+        "center_object_cluster",
+        "foreground_background"
+      ],
+      "fallback_center_motif": "やさしい光の中の静かな日本の家",
+      "layout_family": "central_storyboard",
+      "density": "medium",
+      "people_mode": "none",
+      "allow_blank_documents": false,
+      "allow_blank_signs": false,
+      "allow_ui_like_props": false,
+      "visual_style_profile": "public_card_v1"
     }
   }
 }
