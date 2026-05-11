@@ -205,19 +205,16 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
         "tone":        "bright, reassuring, organized, practical",
         # リッチな自然文（APIプロンプト用。ラベルなし）
         "api_scene": (
-            "A densely illustrated warm scene showing a garden maintenance consultation. "
-            "The traditional Japanese house with freshly trimmed garden trees, rounded shrubs, and a stone "
-            "path occupies the central background — the well-maintained property is clearly the subject. "
-            "A homeowner and garden specialist walk together through the garden at small scale "
-            "(about 20% of image height), the specialist demonstrating or pointing at trimmed shrubs. "
-            "Pruning shears rest on the garden stone path or against a trimmed shrub, "
-            "naturally part of the garden scene — not on a separate platform. "
-            "Work gloves lie on the path nearby; a bundle of cut branches is stacked beside a hedge. "
-            "A blank notepad and plain pencil rest on a flat garden stone, open as if in use — "
-            "part of the garden ground, not a floating surface. "
-            "Golden-orange autumn trees fill upper portions; warm greens and amber fill the lower ground. "
-            "Every part of the canvas is richly detailed — house, garden, people, tools all visible "
-            "throughout. Warm amber and fresh green throughout. Only the very outer borders fade to white."
+            "Illustrated scene — hand-drawn ink-outline watercolor, NOT photorealistic. "
+            "Upper-left: traditional Japanese house with freshly trimmed garden trees; a work truck parked nearby. "
+            "Center: a garden consultant in work jacket and yellow safety helmet, at small scale "
+            "(about 20% of image height), holding a clipboard toward a homeowner couple. "
+            "Lower-left: pruning shears and gardening gloves resting on a stone garden path. "
+            "Lower-right: bundled cut branches stacked beside a trimmed hedge; "
+            "a blank notepad and pencil on a flat garden stone. "
+            "Background: golden-orange autumn trees, green shrubs, warm amber sky. "
+            "Foreground ground: stone path, amber fallen leaves, short grass. "
+            "Warm amber and fresh green fill the canvas; outermost edges dissolve to white."
         ),
     },
     "解体": {
@@ -245,17 +242,15 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
         "avoid":       "not a portrait, no close-up face, no readable text, no logo, no numbers, not three-dimensional render, no for-sale sign text, no price tags",
         "tone":        "calm, trustworthy, organized, hopeful — the registration and handover process feels clear and manageable",
         "api_scene": (
-            "A densely illustrated warm scene showing a property inquiry and registration process. "
-            "The traditional Japanese house surrounded by green garden trees is clearly the central "
-            "subject property — it occupies the upper-center of the composition and is fully visible. "
-            "A homeowner and property advisor discuss together at small scale (about 20% of image height), "
-            "one reviewing blank papers while the other points toward the house. "
-            "An iron house key rests on a stone garden step or is held in someone's hand — "
-            "a natural prop in the scene, not a floating symbol. "
-            "One person holds blank white papers to review; the papers are physical pages, not icons. "
-            "Garden greenery, the stone path, and natural surroundings fill the remaining areas warmly. "
-            "Every part of the canvas is richly filled — house, people, props, garden all visible "
-            "simultaneously. Warm amber and golden tones throughout. Only outer borders fade to white."
+            "Illustrated scene — hand-drawn ink-outline watercolor, NOT photorealistic. "
+            "Upper-center: traditional Japanese house fully visible, surrounded by green garden trees. "
+            "Left: a homeowner and property advisor at small scale (about 20% of image height), "
+            "one holding blank white papers, the other gesturing toward the house. "
+            "Right: an iron house key resting on a garden stone step; "
+            "an open blank notepad and pencil on a flat stone surface nearby. "
+            "Center-foreground: a stone garden path with warm amber fallen leaves. "
+            "Lower area: green garden plants, garden stones, warm earth ground. "
+            "Warm amber and golden tones fill the canvas; outermost edges dissolve to white."
         ),
     },
     "相続・生前対策": {
@@ -648,26 +643,31 @@ def build_api_prompt(title: str, metadata: dict) -> str:
 
     lines = [
         # ──── A. Style Contract（全カテゴリ共通・固定） ────
-        "Warm hand-painted commercial watercolor illustration with a densely composed, multi-focal scene.",
-        "The full wide 16:9 canvas is richly filled — every part of the image contains warm detail: "
-        "house, people, garden or setting, tools or documents, all present and active simultaneously.",
-        "People appear at small-to-medium scale (about 20% of image height), one activity among several "
-        "concurrent activities visible in the illustration.",
-        "Composition is dense and informative — multiple things are happening or visible at once, "
-        "distributed across the full canvas. No single area is left empty or sparse.",
-        "Watercolor washes flow in continuous overlapping patches across the entire canvas — "
-        "all elements share the same unframed white background, blending naturally into each other.",
-        "Only the outermost edges dissolve softly to white — "
-        "no oval vignette, no circular spotlight, no bubble-like scene islands, no framed medallions.",
-        "Warm vivid colors throughout: amber, golden yellow, fresh green, warm brown. "
-        "Colors are rich and warm — not pale, not faded. Visible and warm like a published illustration.",
-        "Natural medium-weight ink lines with soft watercolor washes — "
-        "visible and confident, not heavy anime outlines, not faint pencil sketch.",
-        "Documents and papers appear as physical pages lying on natural surfaces "
-        "(garden path, tatami, ground, stone step) or held in someone's hands — "
-        "not as floating icons, popup windows, or isolated document symbols.",
-        "Tools and objects rest on the natural ground, path, or grass of the scene — "
-        "connected to the same continuous world, not on a separate foreground platform.",
+        "Hand-painted commercial illustration: clear ink outlines on every element, "
+        "filled with vivid warm watercolor. Hand-drawn style, NOT photorealistic.",
+        "Every figure, building, tool, and prop has a distinct ink outline "
+        "with warm watercolor fills — the style of a published Japanese editorial illustration.",
+        "The full 16:9 canvas is filled with multiple elements in different areas: "
+        "house and environment in the background, people at small-to-medium scale in the middle, "
+        "tools and documents in the foreground — all simultaneously visible.",
+        "Elements are distributed across the left, center, and right zones, "
+        "and across foreground and background — a rich multi-focal scene, "
+        "with each element clearly outlined and identifiable.",
+        "People appear at about 20-30% of image height, one active element "
+        "among house, garden, tools, and documents — a natural part of the scene.",
+        "Colors are vivid, warm, and saturated throughout: rich amber, golden yellow, "
+        "fresh green, warm brown — like a professionally published illustration.",
+        "A warm amber and cream watercolor wash fills the background throughout; "
+        "only the very outermost edges dissolve gently into white.",
+        "The composition spreads evenly across the full canvas — "
+        "no oval spotlight, no single centered subject, no empty zones.",
+        "Documents and papers appear as physical drawn pages on natural surfaces or in hands — "
+        "part of the illustrated scene, not floating UI icons.",
+        "Tools and objects rest on the ground, path, or garden of the scene — "
+        "part of the same illustrated world.",
+        # ──── C. Safety（Scene Contractより前に配置し優先度を上げる） ────
+        "All papers, signs, notepads, and surfaces in the scene are blank — "
+        "no readable text, no letters, no numbers anywhere in the image.",
         "",
         # ──── B. Scene Contract（カテゴリ別） ────
         scene_prose,
@@ -678,9 +678,6 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         lines.append(blank_note)
 
     lines += [
-        "",
-        # ──── C. Safety（最小限・文字禁止のみ） ────
-        "All papers, clipboards, signs, and surfaces remain blank — no readable text, no numbers, no symbols.",
         "",
         # ──── D. Output tone ────
         f"Overall impression: {tone}.",
@@ -709,11 +706,12 @@ def build_fallback_prompt(title: str, metadata: dict) -> str:
         people_note = "People at small-to-medium scale (15-28% of image height) as one element among house, garden, and props — not the primary focus."
 
     return "\n".join([
-        "Warm hand-painted commercial watercolor illustration, wide 16:9, rich naturally mixed scene.",
-        "Several elements — people (small scale), house, tools, environment — "
-        "visible in different areas of the full canvas. No single element dominant.",
-        "Warm ambient colors throughout. Soft hand-drawn lines. "
-        "Elements extend near all edges — one continuous scene on white, no oval vignettes; only the outermost edges fade to white.",
+        "Hand-painted commercial illustration: ink outlines on every element, "
+        "vivid warm watercolor fills. Hand-drawn, NOT photorealistic.",
+        "Multi-element scene: house, people (20-30% of image height), tools, environment — "
+        "distributed across left, center, right of the full 16:9 canvas.",
+        "Vivid warm colors — rich amber, golden yellow, fresh green. "
+        "Amber wash throughout; only the outermost edges dissolve to white.",
         f"{scene}.",
         people_note,
         blank_note,
