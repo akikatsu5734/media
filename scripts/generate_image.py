@@ -892,6 +892,7 @@ def generate_image(
         sys.exit(1)
 
     model_name = os.environ.get("GEMINI_IMAGE_MODEL", "imagen-4.0-generate-001")
+<<<<<<< HEAD
     people_mode = (metadata or {}).get("people_mode", "none")
     person_gen = PERSON_GENERATION_MAP.get(people_mode, "dont_allow")
 
@@ -923,6 +924,38 @@ def generate_image(
 
     response = _call_api(api_prompt, "main")
     if response is None:
+=======
+    print("画像生成中...")
+    print(f"  モデル: {model_name}")
+    print(f"  プロンプト（先頭120字）: {prompt[:120]}")
+
+    try:
+        client = genai.Client(api_key=api_key)
+        response = client.models.generate_images(
+            model=model_name,
+            prompt=prompt,
+            config=types.GenerateImagesConfig(
+                number_of_images=1,
+                output_mime_type="image/png",
+                aspect_ratio="16:9",
+                person_generation="dont_allow",
+            ),
+        )
+    except Exception as e:
+        print(f"[ERROR] 画像生成APIエラー: {e}")
+        print("  以下を確認してください:")
+        print("  - GEMINI_API_KEY が正しいか")
+        print("  - APIの課金・利用制限が有効か")
+        print("  - ご利用の地域で Imagen API が利用可能か")
+        print("  - モデル名が正しいか（GEMINI_IMAGE_MODEL 環境変数で上書き可能）")
+        print("  - google-genai SDK が最新か: pip install -U google-genai")
+        return None
+
+    if not response.generated_images:
+        print("[ERROR] 画像が生成されませんでした。")
+        print("  プロンプトが安全フィルターで拒否された可能性があります。")
+        print("  プロンプトを見直して再試行してください。")
+>>>>>>> origin/main
         return None
 
     if not response.generated_images:
