@@ -212,7 +212,7 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
             "A work truck is parked near a Japanese house in the background, green garden trees around. "
             "Naturally placed in the scene: a calculator, stacked coin shapes, blank document shapes, "
             "pruning shears, gardening gloves — all at natural scale. "
-            "Warm amber and golden watercolor fills the canvas to all edges."
+            "Warm cream and gentle amber watercolor fills the full canvas to all edges."
         ),
     },
     "解体": {
@@ -242,15 +242,16 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
         "avoid":       "not a portrait, no close-up face, no readable text, no logo, no numbers, not three-dimensional render, no for-sale sign text, no price tags, no door frame, no gateway framing",
         "tone":        "calm, trustworthy, organized, hopeful — the registration and handover process feels clear and manageable",
         "api_scene": (
-            "Hand-painted commercial illustration — clear ink outlines, vivid warm watercolor, NOT photorealistic. "
-            "A property consultation and registration scene: "
-            "Two figures — homeowner and property consultant in modern casual clothes — "
-            "at about 25% of image height, reviewing documents together. "
-            "Nearby: a house key, multiple blank registration papers, a small house model, stacked coin shapes. "
-            "A Japanese house is visible in the background. "
-            "Additional elements: a blank clipboard, garden trees. "
-            "Multiple elements distributed naturally across the canvas. "
-            "Warm amber and golden watercolor fills the canvas to all edges."
+            "Japanese editorial magazine illustration — clear ink lines, warm gentle watercolor, NOT photorealistic. "
+            "Editorial collage with 4-5 independent mini-vignettes in warm cream watercolor space: "
+            "a small Japanese house illustration at one position; "
+            "a small handshake vignette (two tiny figures, about 12% height, completing a property deal); "
+            "a blank registration document shape as an object illustration; "
+            "a house key as a standalone object; stacked coin shapes. "
+            "Each element is a SEPARATE mini-illustration — NOT placed together in one room. "
+            "NOT a desk scene, NOT two people facing each other at a table. "
+            "Elements float independently in warm cream watercolor. "
+            "Warm cream and gentle amber watercolor fills the full canvas."
         ),
     },
     "相続・生前対策": {
@@ -261,16 +262,14 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
         "avoid":       "no close-up face, not a portrait, no text, no logo, no numbers, not three-dimensional render",
         "tone":        "gentle, warm, organized, thoughtful",
         "api_scene": (
-            "Hand-painted commercial illustration — clear ink outlines, vivid warm watercolor, NOT photorealistic. "
-            "A warm Japanese indoor consultation room: three family members sit around a low wooden table, "
-            "figures about 25-28% of image height. "
-            "On the table: a small house model, multiple blank plain document sheets spread out, "
-            "a clipboard with blank paper, teacups. "
-            "A bookshelf with books and items is visible on the left background. "
-            "Through a large window in the center background, a Japanese house exterior is visible "
-            "in an autumn garden outside. "
-            "Warm amber light fills the room from the window. "
-            "Warm amber and golden watercolor fills the canvas to all edges."
+            "Japanese editorial magazine illustration — clear ink lines, warm gentle watercolor, NOT photorealistic. "
+            "Editorial collage with 4-5 independent mini-vignettes in warm cream watercolor space: "
+            "a small traditional Japanese house as central element; "
+            "a small family vignette (3 tiny figures, about 12% height, discussing together — not at a desk); "
+            "blank document forms as floating object illustrations; "
+            "a house key; stacked coin shapes; a blank calendar shape. "
+            "Each element is SEPARATE, floating independently — NOT a room scene, NOT a desk consultation. "
+            "Warm cream and gentle amber watercolor fills the full canvas."
         ),
     },
     "お金の手配": {
@@ -281,14 +280,15 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
         "avoid":       "not a portrait, no close-up face, no text anywhere, no numbers on coins, no price tags, no logo, not three-dimensional render, no kimono, no traditional formal wear",
         "tone":        "calm, practical, reassuring, organized — cost planning and subsidy review feels manageable",
         "api_scene": (
-            "Hand-painted commercial illustration — clear ink outlines, vivid warm watercolor, NOT photorealistic. "
-            "A warm consultation scene: two figures sit at a table, about 25% of image height, "
-            "reviewing multiple blank papers. "
-            "On the table: stacked coin shapes, a small house model, blank document sheets, "
-            "a blank calendar grid shape, a blank folder. "
-            "A window or warm background shows a Japanese house exterior. "
-            "Additional concept elements nearby: a calculator shape, more coin stacks. "
-            "Warm amber light and watercolor fills the canvas to all edges."
+            "Japanese editorial magazine illustration — clear ink lines, warm gentle watercolor, NOT photorealistic. "
+            "Editorial collage with 4-5 independent mini-vignettes in warm cream watercolor space: "
+            "a small Japanese house with an approval/subsidy concept; "
+            "stacked coin shapes as an object illustration; "
+            "a blank calendar grid shape; "
+            "a small application form shape; "
+            "a tiny consulting vignette (two small figures, about 12% height). "
+            "Each element is SEPARATE, floating independently — NOT a desk consultation scene. "
+            "Warm cream and gentle amber watercolor fills the full canvas."
         ),
     },
     "建築リフォーム": {
@@ -305,7 +305,7 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
             "Another worker is renovating an interior space on one side of the scene. "
             "A couple reviews blank renovation plans at a table in the foreground, about 22% of image height. "
             "Scattered naturally in the scene: construction tools, material samples, a calculator shape, coin stacks. "
-            "Warm amber and golden watercolor fills the canvas to all edges."
+            "Warm cream and gentle amber watercolor fills the full canvas to all edges."
         ),
     },
     "片付け": {
@@ -350,7 +350,7 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
             "A couple reviews blank plain papers nearby. "
             "Distributed naturally around the scene: a house key, stacked coin shapes, a small house model, blank plain papers. "
             "No signs, no price boards, no real estate placards anywhere in the scene. "
-            "Warm amber and golden watercolor fills the canvas to all edges."
+            "Warm cream and gentle amber watercolor fills the full canvas to all edges."
         ),
     },
     "管理": {
@@ -368,7 +368,7 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
             "Distributed naturally around the scene: a blank calendar grid shape, blank checklist sheet, "
             "simple inspection tools, stacked coin shapes, a blank folder. "
             "Multiple management concept elements fill the canvas. "
-            "Warm amber and golden watercolor fills the canvas to all edges."
+            "Warm cream and gentle amber watercolor fills the full canvas to all edges."
         ),
     },
     "保険": {
@@ -458,12 +458,18 @@ _PREFLIGHT_ALLOWED_PHRASES = [
     "no single-person hero portrait",
     # スタイル記述語（構図・媒体感指定のために使用）
     "japanese commercial editorial illustration",
+    "japanese editorial magazine illustration",
     "editorial multi-element composition",
     "editorial multi-element",
     "editorial composition",
+    "editorial collage",
+    "editorial illustration",
+    "editorial elements",
     "information-rich editorial composition",
     "information-media illustration",
     "real estate information-media",
+    "magazine feature illustration",
+    "magazine feel",
     # 文字禁止強化（否定文として使用）
     "no poster",
 ]
@@ -745,11 +751,12 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         people_note = "No human figures — the scene is conveyed through objects, setting, and atmosphere."
     else:
         people_note = (
-            "Foreground figures in consultation or work scenes may be 20-30% of image height — "
-            "multiple figures create depth and narrative. "
-            "NOT a portrait, NOT a close-up face, NOT a single centered adult. "
+            "Human figures are small editorial elements — 10-18% of image height — "
+            "within mini-vignettes, NOT large foreground subjects. "
+            "NOT a portrait, NOT a close-up face, NOT two people at a desk as the main layout. "
             "All figures in modern everyday casual clothing: sweater, light jacket, slacks. "
-            "Figures are always part of a group or scene context — never isolated as the sole subject."
+            "Figures appear as small scene elements within the editorial collage — "
+            "one visual element among many, not the dominant subject."
         )
 
     blank_note = "Simple blank papers and clipboards appear naturally as props." if allow_blank else ""
@@ -769,38 +776,32 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         # ──── A0. Style Lock（写真化防止・最優先） ────
         "This is a hand-drawn watercolor illustration of a Japanese vacant house scene — "
         "NOT a photo, NOT a portrait photograph, NOT a realistic human face render. "
-        "Clear ink outlines with vivid warm watercolor fills — "
-        "the style of a published Japanese commercial illustration, not a camera image.",
+        "Japanese editorial magazine illustration style: "
+        "clear ink lines with warm gentle watercolor and soft paper texture, not a camera image.",
         "No realistic skin texture, no selfie, no single-person hero portrait, "
         "no chest-up business portrait, no close-up face, no camera-lens look.",
         # ──── A. Style Contract（全カテゴリ共通・固定） ────
-        "Hand-painted commercial illustration: clear ink outlines on every element, "
-        "filled with vivid warm watercolor. Hand-drawn illustrated style, NOT photorealistic.",
-        "Every figure, building, tool, and prop has a clear ink outline "
-        "with warm watercolor fills — the style of a published Japanese commercial illustration.",
-        "Information-rich commercial illustration: multiple concept elements communicate the article's theme. "
-        "Composition type varies by category: "
-        "indoor consultation room with house visible through a window (for consultation/inheritance topics); "
-        "outdoor multi-element scene with distributed props (for work/management topics); "
-        "floating-icon collage around a central scene (for process/flow topics). "
-        "NOT locked to a single outdoor landscape — the composition matches the article content.",
-        "Figures may range from 15-35% of image height: foreground consultation or work figures "
-        "can be larger; background figures are smaller. "
-        "Multiple figures at different scales create natural depth and information hierarchy.",
-        "All human figures wear modern everyday casual clothing: sweater, light jacket, slacks, "
-        "casual shirt — not traditional kimono, not formal business suit.",
-        "No single large centered isolated figure — figures are part of scenes, groups, and contexts.",
-        "Props and concept elements are distributed naturally throughout the composition — "
-        "some grounded on surfaces, some floating as visual concept elements at various scales.",
-        "Colors are warm and vivid: warm amber, golden cream, soft green, warm brown — "
-        "rich watercolor washes, not pale or washed-out, not deeply oversaturated.",
-        "Warm amber and golden watercolor washes fill the entire canvas — "
-        "illustration reaches all four frame edges. "
-        "Fill most of the canvas with illustration details and warm watercolor. "
-        "No large empty white areas, especially top corners and side margins. "
-        "Only the very outermost edges dissolve softly into white.",
-        "The composition fills the full 16:9 canvas — "
-        "multiple elements distributed from edge to edge, no large empty white zones.",
+        "Japanese editorial magazine illustration — clear ink lines, warm gentle watercolor with paper texture. "
+        "Multiple vignette collage: explanation-style visual storytelling. NOT photorealistic.",
+        "COMPOSITION: editorial collage with 3-5 independent mini-vignettes floating in warm watercolor space. "
+        "Central subject (house, or main concept) surrounded by supporting mini-illustrations. "
+        "Each mini-vignette represents one article topic — not physically placed in one room. "
+        "NOT a single continuous scene. NOT two people at a desk as the dominant layout. "
+        "NOT a house as full-canvas background with people in front.",
+        "Human figures are small editorial elements (10-18% of image height) within mini-vignettes — "
+        "NOT large foreground subjects. No two-person facing-desk as main composition.",
+        "All human figures wear modern everyday casual clothing: sweater, light jacket, slacks — not kimono.",
+        "No single large centered isolated figure — figures are small supporting scene elements.",
+        "Visual elements: house, small figure groups, object illustrations, concept symbols — "
+        "each a separate mini-illustration, floating independently in warm cream watercolor wash.",
+        "Colors: warm cream and gentle amber, soft yellow-green, warm brown — "
+        "soft vintage magazine feel, not deeply saturated, not vivid orange.",
+        "Warm cream and gentle amber watercolor wash fills the entire canvas — "
+        "illustration and background reach all four frame edges. "
+        "Mini-vignettes and objects distributed across the full canvas area. "
+        "No large empty white areas. Only the very outermost edges dissolve softly into white.",
+        "The full 16:9 canvas is filled with editorial illustration elements and warm watercolor — "
+        "3-5 mini-vignettes distributed from edge to edge.",
         "Documents and papers are blank plain sheets — physical pages on surfaces or in hands, "
         "with no writing, marks, printed content, or symbols of any kind.",
         # ──── C. Safety（Scene Contractより前に配置し優先度を上げる） ────
@@ -852,14 +853,15 @@ def build_fallback_prompt(title: str, metadata: dict) -> str:
     return "\n".join([
         "Hand-drawn watercolor illustration of a Japanese vacant house scene — "
         "NOT a photo, NOT a portrait photograph, NOT a realistic human face render. "
-        "Clear ink outlines with vivid warm watercolor fills — "
-        "the style of a published Japanese commercial illustration, not a camera image.",
+        "Japanese editorial magazine illustration style: clear ink lines, warm gentle watercolor, "
+        "soft paper texture, not a camera image.",
         "No realistic skin texture, no selfie, no single-person hero portrait, "
         "no chest-up business portrait, no close-up face.",
-        "Multi-element commercial illustration: figures (15-30% of image height), house, props, "
-        "category-specific elements — filling the full 16:9 canvas edge to edge.",
+        "Editorial magazine illustration: 3-5 mini-vignettes in warm cream watercolor — "
+        "house, small figures, objects, concept symbols — "
+        "NOT a single desk consultation scene, NOT large portrait figures (10-18% of image height).",
         "All figures in modern casual clothing: sweater, light jacket, slacks — not kimono.",
-        "Warm amber and golden watercolor fills the entire canvas — "
+        "Warm cream and gentle amber watercolor fills the entire canvas — "
         "background extends to all four edges; only the very outermost edges dissolve into white.",
         f"{scene}.",
         people_note,
