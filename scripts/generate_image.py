@@ -722,8 +722,12 @@ def _build_multi_zone_scene(
 # 主題キーワード（scene_type を決定する）: 上から優先順位順
 TITLE_TOPIC_MAP: list[tuple[str, dict]] = [
     ("相続",    {"situation": "inheriting a vacant house from family", "scene_type": "warm family gathering", "mood": "calm and thoughtful"}),
+    ("売る買う", {"situation": "considering a sale-or-purchase process for a vacant house", "scene_type": "outdoor consultation", "mood": "calm and organized"}),
+    ("売買",    {"situation": "considering a sale-or-purchase process for a vacant house", "scene_type": "outdoor consultation", "mood": "calm and organized"}),
     ("売却",    {"situation": "considering selling a vacant house", "scene_type": "outdoor consultation", "mood": "hopeful and organized"}),
+    ("売る",    {"situation": "considering selling a vacant house", "scene_type": "outdoor consultation", "mood": "hopeful and organized"}),
     ("買取",    {"situation": "arranging a vacant house purchase and handover", "scene_type": "outdoor consultation", "mood": "calm and trustworthy"}),
+    ("買う",    {"situation": "considering buying a vacant house", "scene_type": "outdoor consultation", "mood": "curious and considered"}),
     ("片付け",  {"situation": "clearing out and organizing a vacant house", "scene_type": "indoor cleanup", "mood": "organized and forward-looking"}),
     ("解体",    {"situation": "planning the demolition of a vacant house", "scene_type": "outdoor planning", "mood": "calm and forward-looking"}),
     ("管理",    {"situation": "managing and maintaining a vacant house", "scene_type": "outdoor inspection", "mood": "responsible and practical"}),
@@ -813,6 +817,18 @@ SCENE_TYPE_DESCRIPTIONS: dict[str, str] = {
     ),
 }
 
+# outdoor scene_type の集合（hands_only / 机上プロップを抑止する判定に使用）
+_OUTDOOR_SCENE_TYPES: frozenset[str] = frozenset({
+    "outdoor planning",
+    "outdoor consultation",
+    "outdoor inspection",
+    "outdoor renovation",
+    "outdoor welcoming",
+    "garden work",
+    "lot conversion",
+    "quiet outdoor",
+})
+
 # dry-run 出力用デバッグ情報（関数をまたいで渡す）
 _TITLE_SCENE_DEBUG: dict = {}
 
@@ -841,8 +857,13 @@ def build_title_driven_scene(title: str, metadata: dict) -> str:
     # ── 3. 主題なし fallback ──
     if primary is None:
         cat = metadata.get("detected_category", "その他")
+        cat_en = CATEGORY_EN.get(cat, "")
+        situation = (
+            f"dealing with a vacant Japanese house related to {cat_en}"
+            if cat_en else "dealing with a vacant Japanese house"
+        )
         primary = {
-            "situation": f"dealing with a vacant Japanese house ({cat})",
+            "situation": situation,
             "scene_type": "quiet outdoor",
             "mood": "calm and practical",
             "matched_keyword": None,
@@ -855,7 +876,11 @@ def build_title_driven_scene(title: str, metadata: dict) -> str:
 
     additions = [mod.get("situation_add", "") for _, mod in modifiers if mod.get("situation_add")]
     if additions:
-        situation = f"{situation}, with focus on {' and '.join(additions)}"
+        if scene_type in _OUTDOOR_SCENE_TYPES:
+            # outdoor: literal cost/rate phrases trigger text rendering — use abstract framing
+            situation = f"{situation}, approaching the next steps thoughtfully"
+        else:
+            situation = f"{situation}, with focus on {' and '.join(additions)}"
     if modifiers:
         # 最後の修飾語の mood を採用
         mood = modifiers[-1][1].get("mood", mood)
@@ -871,6 +896,10 @@ def build_title_driven_scene(title: str, metadata: dict) -> str:
     if any(kw in title for kw in ["相談", "家族", "業者", "専門家", "交渉", "手続き", "相談先"]):
         effective_people_mode = "up_to_4"
     elif any(kw in title for kw in ["点検", "管理", "確認", "調査", "片付け"]):
+        effective_people_mode = "up_to_2"
+
+    # 方針A: outdoor scene では hands_only（机上操作）は不適切 → up_to_2 に上書き
+    if scene_type in _OUTDOOR_SCENE_TYPES and effective_people_mode == "hands_only":
         effective_people_mode = "up_to_2"
 
     if effective_people_mode == "none":
