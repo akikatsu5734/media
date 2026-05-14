@@ -755,18 +755,62 @@ TITLE_MODIFIER_MAP: list[tuple[str, dict]] = [
     ("安全",      {"situation_add": "ensuring safety and security", "mood": "responsible and calm"}),
 ]
 
-# scene_type → ゆるい場面記述（強いテンプレではなく方向性のみ）
+# scene_type → 環境レイヤー描写（前景・中景・背景の奥行きヒントを含む）
 SCENE_TYPE_DESCRIPTIONS: dict[str, str] = {
-    "warm family gathering": "a warm traditional Japanese residential house in a garden, with family members nearby",
-    "outdoor consultation":  "a Japanese vacant house with a garden, people engaged in discussion nearby",
-    "outdoor inspection":    "a traditional Japanese house seen from outside, someone carefully examining it",
-    "indoor cleanup":        "the interior of a Japanese vacant house, being organized and cleared",
-    "outdoor planning":      "a Japanese vacant house site, calm and surrounded by a quiet garden",
-    "outdoor renovation":    "a Japanese house with activity suggesting repair or renovation work",
-    "outdoor welcoming":     "a Japanese house with a neat garden entrance, suggesting a welcoming space",
-    "garden work":           "a Japanese house with a green garden, trees being tended",
-    "lot conversion":        "a vacant lot beside a Japanese residential area, open and ready for new use",
-    "quiet outdoor":         "a traditional Japanese house standing quietly in a residential neighborhood",
+    "warm family gathering": (
+        "a warm traditional Japanese residential house with weathered roof tiles and a layered garden — "
+        "mature trees in the background, a winding stone path in the mid-ground, "
+        "and a sense of long family history in every detail. "
+        "Family members gathered nearby, the setting full of lived-in quiet texture"
+    ),
+    "outdoor consultation": (
+        "a Japanese vacant house with a garden path leading to the entrance — "
+        "garden greenery and trees framing the property at multiple depths, stone steps visible. "
+        "People engaged in discussion in the mid-ground, the house clearly behind them"
+    ),
+    "outdoor inspection": (
+        "a traditional Japanese house seen from outside — "
+        "slightly overgrown garden in the foreground suggesting long vacancy, "
+        "but the solid structure and roof visible beyond. "
+        "Environmental texture: weathered fence, garden plants, neighboring rooflines"
+    ),
+    "indoor cleanup": (
+        "the interior of a Japanese vacant house — "
+        "tatami rooms, sliding shoji panels filtering light, a sense of rooms "
+        "that once held a family's daily life. Natural window light, depth visible through doorways. "
+        "People working at different positions in the space"
+    ),
+    "outdoor planning": (
+        "a Japanese vacant house site, calm and open — "
+        "trees and garden in the background, neighboring rooflines suggesting a residential street. "
+        "The property is still and waiting, foreground ground texture giving depth"
+    ),
+    "outdoor renovation": (
+        "a Japanese house with renovation activity at multiple scales — "
+        "structural work visible on the building, workers present at different distances, "
+        "the structure showing the layered quality of an old house being renewed"
+    ),
+    "outdoor welcoming": (
+        "a Japanese house with a neat garden entrance — "
+        "a well-tended gate or path in the foreground, warm greenery framing the approach, "
+        "the house visible with welcoming architectural details in the background"
+    ),
+    "garden work": (
+        "a Japanese house with a green layered garden — "
+        "tall background trees, mid-ground trimmed hedges and shrubs, "
+        "foreground garden path with ground texture. "
+        "Maintenance activity visible at multiple scales across the garden depth"
+    ),
+    "lot conversion": (
+        "a Japanese vacant lot beside a residential street — "
+        "neighboring houses and fences giving depth in the background, "
+        "open ground in the foreground suggesting potential, quiet neighborhood atmosphere"
+    ),
+    "quiet outdoor": (
+        "a traditional Japanese house standing quietly in a residential neighborhood — "
+        "mature garden trees in the background, a weathered fence or gate in the mid-ground, "
+        "the property's aged details visible, neighborhood context framing the scene"
+    ),
 }
 
 # dry-run 出力用デバッグ情報（関数をまたいで渡す）
@@ -869,8 +913,10 @@ def build_title_driven_scene(title: str, metadata: dict) -> str:
         f"Setting: {scene_desc}. "
         f"Mood: {mood}. "
         f"{people_str} "
-        "All elements are grounded naturally in the scene — "
-        "no isolated floating objects, no large blank shapes in the foreground. "
+        "The scene has natural visual depth: foreground, middle-ground, and background "
+        "each contribute environmental texture and detail. "
+        "The setting feels lived-in and layered — naturally detailed without being cluttered. "
+        "All elements are grounded in the scene — no isolated floating objects. "
         "Warm cream and gentle amber watercolor washes fill the entire canvas."
     )
 
@@ -950,7 +996,7 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         "and natural surroundings — all grounded in the same illustration space. "
         "Linked by warm watercolor ground, garden path, and soft greenery — NOT isolated icons. "
         "NOT a simple single-scene landscape. NOT a single desk consultation with two large figures. "
-        "Visually rich and natural.",
+        "Visually rich, naturally layered, and lived-in — not sparse, not cluttered.",
         "Figures are small scene elements — 12-20% of image height — "
         "part of the connected illustration, not the dominant subject.",
         "All human figures wear modern everyday casual clothing: sweater, light jacket, slacks, "
