@@ -771,10 +771,16 @@ SCENE_TYPE_DESCRIPTIONS: dict[str, str] = {
         "Family members gathered nearby, the setting full of lived-in quiet texture"
     ),
     "outdoor consultation": (
-        "a Japanese vacant house with a garden path leading to the entrance — "
-        "garden greenery and trees framing the property at multiple depths, stone steps visible. "
-        "Two small figures pausing thoughtfully near the entrance or garden path, "
-        "engaged in quiet discussion — the house clearly in the background"
+        "a traditional Japanese vacant house as the clear visual anchor — "
+        "layered garden with stone path, shrubs, and mature garden trees reaching toward the canvas edges. "
+        "Three or four small figures distributed in different positions across the property: "
+        "a small pair near the entrance in calm quiet conversation; "
+        "another small figure or pair along the garden path, looking toward the house "
+        "with subtle body language of careful consideration. "
+        "Neighboring rooflines, a low garden wall or gate, and layered garden greenery "
+        "spread to the left and right edges, filling the canvas. "
+        "Multiple small story moments distributed naturally — lively yet calm, "
+        "the house as the clear center, the canvas densely and warmly filled"
     ),
     "outdoor inspection": (
         "a traditional Japanese house seen from outside — "
@@ -1047,16 +1053,20 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         "with slightly uneven hand-drawn character — NOT crisp uniform digital outlines. "
         "Gentle watercolor bleeding at object edges; paper texture visible through the paint; "
         "soft pigment granulation and uneven color wash on aged cream paper. "
-        "Muted sage green for trees; warm amber and golden brown for paths; soft cream for buildings. "
-        "Analog commercial illustration style, NOT photorealistic. NOT modern flat illustration.",
-        "Every element has variable warm ink outlines with soft layered watercolor fills — "
-        "naturalistic muted palette, visible paper grain, natural watercolor pooling and gentle bleed. "
-        "The look of a dense printed Japanese commercial illustration.",
-        "Dense commercial illustration: one continuous warm watercolor scene "
+        "Vivid fresh yellow-green for trees and garden plants; rich warm amber and golden yellow for paths and ground; "
+        "soft cream-white for building walls with warm reddish-brown tiled roofs. "
+        "Bright cheerful commercial illustration style — colorful and vivid, NOT pale sketch, NOT photorealistic, NOT modern flat illustration.",
+        "Every element has variable warm ink outlines with vivid layered watercolor fills — "
+        "bright warm palette, visible paper grain, natural watercolor pooling and gentle bleed. "
+        "The look of a bright dense printed Japanese commercial illustration.",
+        "Dense explanatory commercial illustration: one continuous warm watercolor scene "
         "filled with natural visual elements — house, people in activity, "
         "and natural surroundings — all grounded in the same illustration space. "
+        "Multiple small story moments and narrative details distributed across the canvas — "
+        "dense but harmonious, visually rich even at small display sizes. "
         "Linked by warm watercolor ground, garden path, and soft greenery — NOT isolated icons. "
         "NOT a simple single-scene landscape. NOT a single desk consultation with two large figures. "
+        "NOT a quiet empty residential exterior sketch. NOT a sparse isolated house exterior. "
         "Visually rich, naturally layered, and lived-in — not sparse, not cluttered.",
         "Environmental depth layers: foreground has warm garden path, small stones, low plants; "
         "middle-ground has fence or gate, garden shrubs, layered greenery; "
@@ -1072,16 +1082,20 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         "Props rest naturally on garden ground, low wooden surfaces, or soft cloth — "
         "grounded in the scene with natural placement, not scattered isolated icons. "
         "NOT clean arranged objects, NOT modern flat vector icons.",
-        "Colors: muted sage green for trees and bushes, warm amber and golden brown for paths, "
-        "soft warm cream for building walls, gentle earth tones for figures and surroundings — "
-        "multi-colored soft watercolor washes with natural variation. "
-        "Cream paper as the base — NOT pure white, NOT monochrome sepia, NOT flat sparse coloring.",
+        "Colors: highly saturated soft watercolor palette — "
+        "vivid fresh yellow-green for trees and garden plants, bright lemon-yellow golden highlights in sunlit areas, "
+        "warm orange-amber watercolor washes for ground, garden paths, and warm shadows, "
+        "soft cream-white for building walls, warm reddish-brown for traditional tiled roofs, "
+        "clear pale sky-blue accents in open sky and cooler shadow areas — "
+        "energetic multi-colored vivid watercolor washes fill every part of the canvas with warmth and life. "
+        "Cream paper as the base — saturated cheerful palette, NOT muted, NOT gray-brown, NOT pale sketch, NOT flat sparse coloring.",
         "Warm amber and golden watercolor washes fill the entire canvas — "
         "illustration reaches all four frame edges with warm color throughout. "
-        "No large empty or cold white areas — the cream paper tone shows everywhere. "
-        "Only the very outermost edges dissolve gently into warm cream.",
+        "Trees, garden plants, neighboring rooflines, and warm washes extend to the left and right canvas edges — "
+        "no empty side margins on either side. "
+        "No large empty or cold white areas — only the very outermost edges dissolve gently into warm cream.",
         "The composition fills the full wide horizontal canvas — "
-        "multiple elements distributed from edge to edge, no large empty white zones.",
+        "elements distributed densely from edge to edge, no blank white zones on any side.",
         "Documents and papers are blank plain sheets — physical pages on surfaces or in hands, "
         "with no writing, marks, printed content, or symbols of any kind.",
         # ──── C. Safety（Scene Contractより前に配置し優先度を上げる） ────
