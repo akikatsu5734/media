@@ -771,16 +771,15 @@ SCENE_TYPE_DESCRIPTIONS: dict[str, str] = {
         "Family members gathered nearby, the setting full of lived-in quiet texture"
     ),
     "outdoor consultation": (
-        "a traditional Japanese vacant house as the clear visual anchor — "
-        "layered garden with stone path, shrubs, and mature garden trees reaching toward the canvas edges. "
-        "Three or four small figures distributed in different positions across the property: "
-        "a small pair near the entrance in calm quiet conversation; "
-        "another small figure or pair along the garden path, looking toward the house "
-        "with subtle body language of careful consideration. "
-        "Neighboring rooflines, a low garden wall or gate, and layered garden greenery "
-        "spread to the left and right edges, filling the canvas. "
-        "Multiple small story moments distributed naturally — lively yet calm, "
-        "the house as the clear center, the canvas densely and warmly filled"
+        "a traditional Japanese vacant house as the central anchor — "
+        "several small story clusters distributed across the property: "
+        "one small pair near the entrance gate in calm deliberate conversation; "
+        "another person by the garden path looking carefully at the house facade; "
+        "a third small figure near the garden side wall or roofline, quietly considering the structure — "
+        "people calmly evaluating the property from different positions and angles, "
+        "each cluster with distinct body language of careful consideration and quiet discussion. "
+        "The house, garden path, shrubs, and neighboring rooflines connect the clusters. "
+        "Trees and garden elements reach the canvas edges"
     ),
     "outdoor inspection": (
         "a traditional Japanese house seen from outside — "
@@ -930,8 +929,10 @@ def build_title_driven_scene(title: str, metadata: dict) -> str:
         )
     else:
         people_str = (
-            "Two or three small figures in casual everyday clothes, about 15% of image height. "
-            "Naturally gathered in the setting — warm and unposed."
+            "Three or four small figures in casual everyday clothes, about 15% of image height. "
+            "Distributed in different positions and activities across the scene — "
+            "not all gathered in one spot. "
+            "Each small group or individual creates its own distinct story moment."
         )
 
     # ── 7. center_motif：初期版では使用しない（将来フック） ──
@@ -968,6 +969,23 @@ def build_title_driven_scene(title: str, metadata: dict) -> str:
         "any people are naturally grounded in the garden, entrance, path, or street-side space. "
         if scene_type in _OUTDOOR_SCENE_TYPES else ""
     )
+    depth_str = (
+        "Multiple small story clusters are distributed across the scene — "
+        "one near the entrance, one along the garden path, one near the gate or garden wall. "
+        "Each cluster involves one or two people with distinct body language of observation or quiet discussion. "
+        "Trees, shrubs, stone path, and warm watercolor washes connect the clusters. "
+        "The house is the center that ties everything together. "
+        "The eye moves naturally from cluster to cluster across the full canvas."
+        if scene_type == "outdoor consultation" else
+        (
+            "The scene has natural visual depth: "
+            "foreground has ground texture — warm garden path, small stones, low plants; "
+            "middle-ground has fence or gate, garden greenery, shrubs, figures in activity; "
+            "background has house roofline, neighboring rooftops, mature trees. "
+            "Subtle household exterior details — entrance, eaves, layered plantings — "
+            "give the eye multiple places to rest across the full canvas."
+        )
+    )
     return (
         f"The subject of this illustration: {situation}. "
         f"Setting: {scene_desc}. "
@@ -976,12 +994,7 @@ def build_title_driven_scene(title: str, metadata: dict) -> str:
         f"{portrait_guard}"
         f"{welcoming_guard}"
         f"{outdoor_desk_guard}"
-        "The scene has natural visual depth: "
-        "foreground has ground texture — warm garden path, small stones, low plants; "
-        "middle-ground has fence or gate, garden greenery, shrubs, figures in activity; "
-        "background has house roofline, neighboring rooftops, mature trees. "
-        "Subtle household exterior details — entrance, eaves, layered plantings — "
-        "give the eye multiple places to rest across the full canvas. "
+        f"{depth_str} "
         "The setting feels lived-in and layered — naturally detailed without being cluttered. "
         "All elements are grounded in the scene — no isolated floating objects. "
         "Warm cream and gentle amber watercolor washes fill the entire canvas."
@@ -1064,6 +1077,10 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         "and natural surroundings — all grounded in the same illustration space. "
         "Multiple small story moments and narrative details distributed across the canvas — "
         "dense but harmonious, visually rich even at small display sizes. "
+        "Small narrative clusters — each with one or two people in a distinct activity — "
+        "are grounded in the garden path, entrance, or property space. "
+        "These clusters are connected by watercolor washes and garden setting, "
+        "NOT floating, NOT panel-separated, NOT comic-book framed. "
         "Linked by warm watercolor ground, garden path, and soft greenery — NOT isolated icons. "
         "NOT a simple single-scene landscape. NOT a single desk consultation with two large figures. "
         "NOT a quiet empty residential exterior sketch. NOT a sparse isolated house exterior. "
