@@ -242,14 +242,17 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
         "avoid":       "not a portrait, no close-up face, no readable text, no logo, no numbers, not three-dimensional render, no for-sale sign text, no price tags, no door frame, no gateway framing",
         "tone":        "calm, trustworthy, organized, hopeful — the registration and handover process feels clear and manageable",
         "api_scene": (
-            "Hand-painted commercial illustration — clear ink outlines, vivid warm watercolor, NOT photorealistic. "
-            "A property consultation and registration scene: "
-            "Two figures — homeowner and property consultant in modern casual clothes — "
-            "at about 25% of image height, reviewing documents together. "
-            "Nearby: a house key, multiple blank registration papers, a small house model, stacked coin shapes. "
-            "A Japanese house is visible in the background. "
-            "Additional elements: a blank clipboard, garden trees. "
-            "Multiple elements distributed naturally across the canvas. "
+            "Hand-painted commercial illustration — clear ink lines, vivid warm watercolor, NOT photorealistic. "
+            "One continuous commercial illustration — all elements in the same warm watercolor scene."
+            "A Japanese vacant house and garden fill the center background. "
+            "On the left: two small figures (about 15% height) in a brief consultation near the house — "
+            "small scene elements, not the dominant subject. "
+            "Along the garden path and on a low outdoor surface in the foreground: "
+            "blank registration documents, a house key, stacked coin shapes — "
+            "naturally placed on ground or table, not floating in isolation. "
+            "Soft garden greenery, warm amber path, and trees connect all elements across the scene. "
+            "On the right: a small handshake or agreement vignette blending into the garden setting. "
+            "NOT an icon sheet — all elements share the same continuous warm watercolor space. "
             "Warm amber and golden watercolor fills the canvas to all edges."
         ),
     },
@@ -745,11 +748,11 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         people_note = "No human figures — the scene is conveyed through objects, setting, and atmosphere."
     else:
         people_note = (
-            "Foreground figures in consultation or work scenes may be 20-30% of image height — "
-            "multiple figures create depth and narrative. "
-            "NOT a portrait, NOT a close-up face, NOT a single centered adult. "
+            "Figures are small scene elements — 12-20% of image height — "
+            "part of the continuous illustration, not the dominant subject. "
+            "NOT a portrait, NOT a close-up face, NOT two large figures facing at a desk. "
             "All figures in modern everyday casual clothing: sweater, light jacket, slacks. "
-            "Figures are always part of a group or scene context — never isolated as the sole subject."
+            "Figures blend into the shared watercolor scene alongside house, props, and garden."
         )
 
     blank_note = "Simple blank papers and clipboards appear naturally as props." if allow_blank else ""
@@ -778,15 +781,13 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         "filled with vivid warm watercolor. Hand-drawn illustrated style, NOT photorealistic.",
         "Every figure, building, tool, and prop has a clear ink outline "
         "with warm watercolor fills — the style of a published Japanese commercial illustration.",
-        "Information-rich commercial illustration: multiple concept elements communicate the article's theme. "
-        "Composition type varies by category: "
-        "indoor consultation room with house visible through a window (for consultation/inheritance topics); "
-        "outdoor multi-element scene with distributed props (for work/management topics); "
-        "floating-icon collage around a central scene (for process/flow topics). "
-        "NOT locked to a single outdoor landscape — the composition matches the article content.",
-        "Figures may range from 15-35% of image height: foreground consultation or work figures "
-        "can be larger; background figures are smaller. "
-        "Multiple figures at different scales create natural depth and information hierarchy.",
+        "One continuous rich commercial illustration — all elements connected by shared warm watercolor scene."
+        "House, people, documents, keys, coins, and props all exist in the same illustration space, "
+        "linked by pale watercolor ground, garden, path, or desk surface — NOT isolated icons. "
+        "NOT an icon sheet. NOT separate floating elements on blank background. "
+        "NOT a single desk consultation with two large figures facing each other.",
+        "Figures are small scene elements — 12-20% of image height — "
+        "part of the connected illustration, not the dominant subject.",
         "All human figures wear modern everyday casual clothing: sweater, light jacket, slacks, "
         "casual shirt — not traditional kimono, not formal business suit.",
         "No single large centered isolated figure — figures are part of scenes, groups, and contexts.",
