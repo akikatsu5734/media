@@ -1129,8 +1129,11 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         "NOT a modern office interior. NOT a corporate meeting room. NOT a classroom.",
         "No format marks, no corner marks, no tiny printed marks, no dimension marks, "
         "no metadata-like marks anywhere in the image.",
-        "Keep walls, gates, fences, posts, and entrances plain and unmarked — "
+        "Keep walls, gates, fences, posts, pillars, and entrances visually plain — "
+        "no nameplates, no plaques, no rectangular shapes fixed to walls or pillars, "
         "no tiny labels, no plate-like marks, no printed-looking marks on any surface.",
+        "No loose flat rectangles or white sheet-like shapes lying on the ground or foreground — "
+        "ground surfaces contain only natural garden elements: stones, soil, path, grass, plants.",
         "",
         # ──── B. Scene Contract（タイトル駆動） ────
         scene_prose,
