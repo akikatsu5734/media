@@ -717,6 +717,166 @@ def _build_multi_zone_scene(
     ).strip()
 
 
+# ── タイトル駆動 scene planning ──────────────────────────────────────────
+
+# 主題キーワード（scene_type を決定する）: 上から優先順位順
+TITLE_TOPIC_MAP: list[tuple[str, dict]] = [
+    ("相続",    {"situation": "inheriting a vacant house from family", "scene_type": "warm family gathering", "mood": "calm and thoughtful"}),
+    ("売却",    {"situation": "considering selling a vacant house", "scene_type": "outdoor consultation", "mood": "hopeful and organized"}),
+    ("買取",    {"situation": "arranging a vacant house purchase and handover", "scene_type": "outdoor consultation", "mood": "calm and trustworthy"}),
+    ("片付け",  {"situation": "clearing out and organizing a vacant house", "scene_type": "indoor cleanup", "mood": "organized and forward-looking"}),
+    ("解体",    {"situation": "planning the demolition of a vacant house", "scene_type": "outdoor planning", "mood": "calm and forward-looking"}),
+    ("管理",    {"situation": "managing and maintaining a vacant house", "scene_type": "outdoor inspection", "mood": "responsible and practical"}),
+    ("リフォーム", {"situation": "renovating and reviving a vacant house", "scene_type": "outdoor renovation", "mood": "hopeful and energetic"}),
+    ("修繕",    {"situation": "repairing and maintaining a vacant house", "scene_type": "outdoor renovation", "mood": "practical and hopeful"}),
+    ("賃貸",    {"situation": "preparing a vacant house for rental", "scene_type": "outdoor welcoming", "mood": "warm and inviting"}),
+    ("民泊",    {"situation": "operating a vacant house as a vacation rental", "scene_type": "outdoor welcoming", "mood": "welcoming and warm"}),
+    ("庭木",    {"situation": "maintaining the garden of a vacant house", "scene_type": "garden work", "mood": "organized and fresh"}),
+    ("剪定",    {"situation": "pruning and caring for trees around a vacant house", "scene_type": "garden work", "mood": "practical and satisfying"}),
+    ("駐車場",  {"situation": "converting a vacant lot to a parking area", "scene_type": "lot conversion", "mood": "practical and organized"}),
+    ("保険",    {"situation": "protecting a vacant house with insurance", "scene_type": "quiet outdoor", "mood": "reassured and calm"}),
+]
+
+# 修飾キーワード（mood・situation を補完するが scene_type は変えない）
+TITLE_MODIFIER_MAP: list[tuple[str, dict]] = [
+    ("費用",      {"situation_add": "understanding the costs involved", "mood": "practical and reassured"}),
+    ("相場",      {"situation_add": "comparing market rates", "mood": "organized and informed"}),
+    ("補助金",    {"situation_add": "exploring available subsidies and grants", "mood": "reassured and organized"}),
+    ("助成金",    {"situation_add": "exploring available grants", "mood": "reassured and organized"}),
+    ("手続き",    {"situation_add": "navigating the necessary procedures", "mood": "organized and supported"}),
+    ("相談先",    {"situation_add": "finding the right advisor or service", "mood": "calm and supported"}),
+    ("選び方",    {"situation_add": "choosing the right service or approach", "mood": "organized and considered"}),
+    ("注意点",    {"situation_add": "being careful about common pitfalls", "mood": "careful and considered"}),
+    ("失敗しない", {"situation_add": "avoiding common mistakes", "mood": "careful and reassured"}),
+    ("遠方",      {"situation_add": "managing from a distance", "mood": "careful and organized"}),
+    ("交渉",      {"situation_add": "negotiating the best outcome", "mood": "calm and trustworthy"}),
+    ("放置",      {"situation_add": "addressing a long-neglected property", "mood": "concerned but constructive"}),
+    ("コツ",      {"situation_add": "learning practical tips", "mood": "practical and helpful"}),
+    ("安全",      {"situation_add": "ensuring safety and security", "mood": "responsible and calm"}),
+]
+
+# scene_type → ゆるい場面記述（強いテンプレではなく方向性のみ）
+SCENE_TYPE_DESCRIPTIONS: dict[str, str] = {
+    "warm family gathering": "a warm traditional Japanese residential house in a garden, with family members nearby",
+    "outdoor consultation":  "a Japanese vacant house with a garden, people engaged in discussion nearby",
+    "outdoor inspection":    "a traditional Japanese house seen from outside, someone carefully examining it",
+    "indoor cleanup":        "the interior of a Japanese vacant house, being organized and cleared",
+    "outdoor planning":      "a Japanese vacant house site, calm and surrounded by a quiet garden",
+    "outdoor renovation":    "a Japanese house with activity suggesting repair or renovation work",
+    "outdoor welcoming":     "a Japanese house with a neat garden entrance, suggesting a welcoming space",
+    "garden work":           "a Japanese house with a green garden, trees being tended",
+    "lot conversion":        "a vacant lot beside a Japanese residential area, open and ready for new use",
+    "quiet outdoor":         "a traditional Japanese house standing quietly in a residential neighborhood",
+}
+
+# dry-run 出力用デバッグ情報（関数をまたいで渡す）
+_TITLE_SCENE_DEBUG: dict = {}
+
+
+def build_title_driven_scene(title: str, metadata: dict) -> str:
+    """タイトル駆動で scene prose を生成する。
+
+    主入力：記事タイトル（日本語）。
+    カテゴリは people_mode の fallback のみに使用。
+    center_motif は初期実装では使用しない（将来用フックのみ）。
+    固定プロップ（鍵・コイン・書類・家模型等）は列挙しない。
+    """
+    # ── 1. 主題キーワードを優先順位順に照合 ──
+    primary: dict | None = None
+    for keyword, concept in TITLE_TOPIC_MAP:
+        if keyword in title:
+            primary = concept.copy()
+            primary["matched_keyword"] = keyword
+            break
+
+    # ── 2. 修飾キーワードを複数照合（最大2件） ──
+    modifiers: list[tuple[str, dict]] = [
+        (kw, mod) for kw, mod in TITLE_MODIFIER_MAP if kw in title
+    ][:2]
+
+    # ── 3. 主題なし fallback ──
+    if primary is None:
+        cat = metadata.get("detected_category", "その他")
+        primary = {
+            "situation": f"dealing with a vacant Japanese house ({cat})",
+            "scene_type": "quiet outdoor",
+            "mood": "calm and practical",
+            "matched_keyword": None,
+        }
+
+    # ── 4. 修飾キーワードで situation・mood を補完 ──
+    situation = primary["situation"]
+    scene_type = primary["scene_type"]
+    mood = primary["mood"]
+
+    additions = [mod.get("situation_add", "") for _, mod in modifiers if mod.get("situation_add")]
+    if additions:
+        situation = f"{situation}, with focus on {' and '.join(additions)}"
+    if modifiers:
+        # 最後の修飾語の mood を採用
+        mood = modifiers[-1][1].get("mood", mood)
+
+    # ── 5. シーン設定テキスト ──
+    scene_desc = SCENE_TYPE_DESCRIPTIONS.get(
+        scene_type,
+        "a traditional Japanese vacant house in a quiet residential neighborhood",
+    )
+
+    # ── 6. 人物描写：タイトル優先、カテゴリは fallback ──
+    effective_people_mode = metadata.get("people_mode", "none")
+    if any(kw in title for kw in ["相談", "家族", "業者", "専門家", "交渉", "手続き", "相談先"]):
+        effective_people_mode = "up_to_4"
+    elif any(kw in title for kw in ["点検", "管理", "確認", "調査", "片付け"]):
+        effective_people_mode = "up_to_2"
+
+    if effective_people_mode == "none":
+        people_str = "No human figures — the scene is expressed through the environment alone."
+    elif effective_people_mode == "hands_only":
+        people_str = (
+            "Hands only visible — naturally interacting with objects. No faces shown."
+        )
+    elif effective_people_mode == "up_to_2":
+        people_str = (
+            "One or two small figures in casual everyday clothes, about 15% of image height. "
+            "Naturally engaged in the activity — informal and unposed."
+        )
+    else:
+        people_str = (
+            "Two or three small figures in casual everyday clothes, about 15% of image height. "
+            "Naturally gathered in the setting — warm and unposed."
+        )
+
+    # ── 7. center_motif：初期版では使用しない（将来フック） ──
+    # center_motif = metadata.get("center_motif", "")
+    # if center_motif:
+    #     motif_hint = f"The scene may naturally suggest: {center_motif}."
+
+    # ── 8. dry-run 用デバッグ情報を格納 ──
+    _TITLE_SCENE_DEBUG.clear()
+    _TITLE_SCENE_DEBUG.update({
+        "primary_keyword":       primary.get("matched_keyword"),
+        "modifier_keywords":     [kw for kw, _ in modifiers],
+        "user_situation":        situation,
+        "scene_type":            scene_type,
+        "mood":                  mood,
+        "effective_people_mode": effective_people_mode,
+        "center_motif_used":     False,
+    })
+
+    # ── 9. scene prose を組み立てる ──
+    return (
+        f"The subject of this illustration: {situation}. "
+        f"Setting: {scene_desc}. "
+        f"Mood: {mood}. "
+        f"{people_str} "
+        "All elements are grounded naturally in the scene — "
+        "no isolated floating objects, no large blank shapes in the foreground. "
+        "Warm cream and gentle amber watercolor washes fill the entire canvas."
+    )
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+
 def build_api_prompt(title: str, metadata: dict) -> str:
     """Imagen API に送る英語 scene contract プロンプトを生成する。
     誘発語（editorial/magazine/article/thumbnail など）を一切使わず、
@@ -762,18 +922,10 @@ def build_api_prompt(title: str, metadata: dict) -> str:
             "Figures blend into the shared watercolor scene alongside house, props, and garden."
         )
 
-    blank_note = "Simple blank papers and clipboards appear naturally as props." if allow_blank else ""
+    blank_note = ""  # 初期版では固定書類プロップを出さないため無効化
 
-    # api_scene がある場合はそれを使用（自然文・ラベルなし）
-    if contract and "api_scene" in contract:
-        scene_prose = contract["api_scene"]
-    else:
-        # 多ゾーン統合型テンプレートで scene_prose を構築
-        scene_prose = _build_multi_zone_scene(
-            subject     = subject     if subject     else "a small Japanese vacant house",
-            objects_req = objects_req if objects_req else "house key, blank clipboard",
-            objects_sup = objects_sup if objects_sup else "warm amber garden, natural surroundings",
-        )
+    # タイトル駆動 scene plan を使用（カテゴリ別 api_scene は使わない）
+    scene_prose = build_title_driven_scene(title, metadata)
 
     lines = [
         # ──── A0. Style Lock（写真化防止・最優先） ────
@@ -794,12 +946,11 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         "naturalistic muted palette, visible paper grain, natural watercolor pooling and gentle bleed. "
         "The look of a dense printed Japanese commercial illustration.",
         "Dense commercial illustration: one continuous warm watercolor scene "
-        "packed with multiple visual elements — house, consultation figures, handshake, "
-        "keys, coins, papers, house model — all in the same illustration space. "
-        "Multiple small human interactions visible simultaneously. "
+        "filled with natural visual elements — house, people in activity, "
+        "and natural surroundings — all grounded in the same illustration space. "
         "Linked by warm watercolor ground, garden path, and soft greenery — NOT isolated icons. "
         "NOT a simple single-scene landscape. NOT a single desk consultation with two large figures. "
-        "Information-rich and visually dense, like a published commercial real estate article illustration.",
+        "Visually rich and natural.",
         "Figures are small scene elements — 12-20% of image height — "
         "part of the connected illustration, not the dominant subject.",
         "All human figures wear modern everyday casual clothing: sweater, light jacket, slacks, "
@@ -823,11 +974,17 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         # ──── C. Safety（Scene Contractより前に配置し優先度を上げる） ────
         "ABSOLUTELY NO TEXT anywhere in the image — "
         "no words, no letters, no numbers, no labels, no logos, no signs of any kind. "
-        "All papers, forms, documents, clipboards are completely blank plain white surfaces — "
-        "no writing, no form lines, no printed marks, no handwriting, no word fragments. "
-        "No English words, no Japanese characters, no symbols. No poster.",
+        "No English words, no Japanese characters, no symbols anywhere. No poster. "
+        "Do not add paper stacks, clipboards, forms, labels, boards, signs, calendars, "
+        "or UI screens as foreground motifs. "
+        "If any incidental paper-like surface naturally appears, it must be visually minor "
+        "and contain no readable marks, no lines, no letters, no numbers, and no symbols.",
+        "No speech bubbles, no thought bubbles, no dialogue boxes. "
+        "No whiteboards, no presentation boards, no flipcharts, no bulletin boards. "
+        "No calendar grids, no UI screens, no signboards, no wall writing. "
+        "NOT a modern office interior. NOT a corporate meeting room. NOT a classroom.",
         "",
-        # ──── B. Scene Contract（カテゴリ別） ────
+        # ──── B. Scene Contract（タイトル駆動） ────
         scene_prose,
         people_note,
     ]
@@ -853,9 +1010,8 @@ def build_fallback_prompt(title: str, metadata: dict) -> str:
     allow_blank = metadata.get("allow_blank_documents", False)
 
     contract   = CATEGORY_SCENE_CONTRACTS.get(category)
-    subject    = contract["subject"] if contract else f"a small Japanese vacant house with {CATEGORY_EN.get(category, 'vacant house')} objects"
-    blank_note = "Simple blank papers appear as props." if allow_blank else ""
-    scene      = contract.get("api_scene", subject) if contract else subject
+    blank_note = ""  # 初期版では固定書類プロップを出さないため無効化
+    scene      = build_title_driven_scene(title, metadata)   # タイトル駆動に変更
     tone       = contract.get("tone", "calm, warm, organized") if contract else "calm, warm, organized"
 
     if people_mode == "none":
@@ -925,6 +1081,19 @@ def _print_dry_run(
         avoid = metadata.get("avoid_motifs", [])
         print(f"  {'回避モチーフ':<{w}}: {', '.join(avoid[:4]) + (' …' if len(avoid) > 4 else '') if avoid else '-'}")
     print(f"  {'出力先（予定）':<20}: {output_path}")
+    # タイトル駆動 scene plan デバッグ情報
+    if _TITLE_SCENE_DEBUG:
+        w = 20
+        print("\n--- タイトル駆動 Scene Plan ---")
+        print(f"  {'主題キーワード':<{w}}: {_TITLE_SCENE_DEBUG.get('primary_keyword') or '（なし）'}")
+        mods = _TITLE_SCENE_DEBUG.get('modifier_keywords', [])
+        print(f"  {'修飾キーワード':<{w}}: {', '.join(mods) if mods else '（なし）'}")
+        print(f"  {'推定状況':<{w}}: {_TITLE_SCENE_DEBUG.get('user_situation', '-')}")
+        print(f"  {'シーンタイプ':<{w}}: {_TITLE_SCENE_DEBUG.get('scene_type', '-')}")
+        print(f"  {'ムード':<{w}}: {_TITLE_SCENE_DEBUG.get('mood', '-')}")
+        print(f"  {'人物モード（実効値）':<{w}}: {_TITLE_SCENE_DEBUG.get('effective_people_mode', '-')}")
+        print(f"  {'center_motif使用':<{w}}: {'あり' if _TITLE_SCENE_DEBUG.get('center_motif_used') else 'なし（初期版）'}")
+        print("---")
     _print_post_checklist()
     # preflight チェック
     pf_warnings = _preflight_check_api_prompt(api_prompt)
