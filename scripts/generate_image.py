@@ -964,8 +964,12 @@ def build_title_driven_scene(title: str, metadata: dict) -> str:
         f"{people_str} "
         f"{portrait_guard}"
         f"{welcoming_guard}"
-        "The scene has natural visual depth: foreground, middle-ground, and background "
-        "each contribute environmental texture and detail. "
+        "The scene has natural visual depth: "
+        "foreground has ground texture — warm garden path, small stones, low plants; "
+        "middle-ground has fence or gate, garden greenery, shrubs, figures in activity; "
+        "background has house roofline, neighboring rooftops, mature trees. "
+        "Subtle household exterior details — entrance, eaves, layered plantings — "
+        "give the eye multiple places to rest across the full canvas. "
         "The setting feels lived-in and layered — naturally detailed without being cluttered. "
         "All elements are grounded in the scene — no isolated floating objects. "
         "Warm cream and gentle amber watercolor washes fill the entire canvas."
@@ -1048,6 +1052,12 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         "Linked by warm watercolor ground, garden path, and soft greenery — NOT isolated icons. "
         "NOT a simple single-scene landscape. NOT a single desk consultation with two large figures. "
         "Visually rich, naturally layered, and lived-in — not sparse, not cluttered.",
+        "Environmental depth layers: foreground has warm garden path, small stones, low plants; "
+        "middle-ground has fence or gate, garden shrubs, layered greenery; "
+        "background has house roofline, neighboring rooftops, mature trees. "
+        "Subtle household exterior details — entrance, eaves, weathered walls — "
+        "add lived-in texture throughout. "
+        "Many small grounded environmental details fill the full canvas — the eye has multiple places to rest.",
         "Figures are small scene elements — 12-20% of image height — "
         "part of the connected illustration, not the dominant subject.",
         "All human figures wear modern everyday casual clothing: sweater, light jacket, slacks, "
@@ -1064,7 +1074,7 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         "illustration reaches all four frame edges with warm color throughout. "
         "No large empty or cold white areas — the cream paper tone shows everywhere. "
         "Only the very outermost edges dissolve gently into warm cream.",
-        "The composition fills the full 16:9 canvas — "
+        "The composition fills the full wide horizontal canvas — "
         "multiple elements distributed from edge to edge, no large empty white zones.",
         "Documents and papers are blank plain sheets — physical pages on surfaces or in hands, "
         "with no writing, marks, printed content, or symbols of any kind.",
@@ -1080,6 +1090,8 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         "No whiteboards, no presentation boards, no flipcharts, no bulletin boards. "
         "No calendar grids, no UI screens, no signboards, no wall writing. "
         "NOT a modern office interior. NOT a corporate meeting room. NOT a classroom.",
+        "No format marks, no corner marks, no tiny printed marks, no dimension marks, "
+        "no metadata-like marks anywhere in the image.",
         "",
         # ──── B. Scene Contract（タイトル駆動） ────
         scene_prose,
@@ -1128,7 +1140,7 @@ def build_fallback_prompt(title: str, metadata: dict) -> str:
         "No realistic skin texture, no selfie, no single-person hero portrait, "
         "no chest-up business portrait, no close-up face.",
         "Multi-element commercial illustration: figures (15-30% of image height), house, props, "
-        "category-specific elements — filling the full 16:9 canvas edge to edge.",
+        "category-specific elements — filling the full wide horizontal canvas edge to edge.",
         "All figures in modern casual clothing: sweater, light jacket, slacks — not kimono.",
         "Warm amber and golden watercolor fills the entire canvas — "
         "background extends to all four edges; only the very outermost edges dissolve into white.",
