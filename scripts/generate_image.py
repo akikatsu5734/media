@@ -738,6 +738,9 @@ TITLE_TOPIC_MAP: list[tuple[str, dict]] = [
     ("庭木",    {"situation": "maintaining the garden of a vacant house", "scene_type": "garden work", "mood": "organized and fresh"}),
     ("剪定",    {"situation": "pruning and caring for trees around a vacant house", "scene_type": "garden work", "mood": "practical and satisfying"}),
     ("駐車場",  {"situation": "converting a vacant lot to a parking area", "scene_type": "lot conversion", "mood": "practical and organized"}),
+    ("補助金・助成金", {"situation": "carefully considering public support options for a vacant house", "scene_type": "outdoor consultation", "mood": "careful, calm, and responsible"}),
+    ("補助金",  {"situation": "carefully considering public support options for a vacant house", "scene_type": "outdoor consultation", "mood": "careful, calm, and responsible"}),
+    ("助成金",  {"situation": "carefully considering public support options for a vacant house", "scene_type": "outdoor consultation", "mood": "careful, calm, and responsible"}),
     ("保険",    {"situation": "protecting a vacant house with insurance", "scene_type": "quiet outdoor", "mood": "reassured and calm"}),
 ]
 
@@ -745,12 +748,12 @@ TITLE_TOPIC_MAP: list[tuple[str, dict]] = [
 TITLE_MODIFIER_MAP: list[tuple[str, dict]] = [
     ("費用",      {"situation_add": "understanding the costs involved", "mood": "practical and reassured"}),
     ("相場",      {"situation_add": "comparing market rates", "mood": "organized and informed"}),
-    ("補助金",    {"situation_add": "exploring available subsidies and grants", "mood": "reassured and organized"}),
-    ("助成金",    {"situation_add": "exploring available grants", "mood": "reassured and organized"}),
+    ("補助金",    {"situation_add": "exploring available public support", "mood": "reassured and organized"}),
+    ("注意点",    {"situation_add": "carefully weighing important conditions before taking the next step", "mood": "cautious and thoughtful"}),
+    ("助成金",    {"situation_add": "exploring available public support", "mood": "reassured and organized"}),
     ("手続き",    {"situation_add": "navigating the necessary procedures", "mood": "organized and supported"}),
     ("相談先",    {"situation_add": "finding the right advisor or service", "mood": "calm and supported"}),
     ("選び方",    {"situation_add": "choosing the right service or approach", "mood": "organized and considered"}),
-    ("注意点",    {"situation_add": "being careful about common pitfalls", "mood": "careful and considered"}),
     ("失敗しない", {"situation_add": "avoiding common mistakes", "mood": "careful and reassured"}),
     ("遠方",      {"situation_add": "managing from a distance", "mood": "careful and organized"}),
     ("交渉",      {"situation_add": "negotiating the best outcome", "mood": "calm and trustworthy"}),
@@ -770,7 +773,8 @@ SCENE_TYPE_DESCRIPTIONS: dict[str, str] = {
     "outdoor consultation": (
         "a Japanese vacant house with a garden path leading to the entrance — "
         "garden greenery and trees framing the property at multiple depths, stone steps visible. "
-        "People engaged in discussion in the mid-ground, the house clearly behind them"
+        "Two small figures pausing thoughtfully near the entrance or garden path, "
+        "engaged in quiet discussion — the house clearly in the background"
     ),
     "outdoor inspection": (
         "a traditional Japanese house seen from outside — "
