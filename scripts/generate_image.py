@@ -243,10 +243,13 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
         "tone":        "calm, trustworthy, organized, hopeful — the registration and handover process feels clear and manageable",
         "api_scene": (
             "Hand-painted commercial illustration — clear ink outlines, vivid warm watercolor, NOT photorealistic. "
-            "A Japanese house in a garden fills the background. "
-            "Two figures — homeowner and property consultant in modern casual clothes — stand near the house, about 22% of image height. "
-            "Nearby in the scene: a house key, blank registration papers, a small house model, stacked coin shapes. "
-            "Garden trees and a low fence fill the surrounding space. "
+            "A property consultation and registration scene: "
+            "Two figures — homeowner and property consultant in modern casual clothes — "
+            "at about 25% of image height, reviewing documents together. "
+            "Nearby: a house key, multiple blank registration papers, a small house model, stacked coin shapes. "
+            "A Japanese house is visible in the background. "
+            "Additional elements: a blank clipboard, garden trees. "
+            "Multiple elements distributed naturally across the canvas. "
             "Warm amber and golden watercolor fills the canvas to all edges."
         ),
     },
@@ -259,12 +262,14 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
         "tone":        "gentle, warm, organized, thoughtful",
         "api_scene": (
             "Hand-painted commercial illustration — clear ink outlines, vivid warm watercolor, NOT photorealistic. "
-            "Three family members — two adults and one younger adult — in modern casual clothes "
-            "stand in the garden of a Japanese house, figures about 22% of image height. "
-            "One holds blank plain papers; they look at the house together. "
-            "On a low outdoor table nearby: a small house model, a blank folder, blank plain papers. "
-            "Scattered naturally in the scene: stacked coin shapes, a house key, a blank calendar shape. "
-            "Green garden trees and the Japanese house fill the warm background. "
+            "A warm Japanese indoor consultation room: three family members sit around a low wooden table, "
+            "figures about 25-28% of image height. "
+            "On the table: a small house model, multiple blank plain document sheets spread out, "
+            "a clipboard with blank paper, teacups. "
+            "A bookshelf with books and items is visible on the left background. "
+            "Through a large window in the center background, a Japanese house exterior is visible "
+            "in an autumn garden outside. "
+            "Warm amber light fills the room from the window. "
             "Warm amber and golden watercolor fills the canvas to all edges."
         ),
     },
@@ -277,12 +282,13 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
         "tone":        "calm, practical, reassuring, organized — cost planning and subsidy review feels manageable",
         "api_scene": (
             "Hand-painted commercial illustration — clear ink outlines, vivid warm watercolor, NOT photorealistic. "
-            "Two figures in modern casual clothes sit at a low garden table, about 22% of image height, "
-            "reviewing blank papers together. "
-            "On the table: a small house model, blank document forms, stacked coin shapes. "
-            "Nearby in the scene: more coin shapes, a blank calendar grid shape, a blank form, garden rocks. "
-            "A Japanese house with garden trees in the warm background. "
-            "Warm amber and golden watercolor fills the canvas to all edges."
+            "A warm consultation scene: two figures sit at a table, about 25% of image height, "
+            "reviewing multiple blank papers. "
+            "On the table: stacked coin shapes, a small house model, blank document sheets, "
+            "a blank calendar grid shape, a blank folder. "
+            "A window or warm background shows a Japanese house exterior. "
+            "Additional concept elements nearby: a calculator shape, more coin stacks. "
+            "Warm amber light and watercolor fills the canvas to all edges."
         ),
     },
     "建築リフォーム": {
@@ -348,12 +354,22 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
         ),
     },
     "管理": {
-        "subject":     "a small Japanese vacant house with a calendar shape and inspection tools nearby",
-        "objects":     "small Japanese house model, blank calendar grid shape, blank clipboard, simple tools",
+        "subject":     "a vacant house management scene with oversight professional and multiple management elements",
+        "objects":     "Japanese vacant house, management professional, blank checklist clipboard, blank calendar shape, inspection tools, coin shapes",
         "support":     "warm amber watercolor wash, neatly maintained surroundings, soft outdoor light",
-        "composition": "horizontal watercolor scene, house and maintenance tools prominent, warm amber wash, watercolor fades into white edges, no border frame",
+        "composition": "house prominently visible with management professional and multiple distributed management concept elements",
         "avoid":       "not a portrait, no close-up face, no text, no logo, no numbers, not three-dimensional render",
         "tone":        "responsible, organized, calm, reliable",
+        "api_scene": (
+            "Hand-painted commercial illustration — clear ink outlines, vivid warm watercolor, NOT photorealistic. "
+            "A property management scene: a management professional in casual work clothes stands "
+            "near the Japanese vacant house, about 22% of image height, holding a blank clipboard. "
+            "The house is clearly visible as the object being managed. "
+            "Distributed naturally around the scene: a blank calendar grid shape, blank checklist sheet, "
+            "simple inspection tools, stacked coin shapes, a blank folder. "
+            "Multiple management concept elements fill the canvas. "
+            "Warm amber and golden watercolor fills the canvas to all edges."
+        ),
     },
     "保険": {
         "subject":     "a small Japanese house sheltered under a simple open umbrella shape",
@@ -762,10 +778,12 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         "filled with vivid warm watercolor. Hand-drawn illustrated style, NOT photorealistic.",
         "Every figure, building, tool, and prop has a clear ink outline "
         "with warm watercolor fills — the style of a published Japanese commercial illustration.",
-        "Information-rich commercial illustration: multiple concept elements distributed across the canvas — "
-        "house, people, props, cost icons, work elements, category-specific objects all present. "
-        "This is NOT a single landscape scene — it communicates the article's theme "
-        "through multiple simultaneous visual elements across the canvas.",
+        "Information-rich commercial illustration: multiple concept elements communicate the article's theme. "
+        "Composition type varies by category: "
+        "indoor consultation room with house visible through a window (for consultation/inheritance topics); "
+        "outdoor multi-element scene with distributed props (for work/management topics); "
+        "floating-icon collage around a central scene (for process/flow topics). "
+        "NOT locked to a single outdoor landscape — the composition matches the article content.",
         "Figures may range from 15-35% of image height: foreground consultation or work figures "
         "can be larger; background figures are smaller. "
         "Multiple figures at different scales create natural depth and information hierarchy.",
