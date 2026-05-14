@@ -957,6 +957,11 @@ def build_title_driven_scene(title: str, metadata: dict) -> str:
         "No open landscape, no scenic horizon view, no travel composition, no signboard. "
         if scene_type == "outdoor welcoming" else ""
     )
+    outdoor_desk_guard = (
+        "For outdoor scenes, do not add desks or tables — "
+        "any people are naturally grounded in the garden, entrance, path, or street-side space. "
+        if scene_type in _OUTDOOR_SCENE_TYPES else ""
+    )
     return (
         f"The subject of this illustration: {situation}. "
         f"Setting: {scene_desc}. "
@@ -964,6 +969,7 @@ def build_title_driven_scene(title: str, metadata: dict) -> str:
         f"{people_str} "
         f"{portrait_guard}"
         f"{welcoming_guard}"
+        f"{outdoor_desk_guard}"
         "The scene has natural visual depth: "
         "foreground has ground texture — warm garden path, small stones, low plants; "
         "middle-ground has fence or gate, garden greenery, shrubs, figures in activity; "
@@ -1092,6 +1098,8 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         "NOT a modern office interior. NOT a corporate meeting room. NOT a classroom.",
         "No format marks, no corner marks, no tiny printed marks, no dimension marks, "
         "no metadata-like marks anywhere in the image.",
+        "Keep walls, gates, fences, posts, and entrances plain and unmarked — "
+        "no tiny labels, no plate-like marks, no printed-looking marks on any surface.",
         "",
         # ──── B. Scene Contract（タイトル駆動） ────
         scene_prose,
