@@ -247,13 +247,12 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
             "A Japanese vacant house and garden fill the center background. "
             "On the left: two small figures (about 15% height) in a brief consultation near the house — "
             "small scene elements, not the dominant subject. "
-            "Along the garden path and on a low outdoor surface in the foreground: "
-            "blank plain white papers, a house key, stacked coin shapes — "
-            "naturally placed on ground or surface, not floating in isolation. "
+            "One figure holds a blank plain paper; a house key and a few coin shapes "
+            "rest naturally near the consultation pair — small accessories, not piled in the foreground. "
             "Soft garden greenery, warm amber path, and trees connect all elements across the scene. "
-            "On the right: a small handshake or agreement vignette blending into the garden setting. "
-            "NOT an icon sheet — all elements share the same continuous warm watercolor space. "
-            "Warm amber and golden watercolor fills the canvas to all edges."
+            "On one side: a small handshake gesture or brief negotiation scene blending into the setting. "
+            "All elements in one continuous warm watercolor space, no large prop pile in corners. "
+            "Warm cream and gentle amber watercolor fills the canvas to all edges."
         ),
     },
     "相続・生前対策": {
@@ -773,19 +772,20 @@ def build_api_prompt(title: str, metadata: dict) -> str:
 
     lines = [
         # ──── A0. Style Lock（写真化防止・最優先） ────
-        "This is a printed editorial watercolor illustration of a Japanese vacant house scene — "
+        "This is a hand-drawn watercolor illustration of a Japanese vacant house scene — "
         "NOT a photo, NOT a portrait photograph, NOT a realistic human face render. "
-        "Soft sepia/brown variable linework with layered warm watercolor washes on aged cream paper — "
-        "printed commercial magazine illustration style, not a camera image.",
+        "Warm ink lines with layered soft multi-colored watercolor fills on cream paper — "
+        "printed commercial illustration style, NOT monochrome sepia, not a camera image.",
         "No realistic skin texture, no selfie, no single-person hero portrait, "
         "no chest-up business portrait, no close-up face, no camera-lens look.",
         # ──── A. Style Contract（全カテゴリ共通・固定） ────
-        "Printed editorial watercolor illustration: soft brown/sepia linework (NOT crisp uniform black), "
-        "filled with layered warm watercolor washes showing pigment granulation and natural pooling. "
-        "Analog commercial illustration style, NOT photorealistic. "
-        "NOT a clean vector line art. NOT a minimalist stock illustration. NOT flat sparse coloring.",
-        "Every element has soft variable sepia/brown outlines with warm watercolor fills — "
-        "visible paper texture, blotchy warm washes, aged cream paper tone throughout. "
+        "Printed editorial watercolor illustration: warm ink outlines with natural multi-colored fills. "
+        "Muted sage green for trees and vegetation; warm amber and golden brown for paths and soil; "
+        "soft cream tones for buildings; gentle warm tones for figures. "
+        "Layered soft watercolor washes — NOT monochrome sepia, NOT crisp uniform black lines. "
+        "Analog commercial illustration style, NOT photorealistic.",
+        "Every element has warm ink outlines with soft colored watercolor fills — "
+        "naturalistic muted palette on cream paper, visible watercolor texture and gentle bleed. "
         "The look of a printed Japanese commercial magazine illustration.",
         "One continuous rich commercial illustration — all elements connected by shared warm watercolor scene."
         "House, people, documents, keys, coins, and props all exist in the same illustration space, "
@@ -799,9 +799,10 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         "No single large centered isolated figure — figures are part of scenes, groups, and contexts.",
         "Props and concept elements are distributed naturally throughout the composition — "
         "some grounded on surfaces, some floating as visual concept elements at various scales.",
-        "Colors: layered warm amber, golden ochre, muted green, warm earth brown — "
-        "watercolor with visible pigment granulation, blotchy uneven pooling, and natural wash variation. "
-        "Aged cream paper tone as the base; NOT white background, NOT flat sparse coloring.",
+        "Colors: muted sage green for trees and bushes, warm amber and golden brown for paths, "
+        "soft warm cream for building walls, gentle earth tones for figures and surroundings — "
+        "multi-colored soft watercolor washes with natural variation. "
+        "Cream paper as the base — NOT pure white, NOT monochrome sepia, NOT flat sparse coloring.",
         "Warm amber and golden watercolor washes fill the entire canvas — "
         "illustration reaches all four frame edges with warm color throughout. "
         "No large empty or cold white areas — the cream paper tone shows everywhere. "
