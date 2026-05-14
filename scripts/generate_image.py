@@ -242,17 +242,22 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
         "avoid":       "not a portrait, no close-up face, no readable text, no logo, no numbers, not three-dimensional render, no for-sale sign text, no price tags, no door frame, no gateway framing",
         "tone":        "calm, trustworthy, organized, hopeful — the registration and handover process feels clear and manageable",
         "api_scene": (
-            "Hand-painted commercial illustration — clear ink lines, vivid warm watercolor, NOT photorealistic. "
-            "One continuous commercial illustration — all elements in the same warm watercolor scene."
-            "A Japanese vacant house and garden fill the center background. "
-            "On the left: two small figures (about 15% height) in a brief consultation near the house — "
-            "small scene elements, not the dominant subject. "
-            "One figure holds a blank plain paper; a house key and a few coin shapes "
-            "rest naturally near the consultation pair — small accessories, not piled in the foreground. "
-            "Soft garden greenery, warm amber path, and trees connect all elements across the scene. "
-            "On one side: a small handshake gesture or brief negotiation scene blending into the setting. "
-            "All elements in one continuous warm watercolor space, no large prop pile in corners. "
-            "Warm cream and gentle amber watercolor fills the canvas to all edges."
+            "Hand-drawn watercolor illustration — warm ink lines, multi-colored soft watercolor, NOT photorealistic. "
+            "Dense commercial illustration: a Japanese house with warm reddish-brown roof and cream walls "
+            "stands in the center-background as the visual anchor. "
+            "Near the house, a property owner and a consultant in casual clothes "
+            "review small warm cream papers together — one figure holds a few small papers, "
+            "small figures about 16% of image height. "
+            "Nearby, two other small figures complete a brief handshake or agreement — "
+            "about 13% of image height, blending naturally into the garden setting. "
+            "In the lower scene, on a low wooden tray near the people: "
+            "a house key, a small house model, stacked coin shapes, "
+            "a few small warm cream papers partially overlapped with soft beige shadows — "
+            "small natural props, NOT large white rectangles, NOT isolated white sheets. "
+            "Green garden trees, warm amber path, and soft watercolor textures fill every part of the canvas. "
+            "Multiple elements packed into one dense warm watercolor scene — "
+            "visually rich and information-dense, not a simple landscape. "
+            "Warm cream and amber watercolor fills the canvas to all edges."
         ),
     },
     "相続・生前対策": {
@@ -779,26 +784,30 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         "No realistic skin texture, no selfie, no single-person hero portrait, "
         "no chest-up business portrait, no close-up face, no camera-lens look.",
         # ──── A. Style Contract（全カテゴリ共通・固定） ────
-        "Printed editorial watercolor illustration: warm ink outlines with natural multi-colored fills. "
-        "Muted sage green for trees and vegetation; warm amber and golden brown for paths and soil; "
-        "soft cream tones for buildings; gentle warm tones for figures. "
-        "Layered soft watercolor washes — NOT monochrome sepia, NOT crisp uniform black lines. "
-        "Analog commercial illustration style, NOT photorealistic.",
-        "Every element has warm ink outlines with soft colored watercolor fills — "
-        "naturalistic muted palette on cream paper, visible watercolor texture and gentle bleed. "
-        "The look of a printed Japanese commercial magazine illustration.",
-        "One continuous rich commercial illustration — all elements connected by shared warm watercolor scene."
-        "House, people, documents, keys, coins, and props all exist in the same illustration space, "
-        "linked by pale watercolor ground, garden, path, or desk surface — NOT isolated icons. "
-        "NOT an icon sheet. NOT separate floating elements on blank background. "
-        "NOT a single desk consultation with two large figures facing each other.",
+        "Printed editorial watercolor illustration: variable-width warm brown ink lines "
+        "with slightly uneven hand-drawn character — NOT crisp uniform digital outlines. "
+        "Gentle watercolor bleeding at object edges; paper texture visible through the paint; "
+        "soft pigment granulation and uneven color wash on aged cream paper. "
+        "Muted sage green for trees; warm amber and golden brown for paths; soft cream for buildings. "
+        "Analog commercial illustration style, NOT photorealistic. NOT modern flat illustration.",
+        "Every element has variable warm ink outlines with soft layered watercolor fills — "
+        "naturalistic muted palette, visible paper grain, natural watercolor pooling and gentle bleed. "
+        "The look of a dense printed Japanese commercial illustration.",
+        "Dense commercial illustration: one continuous warm watercolor scene "
+        "packed with multiple visual elements — house, consultation figures, handshake, "
+        "keys, coins, papers, house model — all in the same illustration space. "
+        "Multiple small human interactions visible simultaneously. "
+        "Linked by warm watercolor ground, garden path, and soft greenery — NOT isolated icons. "
+        "NOT a simple single-scene landscape. NOT a single desk consultation with two large figures. "
+        "Information-rich and visually dense, like a published commercial real estate article illustration.",
         "Figures are small scene elements — 12-20% of image height — "
         "part of the connected illustration, not the dominant subject.",
         "All human figures wear modern everyday casual clothing: sweater, light jacket, slacks, "
         "casual shirt — not traditional kimono, not formal business suit.",
         "No single large centered isolated figure — figures are part of scenes, groups, and contexts.",
-        "Props and concept elements are distributed naturally throughout the composition — "
-        "some grounded on surfaces, some floating as visual concept elements at various scales.",
+        "Props rest naturally on garden ground, low wooden surfaces, or soft cloth — "
+        "grounded in the scene with natural placement, not scattered isolated icons. "
+        "NOT clean arranged objects, NOT modern flat vector icons.",
         "Colors: muted sage green for trees and bushes, warm amber and golden brown for paths, "
         "soft warm cream for building walls, gentle earth tones for figures and surroundings — "
         "multi-colored soft watercolor washes with natural variation. "
