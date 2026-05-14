@@ -248,8 +248,8 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
             "On the left: two small figures (about 15% height) in a brief consultation near the house — "
             "small scene elements, not the dominant subject. "
             "Along the garden path and on a low outdoor surface in the foreground: "
-            "blank registration documents, a house key, stacked coin shapes — "
-            "naturally placed on ground or table, not floating in isolation. "
+            "blank plain white papers, a house key, stacked coin shapes — "
+            "naturally placed on ground or surface, not floating in isolation. "
             "Soft garden greenery, warm amber path, and trees connect all elements across the scene. "
             "On the right: a small handshake or agreement vignette blending into the garden setting. "
             "NOT an icon sheet — all elements share the same continuous warm watercolor space. "
@@ -461,12 +461,15 @@ _PREFLIGHT_ALLOWED_PHRASES = [
     "no single-person hero portrait",
     # スタイル記述語（構図・媒体感指定のために使用）
     "japanese commercial editorial illustration",
+    "printed editorial watercolor illustration",
     "editorial multi-element composition",
     "editorial multi-element",
     "editorial composition",
     "information-rich editorial composition",
     "information-media illustration",
     "real estate information-media",
+    "printed commercial magazine illustration",
+    "commercial magazine illustration",
     # 文字禁止強化（否定文として使用）
     "no poster",
 ]
@@ -770,17 +773,20 @@ def build_api_prompt(title: str, metadata: dict) -> str:
 
     lines = [
         # ──── A0. Style Lock（写真化防止・最優先） ────
-        "This is a hand-drawn watercolor illustration of a Japanese vacant house scene — "
+        "This is a printed editorial watercolor illustration of a Japanese vacant house scene — "
         "NOT a photo, NOT a portrait photograph, NOT a realistic human face render. "
-        "Clear ink outlines with vivid warm watercolor fills — "
-        "the style of a published Japanese commercial illustration, not a camera image.",
+        "Soft sepia/brown variable linework with layered warm watercolor washes on aged cream paper — "
+        "printed commercial magazine illustration style, not a camera image.",
         "No realistic skin texture, no selfie, no single-person hero portrait, "
         "no chest-up business portrait, no close-up face, no camera-lens look.",
         # ──── A. Style Contract（全カテゴリ共通・固定） ────
-        "Hand-painted commercial illustration: clear ink outlines on every element, "
-        "filled with vivid warm watercolor. Hand-drawn illustrated style, NOT photorealistic.",
-        "Every figure, building, tool, and prop has a clear ink outline "
-        "with warm watercolor fills — the style of a published Japanese commercial illustration.",
+        "Printed editorial watercolor illustration: soft brown/sepia linework (NOT crisp uniform black), "
+        "filled with layered warm watercolor washes showing pigment granulation and natural pooling. "
+        "Analog commercial illustration style, NOT photorealistic. "
+        "NOT a clean vector line art. NOT a minimalist stock illustration. NOT flat sparse coloring.",
+        "Every element has soft variable sepia/brown outlines with warm watercolor fills — "
+        "visible paper texture, blotchy warm washes, aged cream paper tone throughout. "
+        "The look of a printed Japanese commercial magazine illustration.",
         "One continuous rich commercial illustration — all elements connected by shared warm watercolor scene."
         "House, people, documents, keys, coins, and props all exist in the same illustration space, "
         "linked by pale watercolor ground, garden, path, or desk surface — NOT isolated icons. "
@@ -793,22 +799,23 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         "No single large centered isolated figure — figures are part of scenes, groups, and contexts.",
         "Props and concept elements are distributed naturally throughout the composition — "
         "some grounded on surfaces, some floating as visual concept elements at various scales.",
-        "Colors are warm and vivid: warm amber, golden cream, soft green, warm brown — "
-        "rich watercolor washes, not pale or washed-out, not deeply oversaturated.",
+        "Colors: layered warm amber, golden ochre, muted green, warm earth brown — "
+        "watercolor with visible pigment granulation, blotchy uneven pooling, and natural wash variation. "
+        "Aged cream paper tone as the base; NOT white background, NOT flat sparse coloring.",
         "Warm amber and golden watercolor washes fill the entire canvas — "
-        "illustration reaches all four frame edges. "
-        "Fill most of the canvas with illustration details and warm watercolor. "
-        "No large empty white areas, especially top corners and side margins. "
-        "Only the very outermost edges dissolve softly into white.",
+        "illustration reaches all four frame edges with warm color throughout. "
+        "No large empty or cold white areas — the cream paper tone shows everywhere. "
+        "Only the very outermost edges dissolve gently into warm cream.",
         "The composition fills the full 16:9 canvas — "
         "multiple elements distributed from edge to edge, no large empty white zones.",
         "Documents and papers are blank plain sheets — physical pages on surfaces or in hands, "
         "with no writing, marks, printed content, or symbols of any kind.",
         # ──── C. Safety（Scene Contractより前に配置し優先度を上げる） ────
-        "No text, no letters, no numbers, no signs, no labels, no logos anywhere in the image — "
-        "no storefront sign, no notice board, no wall writing, no calendar marks, "
-        "no Japanese characters, no English words, no symbols on papers, signs, boards, "
-        "clipboards, or documents. No poster.",
+        "ABSOLUTELY NO TEXT anywhere in the image — "
+        "no words, no letters, no numbers, no labels, no logos, no signs of any kind. "
+        "All papers, forms, documents, clipboards are completely blank plain white surfaces — "
+        "no writing, no form lines, no printed marks, no handwriting, no word fragments. "
+        "No English words, no Japanese characters, no symbols. No poster.",
         "",
         # ──── B. Scene Contract（カテゴリ別） ────
         scene_prose,
