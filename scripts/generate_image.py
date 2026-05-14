@@ -811,9 +811,13 @@ SCENE_TYPE_DESCRIPTIONS: dict[str, str] = {
         "Maintenance activity visible at multiple scales across the garden depth"
     ),
     "lot conversion": (
-        "a Japanese vacant lot beside a residential street — "
-        "neighboring houses and fences giving depth in the background, "
-        "open ground in the foreground suggesting potential, quiet neighborhood atmosphere"
+        "a cleared open area beside or in front of a Japanese vacant house, "
+        "with graveled ground and a low stone border or simple wooden boundary marking the edge. "
+        "A wide open entrance from a quiet residential street faces the foreground. "
+        "Neighboring Japanese houses and garden fences give depth in the background. "
+        "The space feels prepared and cleared for practical everyday use, "
+        "still belonging to the old house and its surrounding garden. "
+        "No parking sign, no P mark, no price board, no painted ground lines, no map, no advertisement."
     ),
     "quiet outdoor": (
         "a traditional Japanese house standing quietly in a residential neighborhood — "
