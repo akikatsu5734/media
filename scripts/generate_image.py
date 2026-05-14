@@ -794,9 +794,10 @@ SCENE_TYPE_DESCRIPTIONS: dict[str, str] = {
         "The property is still and waiting, foreground ground texture giving depth"
     ),
     "outdoor renovation": (
-        "a Japanese house with renovation activity at multiple scales — "
-        "structural work visible on the building, workers present at different distances, "
-        "the structure showing the layered quality of an old house being renewed"
+        "a traditional Japanese vacant house as the clear central subject — "
+        "the exterior shows subtle signs of repair and renewal integrated into the walls, roofline, and garden edge, "
+        "while the old structure remains visibly present. "
+        "If any people appear, they are tiny background figures only, never the main subject"
     ),
     "outdoor welcoming": (
         "a Japanese house with a neat garden entrance — "
@@ -941,11 +942,18 @@ def build_title_driven_scene(title: str, metadata: dict) -> str:
     })
 
     # ── 9. scene prose を組み立てる ──
+    portrait_guard = (
+        "The house must remain the dominant subject. "
+        "No single person fills the center of the frame. "
+        "No individual face or figure as the main focus. "
+        if scene_type == "outdoor renovation" else ""
+    )
     return (
         f"The subject of this illustration: {situation}. "
         f"Setting: {scene_desc}. "
         f"Mood: {mood}. "
         f"{people_str} "
+        f"{portrait_guard}"
         "The scene has natural visual depth: foreground, middle-ground, and background "
         "each contribute environmental texture and detail. "
         "The setting feels lived-in and layered — naturally detailed without being cluttered. "
