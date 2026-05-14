@@ -813,6 +813,18 @@ SCENE_TYPE_DESCRIPTIONS: dict[str, str] = {
     ),
 }
 
+# outdoor scene_type の集合（hands_only / 机上プロップを抑止する判定に使用）
+_OUTDOOR_SCENE_TYPES: frozenset[str] = frozenset({
+    "outdoor planning",
+    "outdoor consultation",
+    "outdoor inspection",
+    "outdoor renovation",
+    "outdoor welcoming",
+    "garden work",
+    "lot conversion",
+    "quiet outdoor",
+})
+
 # dry-run 出力用デバッグ情報（関数をまたいで渡す）
 _TITLE_SCENE_DEBUG: dict = {}
 
@@ -855,7 +867,11 @@ def build_title_driven_scene(title: str, metadata: dict) -> str:
 
     additions = [mod.get("situation_add", "") for _, mod in modifiers if mod.get("situation_add")]
     if additions:
-        situation = f"{situation}, with focus on {' and '.join(additions)}"
+        if scene_type in _OUTDOOR_SCENE_TYPES:
+            # outdoor: literal cost/rate phrases trigger text rendering — use abstract framing
+            situation = f"{situation}, approaching the next steps thoughtfully"
+        else:
+            situation = f"{situation}, with focus on {' and '.join(additions)}"
     if modifiers:
         # 最後の修飾語の mood を採用
         mood = modifiers[-1][1].get("mood", mood)
@@ -871,6 +887,10 @@ def build_title_driven_scene(title: str, metadata: dict) -> str:
     if any(kw in title for kw in ["相談", "家族", "業者", "専門家", "交渉", "手続き", "相談先"]):
         effective_people_mode = "up_to_4"
     elif any(kw in title for kw in ["点検", "管理", "確認", "調査", "片付け"]):
+        effective_people_mode = "up_to_2"
+
+    # 方針A: outdoor scene では hands_only（机上操作）は不適切 → up_to_2 に上書き
+    if scene_type in _OUTDOOR_SCENE_TYPES and effective_people_mode == "hands_only":
         effective_people_mode = "up_to_2"
 
     if effective_people_mode == "none":
