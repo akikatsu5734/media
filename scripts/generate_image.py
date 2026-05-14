@@ -733,7 +733,7 @@ TITLE_TOPIC_MAP: list[tuple[str, dict]] = [
     ("管理",    {"situation": "managing and maintaining a vacant house", "scene_type": "outdoor inspection", "mood": "responsible and practical"}),
     ("リフォーム", {"situation": "renovating and reviving a vacant house", "scene_type": "outdoor renovation", "mood": "hopeful and energetic"}),
     ("修繕",    {"situation": "repairing and maintaining a vacant house", "scene_type": "outdoor renovation", "mood": "practical and hopeful"}),
-    ("賃貸",    {"situation": "preparing a vacant house for rental", "scene_type": "outdoor welcoming", "mood": "warm and inviting"}),
+    ("賃貸",    {"situation": "preparing a vacant Japanese house for rental by calmly checking the house and its surroundings", "scene_type": "outdoor inspection", "mood": "careful and practical"}),
     ("民泊",    {"situation": "operating a vacant house as a vacation rental", "scene_type": "outdoor welcoming", "mood": "welcoming and warm"}),
     ("庭木",    {"situation": "maintaining the garden of a vacant house", "scene_type": "garden work", "mood": "organized and fresh"}),
     ("剪定",    {"situation": "pruning and caring for trees around a vacant house", "scene_type": "garden work", "mood": "practical and satisfying"}),
@@ -948,12 +948,18 @@ def build_title_driven_scene(title: str, metadata: dict) -> str:
         "No individual face or figure as the main focus. "
         if scene_type == "outdoor renovation" else ""
     )
+    welcoming_guard = (
+        "The house must remain the central subject of the scene. "
+        "No open landscape, no scenic horizon view, no travel composition, no signboard. "
+        if scene_type == "outdoor welcoming" else ""
+    )
     return (
         f"The subject of this illustration: {situation}. "
         f"Setting: {scene_desc}. "
         f"Mood: {mood}. "
         f"{people_str} "
         f"{portrait_guard}"
+        f"{welcoming_guard}"
         "The scene has natural visual depth: foreground, middle-ground, and background "
         "each contribute environmental texture and detail. "
         "The setting feels lived-in and layered — naturally detailed without being cluttered. "
