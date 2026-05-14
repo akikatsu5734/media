@@ -242,15 +242,22 @@ CATEGORY_SCENE_CONTRACTS: dict[str, dict[str, str]] = {
         "avoid":       "not a portrait, no close-up face, no readable text, no logo, no numbers, not three-dimensional render, no for-sale sign text, no price tags, no door frame, no gateway framing",
         "tone":        "calm, trustworthy, organized, hopeful — the registration and handover process feels clear and manageable",
         "api_scene": (
-            "Hand-painted commercial illustration — clear ink outlines, vivid warm watercolor, NOT photorealistic. "
-            "A property consultation and registration scene: "
-            "Two figures — homeowner and property consultant in modern casual clothes — "
-            "at about 25% of image height, reviewing documents together. "
-            "Nearby: a house key, multiple blank registration papers, a small house model, stacked coin shapes. "
-            "A Japanese house is visible in the background. "
-            "Additional elements: a blank clipboard, garden trees. "
-            "Multiple elements distributed naturally across the canvas. "
-            "Warm amber and golden watercolor fills the canvas to all edges."
+            "Hand-drawn watercolor illustration — warm ink lines, multi-colored soft watercolor, NOT photorealistic. "
+            "Dense commercial illustration: a Japanese house with warm reddish-brown roof and cream walls "
+            "stands in the center-background as the visual anchor. "
+            "Near the house, a property owner and a consultant in casual clothes "
+            "review small warm cream papers together — one figure holds a few small papers, "
+            "small figures about 16% of image height. "
+            "Nearby, two other small figures complete a brief handshake or agreement — "
+            "about 13% of image height, blending naturally into the garden setting. "
+            "In the lower scene, on a low wooden tray near the people: "
+            "a house key, a small house model, stacked coin shapes, "
+            "a few small warm cream papers partially overlapped with soft beige shadows — "
+            "small natural props, NOT large white rectangles, NOT isolated white sheets. "
+            "Green garden trees, warm amber path, and soft watercolor textures fill every part of the canvas. "
+            "Multiple elements packed into one dense warm watercolor scene — "
+            "visually rich and information-dense, not a simple landscape. "
+            "Warm cream and amber watercolor fills the canvas to all edges."
         ),
     },
     "相続・生前対策": {
@@ -458,12 +465,15 @@ _PREFLIGHT_ALLOWED_PHRASES = [
     "no single-person hero portrait",
     # スタイル記述語（構図・媒体感指定のために使用）
     "japanese commercial editorial illustration",
+    "printed editorial watercolor illustration",
     "editorial multi-element composition",
     "editorial multi-element",
     "editorial composition",
     "information-rich editorial composition",
     "information-media illustration",
     "real estate information-media",
+    "printed commercial magazine illustration",
+    "commercial magazine illustration",
     # 文字禁止強化（否定文として使用）
     "no poster",
 ]
@@ -707,6 +717,212 @@ def _build_multi_zone_scene(
     ).strip()
 
 
+# ── タイトル駆動 scene planning ──────────────────────────────────────────
+
+# 主題キーワード（scene_type を決定する）: 上から優先順位順
+TITLE_TOPIC_MAP: list[tuple[str, dict]] = [
+    ("相続",    {"situation": "inheriting a vacant house from family", "scene_type": "warm family gathering", "mood": "calm and thoughtful"}),
+    ("売却",    {"situation": "considering selling a vacant house", "scene_type": "outdoor consultation", "mood": "hopeful and organized"}),
+    ("買取",    {"situation": "arranging a vacant house purchase and handover", "scene_type": "outdoor consultation", "mood": "calm and trustworthy"}),
+    ("片付け",  {"situation": "clearing out and organizing a vacant house", "scene_type": "indoor cleanup", "mood": "organized and forward-looking"}),
+    ("解体",    {"situation": "planning the demolition of a vacant house", "scene_type": "outdoor planning", "mood": "calm and forward-looking"}),
+    ("管理",    {"situation": "managing and maintaining a vacant house", "scene_type": "outdoor inspection", "mood": "responsible and practical"}),
+    ("リフォーム", {"situation": "renovating and reviving a vacant house", "scene_type": "outdoor renovation", "mood": "hopeful and energetic"}),
+    ("修繕",    {"situation": "repairing and maintaining a vacant house", "scene_type": "outdoor renovation", "mood": "practical and hopeful"}),
+    ("賃貸",    {"situation": "preparing a vacant house for rental", "scene_type": "outdoor welcoming", "mood": "warm and inviting"}),
+    ("民泊",    {"situation": "operating a vacant house as a vacation rental", "scene_type": "outdoor welcoming", "mood": "welcoming and warm"}),
+    ("庭木",    {"situation": "maintaining the garden of a vacant house", "scene_type": "garden work", "mood": "organized and fresh"}),
+    ("剪定",    {"situation": "pruning and caring for trees around a vacant house", "scene_type": "garden work", "mood": "practical and satisfying"}),
+    ("駐車場",  {"situation": "converting a vacant lot to a parking area", "scene_type": "lot conversion", "mood": "practical and organized"}),
+    ("保険",    {"situation": "protecting a vacant house with insurance", "scene_type": "quiet outdoor", "mood": "reassured and calm"}),
+]
+
+# 修飾キーワード（mood・situation を補完するが scene_type は変えない）
+TITLE_MODIFIER_MAP: list[tuple[str, dict]] = [
+    ("費用",      {"situation_add": "understanding the costs involved", "mood": "practical and reassured"}),
+    ("相場",      {"situation_add": "comparing market rates", "mood": "organized and informed"}),
+    ("補助金",    {"situation_add": "exploring available subsidies and grants", "mood": "reassured and organized"}),
+    ("助成金",    {"situation_add": "exploring available grants", "mood": "reassured and organized"}),
+    ("手続き",    {"situation_add": "navigating the necessary procedures", "mood": "organized and supported"}),
+    ("相談先",    {"situation_add": "finding the right advisor or service", "mood": "calm and supported"}),
+    ("選び方",    {"situation_add": "choosing the right service or approach", "mood": "organized and considered"}),
+    ("注意点",    {"situation_add": "being careful about common pitfalls", "mood": "careful and considered"}),
+    ("失敗しない", {"situation_add": "avoiding common mistakes", "mood": "careful and reassured"}),
+    ("遠方",      {"situation_add": "managing from a distance", "mood": "careful and organized"}),
+    ("交渉",      {"situation_add": "negotiating the best outcome", "mood": "calm and trustworthy"}),
+    ("放置",      {"situation_add": "addressing a long-neglected property", "mood": "concerned but constructive"}),
+    ("コツ",      {"situation_add": "learning practical tips", "mood": "practical and helpful"}),
+    ("安全",      {"situation_add": "ensuring safety and security", "mood": "responsible and calm"}),
+]
+
+# scene_type → 環境レイヤー描写（前景・中景・背景の奥行きヒントを含む）
+SCENE_TYPE_DESCRIPTIONS: dict[str, str] = {
+    "warm family gathering": (
+        "a warm traditional Japanese residential house with weathered roof tiles and a layered garden — "
+        "mature trees in the background, a winding stone path in the mid-ground, "
+        "and a sense of long family history in every detail. "
+        "Family members gathered nearby, the setting full of lived-in quiet texture"
+    ),
+    "outdoor consultation": (
+        "a Japanese vacant house with a garden path leading to the entrance — "
+        "garden greenery and trees framing the property at multiple depths, stone steps visible. "
+        "People engaged in discussion in the mid-ground, the house clearly behind them"
+    ),
+    "outdoor inspection": (
+        "a traditional Japanese house seen from outside — "
+        "slightly overgrown garden in the foreground suggesting long vacancy, "
+        "but the solid structure and roof visible beyond. "
+        "Environmental texture: weathered fence, garden plants, neighboring rooflines"
+    ),
+    "indoor cleanup": (
+        "the interior of a Japanese vacant house — "
+        "tatami rooms, sliding shoji panels filtering light, a sense of rooms "
+        "that once held a family's daily life. Natural window light, depth visible through doorways. "
+        "People working at different positions in the space"
+    ),
+    "outdoor planning": (
+        "a Japanese vacant house site, calm and open — "
+        "trees and garden in the background, neighboring rooflines suggesting a residential street. "
+        "The property is still and waiting, foreground ground texture giving depth"
+    ),
+    "outdoor renovation": (
+        "a Japanese house with renovation activity at multiple scales — "
+        "structural work visible on the building, workers present at different distances, "
+        "the structure showing the layered quality of an old house being renewed"
+    ),
+    "outdoor welcoming": (
+        "a Japanese house with a neat garden entrance — "
+        "a well-tended gate or path in the foreground, warm greenery framing the approach, "
+        "the house visible with welcoming architectural details in the background"
+    ),
+    "garden work": (
+        "a Japanese house with a green layered garden — "
+        "tall background trees, mid-ground trimmed hedges and shrubs, "
+        "foreground garden path with ground texture. "
+        "Maintenance activity visible at multiple scales across the garden depth"
+    ),
+    "lot conversion": (
+        "a Japanese vacant lot beside a residential street — "
+        "neighboring houses and fences giving depth in the background, "
+        "open ground in the foreground suggesting potential, quiet neighborhood atmosphere"
+    ),
+    "quiet outdoor": (
+        "a traditional Japanese house standing quietly in a residential neighborhood — "
+        "mature garden trees in the background, a weathered fence or gate in the mid-ground, "
+        "the property's aged details visible, neighborhood context framing the scene"
+    ),
+}
+
+# dry-run 出力用デバッグ情報（関数をまたいで渡す）
+_TITLE_SCENE_DEBUG: dict = {}
+
+
+def build_title_driven_scene(title: str, metadata: dict) -> str:
+    """タイトル駆動で scene prose を生成する。
+
+    主入力：記事タイトル（日本語）。
+    カテゴリは people_mode の fallback のみに使用。
+    center_motif は初期実装では使用しない（将来用フックのみ）。
+    固定プロップ（鍵・コイン・書類・家模型等）は列挙しない。
+    """
+    # ── 1. 主題キーワードを優先順位順に照合 ──
+    primary: dict | None = None
+    for keyword, concept in TITLE_TOPIC_MAP:
+        if keyword in title:
+            primary = concept.copy()
+            primary["matched_keyword"] = keyword
+            break
+
+    # ── 2. 修飾キーワードを複数照合（最大2件） ──
+    modifiers: list[tuple[str, dict]] = [
+        (kw, mod) for kw, mod in TITLE_MODIFIER_MAP if kw in title
+    ][:2]
+
+    # ── 3. 主題なし fallback ──
+    if primary is None:
+        cat = metadata.get("detected_category", "その他")
+        primary = {
+            "situation": f"dealing with a vacant Japanese house ({cat})",
+            "scene_type": "quiet outdoor",
+            "mood": "calm and practical",
+            "matched_keyword": None,
+        }
+
+    # ── 4. 修飾キーワードで situation・mood を補完 ──
+    situation = primary["situation"]
+    scene_type = primary["scene_type"]
+    mood = primary["mood"]
+
+    additions = [mod.get("situation_add", "") for _, mod in modifiers if mod.get("situation_add")]
+    if additions:
+        situation = f"{situation}, with focus on {' and '.join(additions)}"
+    if modifiers:
+        # 最後の修飾語の mood を採用
+        mood = modifiers[-1][1].get("mood", mood)
+
+    # ── 5. シーン設定テキスト ──
+    scene_desc = SCENE_TYPE_DESCRIPTIONS.get(
+        scene_type,
+        "a traditional Japanese vacant house in a quiet residential neighborhood",
+    )
+
+    # ── 6. 人物描写：タイトル優先、カテゴリは fallback ──
+    effective_people_mode = metadata.get("people_mode", "none")
+    if any(kw in title for kw in ["相談", "家族", "業者", "専門家", "交渉", "手続き", "相談先"]):
+        effective_people_mode = "up_to_4"
+    elif any(kw in title for kw in ["点検", "管理", "確認", "調査", "片付け"]):
+        effective_people_mode = "up_to_2"
+
+    if effective_people_mode == "none":
+        people_str = "No human figures — the scene is expressed through the environment alone."
+    elif effective_people_mode == "hands_only":
+        people_str = (
+            "Hands only visible — naturally interacting with objects. No faces shown."
+        )
+    elif effective_people_mode == "up_to_2":
+        people_str = (
+            "One or two small figures in casual everyday clothes, about 15% of image height. "
+            "Naturally engaged in the activity — informal and unposed."
+        )
+    else:
+        people_str = (
+            "Two or three small figures in casual everyday clothes, about 15% of image height. "
+            "Naturally gathered in the setting — warm and unposed."
+        )
+
+    # ── 7. center_motif：初期版では使用しない（将来フック） ──
+    # center_motif = metadata.get("center_motif", "")
+    # if center_motif:
+    #     motif_hint = f"The scene may naturally suggest: {center_motif}."
+
+    # ── 8. dry-run 用デバッグ情報を格納 ──
+    _TITLE_SCENE_DEBUG.clear()
+    _TITLE_SCENE_DEBUG.update({
+        "primary_keyword":       primary.get("matched_keyword"),
+        "modifier_keywords":     [kw for kw, _ in modifiers],
+        "user_situation":        situation,
+        "scene_type":            scene_type,
+        "mood":                  mood,
+        "effective_people_mode": effective_people_mode,
+        "center_motif_used":     False,
+    })
+
+    # ── 9. scene prose を組み立てる ──
+    return (
+        f"The subject of this illustration: {situation}. "
+        f"Setting: {scene_desc}. "
+        f"Mood: {mood}. "
+        f"{people_str} "
+        "The scene has natural visual depth: foreground, middle-ground, and background "
+        "each contribute environmental texture and detail. "
+        "The setting feels lived-in and layered — naturally detailed without being cluttered. "
+        "All elements are grounded in the scene — no isolated floating objects. "
+        "Warm cream and gentle amber watercolor washes fill the entire canvas."
+    )
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+
 def build_api_prompt(title: str, metadata: dict) -> str:
     """Imagen API に送る英語 scene contract プロンプトを生成する。
     誘発語（editorial/magazine/article/thumbnail など）を一切使わず、
@@ -745,71 +961,76 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         people_note = "No human figures — the scene is conveyed through objects, setting, and atmosphere."
     else:
         people_note = (
-            "Foreground figures in consultation or work scenes may be 20-30% of image height — "
-            "multiple figures create depth and narrative. "
-            "NOT a portrait, NOT a close-up face, NOT a single centered adult. "
+            "Figures are small scene elements — 12-20% of image height — "
+            "part of the continuous illustration, not the dominant subject. "
+            "NOT a portrait, NOT a close-up face, NOT two large figures facing at a desk. "
             "All figures in modern everyday casual clothing: sweater, light jacket, slacks. "
-            "Figures are always part of a group or scene context — never isolated as the sole subject."
+            "Figures blend into the shared watercolor scene alongside house, props, and garden."
         )
 
-    blank_note = "Simple blank papers and clipboards appear naturally as props." if allow_blank else ""
+    blank_note = ""  # 初期版では固定書類プロップを出さないため無効化
 
-    # api_scene がある場合はそれを使用（自然文・ラベルなし）
-    if contract and "api_scene" in contract:
-        scene_prose = contract["api_scene"]
-    else:
-        # 多ゾーン統合型テンプレートで scene_prose を構築
-        scene_prose = _build_multi_zone_scene(
-            subject     = subject     if subject     else "a small Japanese vacant house",
-            objects_req = objects_req if objects_req else "house key, blank clipboard",
-            objects_sup = objects_sup if objects_sup else "warm amber garden, natural surroundings",
-        )
+    # タイトル駆動 scene plan を使用（カテゴリ別 api_scene は使わない）
+    scene_prose = build_title_driven_scene(title, metadata)
 
     lines = [
         # ──── A0. Style Lock（写真化防止・最優先） ────
         "This is a hand-drawn watercolor illustration of a Japanese vacant house scene — "
         "NOT a photo, NOT a portrait photograph, NOT a realistic human face render. "
-        "Clear ink outlines with vivid warm watercolor fills — "
-        "the style of a published Japanese commercial illustration, not a camera image.",
+        "Warm ink lines with layered soft multi-colored watercolor fills on cream paper — "
+        "printed commercial illustration style, NOT monochrome sepia, not a camera image.",
         "No realistic skin texture, no selfie, no single-person hero portrait, "
         "no chest-up business portrait, no close-up face, no camera-lens look.",
         # ──── A. Style Contract（全カテゴリ共通・固定） ────
-        "Hand-painted commercial illustration: clear ink outlines on every element, "
-        "filled with vivid warm watercolor. Hand-drawn illustrated style, NOT photorealistic.",
-        "Every figure, building, tool, and prop has a clear ink outline "
-        "with warm watercolor fills — the style of a published Japanese commercial illustration.",
-        "Information-rich commercial illustration: multiple concept elements communicate the article's theme. "
-        "Composition type varies by category: "
-        "indoor consultation room with house visible through a window (for consultation/inheritance topics); "
-        "outdoor multi-element scene with distributed props (for work/management topics); "
-        "floating-icon collage around a central scene (for process/flow topics). "
-        "NOT locked to a single outdoor landscape — the composition matches the article content.",
-        "Figures may range from 15-35% of image height: foreground consultation or work figures "
-        "can be larger; background figures are smaller. "
-        "Multiple figures at different scales create natural depth and information hierarchy.",
+        "Printed editorial watercolor illustration: variable-width warm brown ink lines "
+        "with slightly uneven hand-drawn character — NOT crisp uniform digital outlines. "
+        "Gentle watercolor bleeding at object edges; paper texture visible through the paint; "
+        "soft pigment granulation and uneven color wash on aged cream paper. "
+        "Muted sage green for trees; warm amber and golden brown for paths; soft cream for buildings. "
+        "Analog commercial illustration style, NOT photorealistic. NOT modern flat illustration.",
+        "Every element has variable warm ink outlines with soft layered watercolor fills — "
+        "naturalistic muted palette, visible paper grain, natural watercolor pooling and gentle bleed. "
+        "The look of a dense printed Japanese commercial illustration.",
+        "Dense commercial illustration: one continuous warm watercolor scene "
+        "filled with natural visual elements — house, people in activity, "
+        "and natural surroundings — all grounded in the same illustration space. "
+        "Linked by warm watercolor ground, garden path, and soft greenery — NOT isolated icons. "
+        "NOT a simple single-scene landscape. NOT a single desk consultation with two large figures. "
+        "Visually rich, naturally layered, and lived-in — not sparse, not cluttered.",
+        "Figures are small scene elements — 12-20% of image height — "
+        "part of the connected illustration, not the dominant subject.",
         "All human figures wear modern everyday casual clothing: sweater, light jacket, slacks, "
         "casual shirt — not traditional kimono, not formal business suit.",
         "No single large centered isolated figure — figures are part of scenes, groups, and contexts.",
-        "Props and concept elements are distributed naturally throughout the composition — "
-        "some grounded on surfaces, some floating as visual concept elements at various scales.",
-        "Colors are warm and vivid: warm amber, golden cream, soft green, warm brown — "
-        "rich watercolor washes, not pale or washed-out, not deeply oversaturated.",
+        "Props rest naturally on garden ground, low wooden surfaces, or soft cloth — "
+        "grounded in the scene with natural placement, not scattered isolated icons. "
+        "NOT clean arranged objects, NOT modern flat vector icons.",
+        "Colors: muted sage green for trees and bushes, warm amber and golden brown for paths, "
+        "soft warm cream for building walls, gentle earth tones for figures and surroundings — "
+        "multi-colored soft watercolor washes with natural variation. "
+        "Cream paper as the base — NOT pure white, NOT monochrome sepia, NOT flat sparse coloring.",
         "Warm amber and golden watercolor washes fill the entire canvas — "
-        "illustration reaches all four frame edges. "
-        "Fill most of the canvas with illustration details and warm watercolor. "
-        "No large empty white areas, especially top corners and side margins. "
-        "Only the very outermost edges dissolve softly into white.",
+        "illustration reaches all four frame edges with warm color throughout. "
+        "No large empty or cold white areas — the cream paper tone shows everywhere. "
+        "Only the very outermost edges dissolve gently into warm cream.",
         "The composition fills the full 16:9 canvas — "
         "multiple elements distributed from edge to edge, no large empty white zones.",
         "Documents and papers are blank plain sheets — physical pages on surfaces or in hands, "
         "with no writing, marks, printed content, or symbols of any kind.",
         # ──── C. Safety（Scene Contractより前に配置し優先度を上げる） ────
-        "No text, no letters, no numbers, no signs, no labels, no logos anywhere in the image — "
-        "no storefront sign, no notice board, no wall writing, no calendar marks, "
-        "no Japanese characters, no English words, no symbols on papers, signs, boards, "
-        "clipboards, or documents. No poster.",
+        "ABSOLUTELY NO TEXT anywhere in the image — "
+        "no words, no letters, no numbers, no labels, no logos, no signs of any kind. "
+        "No English words, no Japanese characters, no symbols anywhere. No poster. "
+        "Do not add paper stacks, clipboards, forms, labels, boards, signs, calendars, "
+        "or UI screens as foreground motifs. "
+        "If any incidental paper-like surface naturally appears, it must be visually minor "
+        "and contain no readable marks, no lines, no letters, no numbers, and no symbols.",
+        "No speech bubbles, no thought bubbles, no dialogue boxes. "
+        "No whiteboards, no presentation boards, no flipcharts, no bulletin boards. "
+        "No calendar grids, no UI screens, no signboards, no wall writing. "
+        "NOT a modern office interior. NOT a corporate meeting room. NOT a classroom.",
         "",
-        # ──── B. Scene Contract（カテゴリ別） ────
+        # ──── B. Scene Contract（タイトル駆動） ────
         scene_prose,
         people_note,
     ]
@@ -835,9 +1056,8 @@ def build_fallback_prompt(title: str, metadata: dict) -> str:
     allow_blank = metadata.get("allow_blank_documents", False)
 
     contract   = CATEGORY_SCENE_CONTRACTS.get(category)
-    subject    = contract["subject"] if contract else f"a small Japanese vacant house with {CATEGORY_EN.get(category, 'vacant house')} objects"
-    blank_note = "Simple blank papers appear as props." if allow_blank else ""
-    scene      = contract.get("api_scene", subject) if contract else subject
+    blank_note = ""  # 初期版では固定書類プロップを出さないため無効化
+    scene      = build_title_driven_scene(title, metadata)   # タイトル駆動に変更
     tone       = contract.get("tone", "calm, warm, organized") if contract else "calm, warm, organized"
 
     if people_mode == "none":
@@ -907,6 +1127,19 @@ def _print_dry_run(
         avoid = metadata.get("avoid_motifs", [])
         print(f"  {'回避モチーフ':<{w}}: {', '.join(avoid[:4]) + (' …' if len(avoid) > 4 else '') if avoid else '-'}")
     print(f"  {'出力先（予定）':<20}: {output_path}")
+    # タイトル駆動 scene plan デバッグ情報
+    if _TITLE_SCENE_DEBUG:
+        w = 20
+        print("\n--- タイトル駆動 Scene Plan ---")
+        print(f"  {'主題キーワード':<{w}}: {_TITLE_SCENE_DEBUG.get('primary_keyword') or '（なし）'}")
+        mods = _TITLE_SCENE_DEBUG.get('modifier_keywords', [])
+        print(f"  {'修飾キーワード':<{w}}: {', '.join(mods) if mods else '（なし）'}")
+        print(f"  {'推定状況':<{w}}: {_TITLE_SCENE_DEBUG.get('user_situation', '-')}")
+        print(f"  {'シーンタイプ':<{w}}: {_TITLE_SCENE_DEBUG.get('scene_type', '-')}")
+        print(f"  {'ムード':<{w}}: {_TITLE_SCENE_DEBUG.get('mood', '-')}")
+        print(f"  {'人物モード（実効値）':<{w}}: {_TITLE_SCENE_DEBUG.get('effective_people_mode', '-')}")
+        print(f"  {'center_motif使用':<{w}}: {'あり' if _TITLE_SCENE_DEBUG.get('center_motif_used') else 'なし（初期版）'}")
+        print("---")
     _print_post_checklist()
     # preflight チェック
     pf_warnings = _preflight_check_api_prompt(api_prompt)
