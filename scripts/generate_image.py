@@ -35,6 +35,27 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# Stage 1: visual brief 抽出モジュール（scripts/visual_brief.py）
+# ImportError 時はフォールバックの no-op 実装を使い、既存ロジックを維持する
+try:
+    from visual_brief import (
+        build_brief_cluster_prose,
+        extract_visual_brief,
+        load_brief_from_file,
+        validate_visual_brief,
+    )
+    _BRIEF_AVAILABLE = True
+except ImportError:
+    _BRIEF_AVAILABLE = False
+    def build_brief_cluster_prose(brief: dict) -> str:  # type: ignore[misc]
+        return ""
+    def validate_visual_brief(brief: dict) -> bool:  # type: ignore[misc]
+        return False
+    def load_brief_from_file(path: str) -> str:  # type: ignore[misc]
+        return ""
+    def extract_visual_brief(body: str, title: str) -> dict:  # type: ignore[misc]
+        return {}
+
 BASE_DIR = Path(__file__).parent.parent
 IMAGES_DIR = BASE_DIR / "data" / "images"
 PROMPTS_DIR = BASE_DIR / "prompts"
@@ -831,6 +852,30 @@ SCENE_TYPE_DESCRIPTIONS: dict[str, str] = {
     ),
 }
 
+# scene_type 別 optional motif hints
+# 固定プロップではなく Gemini が任意で選べる候補。不要なら使わなくてよい。
+OPTIONAL_MOTIF_HINTS: dict[str, str] = {
+    "outdoor consultation": (
+        "Optional small supporting motifs may appear where they fit naturally — "
+        "the artist may choose a few from: small blank house-shaped tokens held or compared by people, "
+        "small warm cream blank papers held gently by one person (not spread on the ground), "
+        "a subtle comparison gesture between two small groups. "
+        "These must stay small, grounded, non-readable, and secondary to the house and people. "
+        "Not all suggestions need to appear — only what fits the scene naturally. "
+        "No floating icons, no foreground-dominant objects, no readable marks of any kind."
+    ),
+    "indoor cleanup": (
+        "Optional small supporting motifs may appear — "
+        "cardboard boxes being carried or stacked, basic cleaning tools, sorted household items nearby. "
+        "These must stay secondary, grounded, and contain no readable marks."
+    ),
+    "outdoor planning": (
+        "Optional small supporting motifs may appear — "
+        "a safety helmet or work gloves resting on a low surface, simple tools placed nearby. "
+        "These must stay subtle, grounded, and contain no readable marks."
+    ),
+}
+
 # outdoor scene_type の集合（hands_only / 机上プロップを抑止する判定に使用）
 _OUTDOOR_SCENE_TYPES: frozenset[str] = frozenset({
     "outdoor planning",
@@ -1003,7 +1048,23 @@ def build_title_driven_scene(title: str, metadata: dict) -> str:
 
 # ─────────────────────────────────────────────────────────────────────────────
 
-def build_api_prompt(title: str, metadata: dict) -> str:
+def _build_avoid_extra(avoid_motifs: list) -> str:
+    """brief の avoid_motifs から Safety 追加文を生成する。
+    Preflight 誘発語（photo, portrait 等）を含む項目は除外する。
+    """
+    if not avoid_motifs:
+        return ""
+    preflight_set = {w.lower() for w in _PROMPT_PREFLIGHT_WORDS}
+    safe_items = [
+        item for item in avoid_motifs
+        if not any(pw in item.lower() for pw in preflight_set)
+    ]
+    if not safe_items:
+        return ""
+    return f"Avoid depicting these article-specific elements: {', '.join(safe_items[:6])}."
+
+
+def build_api_prompt(title: str, metadata: dict, visual_brief: Optional[dict] = None) -> str:
     """Imagen API に送る英語 scene contract プロンプトを生成する。
     誘発語（editorial/magazine/article/thumbnail など）を一切使わず、
     視覚的な場面記述のみで構成する。
@@ -1053,6 +1114,15 @@ def build_api_prompt(title: str, metadata: dict) -> str:
     # タイトル駆動 scene plan を使用（カテゴリ別 api_scene は使わない）
     scene_prose = build_title_driven_scene(title, metadata)
 
+    # motif injection: visual brief がある場合は assertive prose、ない場合は OPTIONAL_MOTIF_HINTS
+    _scene_type_for_motifs = _TITLE_SCENE_DEBUG.get("scene_type", "")
+    if visual_brief and validate_visual_brief(visual_brief):
+        motif_injection = build_brief_cluster_prose(visual_brief)
+        avoid_extra_line = _build_avoid_extra(visual_brief.get("avoid_motifs", []))
+    else:
+        motif_injection = OPTIONAL_MOTIF_HINTS.get(_scene_type_for_motifs, "")
+        avoid_extra_line = ""
+
     lines = [
         # ──── A0. Style Lock（写真化防止・最優先） ────
         "This is a hand-drawn watercolor illustration of a Japanese vacant house scene — "
@@ -1072,6 +1142,11 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         "Every element has variable warm ink outlines with vivid layered watercolor fills — "
         "bright warm palette, visible paper grain, natural watercolor pooling and gentle bleed. "
         "The look of a bright dense printed Japanese commercial illustration.",
+        "Maintain the same warm hand-drawn watercolor style even when showing multiple small story moments — "
+        "soft uneven ink lines, translucent layered watercolor fills, visible cream paper grain. "
+        "NOT manga, NOT comic panel art, NOT crisp uniform digital lines, NOT flat vector art. "
+        "All story clusters must feel like parts of ONE continuous watercolor scene, "
+        "never like separate comic panels or isolated frames.",
         "Dense explanatory commercial illustration: one continuous warm watercolor scene "
         "filled with natural visual elements — house, people in activity, "
         "and natural surroundings — all grounded in the same illustration space. "
@@ -1094,7 +1169,8 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         "Figures are small scene elements — 12-20% of image height — "
         "part of the connected illustration, not the dominant subject.",
         "All human figures wear modern everyday casual clothing: sweater, light jacket, slacks, "
-        "casual shirt — not traditional kimono, not formal business suit.",
+        "casual shirt — not traditional kimono, not formal business suit, not uniform, not official cap. "
+        "No police appearance, no security guard appearance — all figures look like ordinary civilians.",
         "No single large centered isolated figure — figures are part of scenes, groups, and contexts.",
         "Props rest naturally on garden ground, low wooden surfaces, or soft cloth — "
         "grounded in the scene with natural placement, not scattered isolated icons. "
@@ -1119,10 +1195,11 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         "ABSOLUTELY NO TEXT anywhere in the image — "
         "no words, no letters, no numbers, no labels, no logos, no signs of any kind. "
         "No English words, no Japanese characters, no symbols anywhere. No poster. "
-        "Do not add paper stacks, clipboards, forms, labels, boards, signs, calendars, "
-        "or UI screens as foreground motifs. "
-        "If any incidental paper-like surface naturally appears, it must be visually minor "
-        "and contain no readable marks, no lines, no letters, no numbers, and no symbols.",
+        "Do not use paper stacks, clipboards, forms, labels, boards, signs, calendars, "
+        "or UI screens as dominant foreground motifs. "
+        "Small blank papers held gently by a person, or subtle non-readable small objects, may appear "
+        "if they are secondary, non-central, and grounded in the scene. "
+        "Any object must contain no readable marks, no lines, no letters, no numbers, and no symbols.",
         "No speech bubbles, no thought bubbles, no dialogue boxes. "
         "No whiteboards, no presentation boards, no flipcharts, no bulletin boards. "
         "No calendar grids, no UI screens, no signboards, no wall writing. "
@@ -1130,13 +1207,17 @@ def build_api_prompt(title: str, metadata: dict) -> str:
         "No format marks, no corner marks, no tiny printed marks, no dimension marks, "
         "no metadata-like marks anywhere in the image.",
         "Keep walls, gates, fences, posts, pillars, and entrances visually plain — "
-        "no nameplates, no plaques, no rectangular shapes fixed to walls or pillars, "
-        "no tiny labels, no plate-like marks, no printed-looking marks on any surface.",
-        "No loose flat rectangles or white sheet-like shapes lying on the ground or foreground — "
-        "ground surfaces contain only natural garden elements: stones, soil, path, grass, plants.",
+        "no nameplates, no plaques, no plate-like marks or signs attached to wall surfaces, "
+        "no tiny labels, no printed-looking marks on any surface.",
+        "No large white flat sheets spread on the ground as a dominant foreground element — "
+        "ground surfaces are primarily natural garden elements: stones, soil, path, grass, plants.",
+        "No freestanding white board, no blank sign panel, no large isolated rectangular object — "
+        "these read as FOR SALE boards, clipboards, or signage and are forbidden as central or foreground motifs.",
+        avoid_extra_line,
         "",
         # ──── B. Scene Contract（タイトル駆動） ────
         scene_prose,
+        motif_injection,
         people_note,
     ]
 
@@ -1152,7 +1233,7 @@ def build_api_prompt(title: str, metadata: dict) -> str:
     return "\n".join(lines)
 
 
-def build_fallback_prompt(title: str, metadata: dict) -> str:
+def build_fallback_prompt(title: str, metadata: dict, visual_brief: Optional[dict] = None) -> str:
     """generated_images が空だった場合の短縮リトライプロンプト。
     英語 scene contract の短縮版。誘発語は使わない。
     """
@@ -1164,6 +1245,7 @@ def build_fallback_prompt(title: str, metadata: dict) -> str:
     blank_note = ""  # 初期版では固定書類プロップを出さないため無効化
     scene      = build_title_driven_scene(title, metadata)   # タイトル駆動に変更
     tone       = contract.get("tone", "calm, warm, organized") if contract else "calm, warm, organized"
+    brief_note = build_brief_cluster_prose(visual_brief) if (visual_brief and validate_visual_brief(visual_brief)) else ""
 
     if people_mode == "none":
         people_note = "No human figures — scene conveyed through objects and atmosphere."
@@ -1187,6 +1269,7 @@ def build_fallback_prompt(title: str, metadata: dict) -> str:
         "Warm amber and golden watercolor fills the entire canvas — "
         "background extends to all four edges; only the very outermost edges dissolve into white.",
         f"{scene}.",
+        brief_note,
         people_note,
         blank_note,
         "No text, no letters, no numbers, no signs, no labels anywhere in the image. "
@@ -1207,6 +1290,7 @@ def _print_dry_run(
     fallback_prompt: str,
     output_path: Path,
     metadata: dict,
+    visual_brief: dict = {},
 ) -> None:
     print("\n=== DRY-RUN: 画像生成パラメータ確認 ===\n")
     if metadata:
@@ -1245,6 +1329,24 @@ def _print_dry_run(
         print(f"  {'人物モード（実効値）':<{w}}: {_TITLE_SCENE_DEBUG.get('effective_people_mode', '-')}")
         print(f"  {'center_motif使用':<{w}}: {'あり' if _TITLE_SCENE_DEBUG.get('center_motif_used') else 'なし（初期版）'}")
         print("---")
+    # visual brief サマリー（--body-file 指定時のみ）
+    if visual_brief and validate_visual_brief(visual_brief):
+        w = 20
+        print("\n--- Visual Brief (記事本文由来) ---")
+        print(f"  {'core_theme':<{w}}: {visual_brief.get('core_theme', '-')}")
+        print(f"  {'reader_problem':<{w}}: {visual_brief.get('reader_problem', '-')}")
+        print(f"  {'reader_outcome':<{w}}: {visual_brief.get('reader_outcome', '-')}")
+        clusters = visual_brief.get("narrative_clusters", [])
+        print(f"  {'clusters':<{w}}: {len(clusters)} 件")
+        for c in clusters:
+            label = c.get("label", "")
+            scene = c.get("scene", "")[:60]
+            print(f"    [{label}] {scene}{'…' if len(c.get('scene',''))>60 else ''}")
+        motifs = visual_brief.get("supporting_motif_candidates", [])
+        print(f"  {'supporting motifs':<{w}}: {', '.join(motifs[:5]) if motifs else '（なし）'}")
+        avoids = visual_brief.get("avoid_motifs", [])
+        print(f"  {'avoid motifs':<{w}}: {', '.join(avoids[:4]) if avoids else '（なし）'}")
+        print("---")
     _print_post_checklist()
     # preflight チェック
     pf_warnings = _preflight_check_api_prompt(api_prompt)
@@ -1273,12 +1375,13 @@ def generate_image(
     output_path: Path,
     dry_run: bool = False,
     metadata: Optional[dict] = None,
+    visual_brief: Optional[dict] = None,
 ) -> Optional[Path]:
     """Gemini Imagen で画像を生成して output_path に保存する。
     実API呼び出しには compact な api_prompt を使い、空だった場合は fallback_prompt で1回リトライする。
     """
     if dry_run:
-        _print_dry_run(verbose_prompt, api_prompt, fallback_prompt, output_path, metadata or {})
+        _print_dry_run(verbose_prompt, api_prompt, fallback_prompt, output_path, metadata or {}, visual_brief or {})
         return None
 
     api_key = os.environ.get("GEMINI_API_KEY", "")
@@ -1390,17 +1493,31 @@ def main() -> None:
         help="出力先（省略時: data/images/YYYYMMDD_HHMMSS.png）",
     )
     parser.add_argument("--dry-run", action="store_true", help="API を呼ばずプロンプトのみ確認")
+    parser.add_argument(
+        "--body-file",
+        default="",
+        metavar="FILE",
+        help="記事本文ファイルパス。指定すると visual brief を抽出してプロンプトに注入する（--type general のみ有効）。",
+    )
     args = parser.parse_args()
 
     metadata: dict = {}
+    visual_brief: dict = {}
 
     if args.image_type:
         if not args.title:
             parser.error("--type を使う場合は --title も指定してください。")
         verbose_prompt, metadata = build_image_prompt(args.image_type, args.title)
+
+        # visual brief 取得（--body-file 指定時、--type general のみ有効）
+        if args.body_file and args.image_type == "general" and metadata:
+            body_text = load_brief_from_file(args.body_file)
+            if body_text:
+                visual_brief = extract_visual_brief(body_text, args.title)
+
         if args.image_type == "general" and metadata:
-            api_prompt = build_api_prompt(args.title, metadata)
-            fallback_prompt = build_fallback_prompt(args.title, metadata)
+            api_prompt = build_api_prompt(args.title, metadata, visual_brief=visual_brief)
+            fallback_prompt = build_fallback_prompt(args.title, metadata, visual_brief=visual_brief)
         else:
             api_prompt = verbose_prompt
             fallback_prompt = verbose_prompt
@@ -1418,7 +1535,7 @@ def main() -> None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         output_path = IMAGES_DIR / f"{timestamp}.png"
 
-    generate_image(verbose_prompt, api_prompt, fallback_prompt, output_path, dry_run=args.dry_run, metadata=metadata)
+    generate_image(verbose_prompt, api_prompt, fallback_prompt, output_path, dry_run=args.dry_run, metadata=metadata, visual_brief=visual_brief)
 
 
 if __name__ == "__main__":
